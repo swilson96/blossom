@@ -1,9 +1,16 @@
 import React from 'react';
 import {render} from 'react-dom';
 
+import NameList from './NameList.jsx';
+
 class App extends React.Component {
   render () {
-    return <p>I AM BLOSSOM</p>;
+    return (
+      <div>
+        <h1>I AM BLOSSOM</h1>
+        <NameList />
+      </div>
+    )
   }
 }
 
