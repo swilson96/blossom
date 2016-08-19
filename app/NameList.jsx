@@ -1,5 +1,5 @@
 import React from 'react';
-import RowHeadings from './rowHeadings.jsx';
+import InputGrid from './inputGrid.jsx';
 
 require("./css/nameList.scss");
 
@@ -37,7 +37,7 @@ class NameList extends React.Component {
             <button type="submit">add</button>
           </form>
         </div>
-        <RowHeadings nodes={this.state.nodes}/>
+        <InputGrid nodes={this.state.nodes}/>
       </div>
     );
   }
