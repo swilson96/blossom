@@ -1,5 +1,7 @@
 import React from 'react';
-import RowHeadings from './RowHeadings.jsx';
+import RowHeadings from './rowHeadings.jsx';
+
+require("./css/nameList.scss");
 
 class NameList extends React.Component {
   constructor() {

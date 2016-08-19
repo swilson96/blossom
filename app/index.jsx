@@ -1,7 +1,7 @@
 import React from 'react';
 import {render} from 'react-dom';
 
-import NameList from './NameList.jsx';
+import NameList from './nameList.jsx';
 
 class App extends React.Component {
   render () {
