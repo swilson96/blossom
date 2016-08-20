@@ -34,7 +34,7 @@ class NameList extends React.Component {
         <div className="header">
           <form onSubmit={(e) => this.addNode(e)}>
             <input ref={(a) => this._inputElement = a} placeholder="new node"></input>
-            <button type="submit">add</button>
+            <button type="submit">Add</button>
           </form>
         </div>
         <InputGrid nodes={this.state.nodes}/>
