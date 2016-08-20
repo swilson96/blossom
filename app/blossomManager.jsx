@@ -1,33 +1,36 @@
 import React from 'react';
+import BlossomStore from './blossomStore.js';
 
 require("./css/blossomManager.scss");
 
 class BlossomManager extends React.Component {
   constructor() {
     super();
+    this.blossomStore = new BlossomStore();
     this.state = {};
   }
 
   resetBlossom(e) {
-    this.setState({blossom: null});
+    this.setState({key: null});
     e.preventDefault();
   }
 
   saveBlossom(e) {
     // Generate a new key
-    this.setState({blossom: "ABCDEFGHIJK"});
+    var key = this.blossomStore.saveNewBlossom({nodes:{"ABC":"Simon"}});
+    this.setState({key: key});
     e.preventDefault();
   }
 
   loadBlossom(e) {
-    this.setState({blossom: this._blossomInput.value});
+    this.setState({key: this._blossomInput.value});
     this._blossomInput = "";
     e.preventDefault();
   }
 
   render() {
     var action;
-    if (this.state.blossom) {
+    if (this.state.key) {
       action = (
         <form onSubmit={(e) => this.resetBlossom(e)}>
           <button type="submit">Reset page</button>
@@ -42,8 +45,8 @@ class BlossomManager extends React.Component {
     }
 
     var currentBlossom = "";
-    if (this.state.blossom) {
-      currentBlossom = <div className="currentBlossom">{this.state.blossom}</div>
+    if (this.state.key) {
+      currentBlossom = <div className="currentBlossom">{this.state.key}</div>
     }
 
     return (

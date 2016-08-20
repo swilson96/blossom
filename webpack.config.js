@@ -19,6 +19,11 @@ var config = {
         loader : 'babel'
       },
       {
+        test : /\.js?/,
+        include : APP_DIR,
+        loader : 'babel'
+      },
+      {
         test: /\.scss$/,
         loaders: ["style", "css", "sass"]
       }
