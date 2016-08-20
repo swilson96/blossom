@@ -1,11 +1,19 @@
 import React from 'react';
 
+require("./css/inputGrid.scss");
+
 class InputGrid extends React.Component {
   render() {
     var nodes = this.props.nodes;
 
     function createNameCell(item) {
-      return <td className="nameCell" id={item.key + "_column"} key={item.key}>{item.name}</td>
+      return (
+        <th className="nameCell rotate" id={item.key + "_column"} key={item.key}>
+          <div>
+            <span>{item.name}</span>
+          </div>
+        </th>
+      )
     }
 
     function createInputCell(x, y) {
@@ -31,11 +39,13 @@ class InputGrid extends React.Component {
 
     return (
       <table className="inputGrid">
-        <tbody>
+        <thead>
           <tr>
-            <td></td>
+            <th></th>
             {nameCells}
           </tr>
+        </thead>
+        <tbody>
           {rows}
         </tbody>
       </table>

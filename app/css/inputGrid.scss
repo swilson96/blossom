@@ -1,0 +1,42 @@
+table {
+  border-collapse: collapse;
+}
+
+td {
+  text-align: center;
+  padding: 10px 5px;
+  border: 1px solid #ccc;
+  &.inputCell {
+    width: 27px;
+  }
+}
+
+.nameCell {
+  font-weight: bold;
+}
+
+th {
+  padding: 0 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+/* Header rotation from https://css-tricks.com/rotated-table-column-headers/ */
+th.rotate {
+  /* Something you can count on */
+  height: 140px;
+  width: 27px;
+  white-space: nowrap;
+
+  > div {
+    transform:
+      /* Magic Numbers */
+      translate(26px, 50px)
+      /* 45 is really 360 - 45 */
+      rotate(315deg);
+    width: 30px;
+  }
+  > div > span {
+    border-bottom: 1px solid #ccc;
+    padding: 5px 10px;
+  }
+}

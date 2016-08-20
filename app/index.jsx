@@ -3,6 +3,8 @@ import {render} from 'react-dom';
 
 import NameList from './nameList.jsx';
 
+require("./css/app.scss");
+
 class App extends React.Component {
   render () {
     return (
