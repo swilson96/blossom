@@ -1,3 +1,11 @@
-.BlossomManager {
+.blossomManager {
   float: right;
+
+  .currentBlossom, .blossomAction {
+    display: inline-block;
+  }
+
+  .currentBlossom {
+    margin: 5px;
+  }
 }

@@ -1,5 +1,6 @@
 table {
   border-collapse: collapse;
+  margin-top: -40px;
 }
 
 td {
@@ -29,7 +30,7 @@ th.rotate {
 
   > div {
     transform:
-      /* Magic Numbers */
+      /* Magic Numbers to align the rotated div*/
       translate(26px, 50px)
       /* 45 is really 360 - 45 */
       rotate(315deg);

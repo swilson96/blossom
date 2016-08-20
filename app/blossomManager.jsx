@@ -41,9 +41,14 @@ class BlossomManager extends React.Component {
       );
     }
 
+    var currentBlossom = "";
+    if (this.state.blossom) {
+      currentBlossom = <div className="currentBlossom">{this.state.blossom}</div>
+    }
+
     return (
       <div className="blossomManager">
-        <div className="currentBlossom">{this.state.blossom}</div>
+        {currentBlossom}
         <div className="blossomAction">{action}</div>
         <div className="blossomLoad">
           <form onSubmit={(e) => this.loadBlossom(e)}>

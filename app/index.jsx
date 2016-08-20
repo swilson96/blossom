@@ -10,8 +10,10 @@ class App extends React.Component {
   render () {
     return (
       <div>
-        <h1>I AM BLOSSOM</h1>
-        <BlossomManager />
+        <nav>
+          <h1>I AM BLOSSOM</h1>
+          <BlossomManager />
+        </nav>
         <NameList />
       </div>
     )
