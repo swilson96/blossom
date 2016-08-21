@@ -1,8 +1,8 @@
 import React from 'react';
 
-require("./css/nameList.scss");
+require("./css/addNode.scss");
 
-class NameList extends React.Component {
+class AddNode extends React.Component {
   constructor() {
     super();
   }
@@ -25,4 +25,4 @@ class NameList extends React.Component {
   }
 }
 
-export default NameList;
+export default AddNode;
