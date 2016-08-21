@@ -7,14 +7,46 @@ import NameList from './nameList.jsx';
 require("./css/app.scss");
 
 class App extends React.Component {
+  constructor() {
+    super();
+    this.state = {blossom: {nodes:[], edges:[]}};
+  }
+
+  resetBlossom() {
+    this.setState({
+      blossom: {
+        nodes: [],
+        edges: []
+      }
+    });
+  }
+
+  addNode(nodeName) {
+    var itemArray = this.state.blossom.nodes;
+
+    itemArray.push(
+      {
+        name:nodeName,
+        key: Date.now()
+      }
+    );
+
+    this.setState({
+      blossom: {
+        nodes: itemArray,
+        edges: this.state.blossom.edges
+      }
+    });
+  }
+
   render () {
     return (
       <div>
         <nav>
           <h1>I AM BLOSSOM</h1>
-          <BlossomManager />
+          <BlossomManager reset={() => this.resetBlossom()} />
         </nav>
-        <NameList />
+        <NameList blossom={this.state.blossom} addNode={(n) => this.addNode(n)} />
       </div>
     )
   }

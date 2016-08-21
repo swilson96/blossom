@@ -6,26 +6,12 @@ require("./css/nameList.scss");
 class NameList extends React.Component {
   constructor() {
     super();
-    this.state = {nodes:[]};
   }
 
   addNode(e) {
-    var itemArray = this.state.nodes;
-
-    itemArray.push(
-      {
-        name: this._inputElement.value,
-        key: Date.now()
-      }
-    );
-
-    this.setState({
-      nodes: itemArray
-    });
-
-    this._inputElement.value = "";
-
     e.preventDefault();
+    this.props.addNode(this._inputElement.value)
+    this._inputElement.value = "";
   }
 
   render() {
@@ -37,7 +23,7 @@ class NameList extends React.Component {
             <button type="submit">Add</button>
           </form>
         </div>
-        <InputGrid nodes={this.state.nodes}/>
+        <InputGrid nodes={this.props.blossom.nodes}/>
       </div>
     );
   }

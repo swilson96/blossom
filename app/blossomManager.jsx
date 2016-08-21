@@ -12,6 +12,7 @@ class BlossomManager extends React.Component {
 
   resetBlossom(e) {
     this.setState({key: null});
+    this.props.reset();
     e.preventDefault();
   }
 
