@@ -3,6 +3,7 @@ import {render} from 'react-dom';
 
 import BlossomManager from './blossomManager.jsx';
 import NameList from './nameList.jsx';
+import InputGrid from './inputGrid.jsx';
 
 require("./css/app.scss");
 
@@ -47,6 +48,7 @@ class App extends React.Component {
           <BlossomManager reset={() => this.resetBlossom()} />
         </nav>
         <NameList blossom={this.state.blossom} addNode={(n) => this.addNode(n)} />
+        <InputGrid blossom={this.state.blossom} />
       </div>
     )
   }

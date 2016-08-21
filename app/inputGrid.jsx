@@ -4,7 +4,7 @@ require("./css/inputGrid.scss");
 
 class InputGrid extends React.Component {
   render() {
-    var nodes = this.props.nodes;
+    var nodes = this.props.blossom.nodes;
 
     function createNameCell(item) {
       return (
