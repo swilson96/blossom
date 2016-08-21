@@ -15,10 +15,10 @@ class AddNode extends React.Component {
 
   render() {
     return (
-      <div className="nameListMain">
+      <div className="addNodeMain">
         <form onSubmit={(e) => this.addNode(e)}>
-          <input ref={(a) => this._inputElement = a} placeholder="new node"></input>
-          <button type="submit">Add</button>
+          <input id="addNodeInput" ref={(a) => this._inputElement = a} placeholder="new node"></input>
+          <button id="addNodeSubmit" type="submit">Add</button>
         </form>
       </div>
     );

@@ -38,7 +38,7 @@ class InputGrid extends React.Component {
     var rows = nodes.map(createRow);
 
     return (
-      <table className="inputGrid">
+      <table id="inputGrid" className="inputGrid">
         <thead>
           <tr>
             <th></th>
