@@ -1,5 +1,4 @@
 import React from 'react';
-import {render} from 'react-dom';
 
 import BlossomManager from './blossomManager.jsx';
 import AddNode from './addNode.jsx';
@@ -10,7 +9,7 @@ require("./css/app.scss");
 class App extends React.Component {
   constructor() {
     super();
-    this.state = {blossom: {nodes:[], edges:[]}};
+    this.state = {blossom:{nodes:[], edges:[]}}
   }
 
   resetBlossom() {
@@ -22,24 +21,6 @@ class App extends React.Component {
     });
   }
 
-  addNode(nodeName) {
-    var itemArray = this.state.blossom.nodes;
-
-    itemArray.push(
-      {
-        name:nodeName,
-        key: Date.now()
-      }
-    );
-
-    this.setState({
-      blossom: {
-        nodes: itemArray,
-        edges: this.state.blossom.edges
-      }
-    });
-  }
-
   render () {
     return (
       <div>
@@ -47,11 +28,11 @@ class App extends React.Component {
           <h1>I AM BLOSSOM</h1>
           <BlossomManager reset={() => this.resetBlossom()} />
         </nav>
-        <AddNode blossom={this.state.blossom} addNode={(n) => this.addNode(n)} />
+        <AddNode />
         <InputGrid blossom={this.state.blossom} />
       </div>
     )
   }
 }
 
-render(<App/>, document.getElementById('app'));
+export default App;
