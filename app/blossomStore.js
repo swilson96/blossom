@@ -21,11 +21,15 @@ class BlossomStore {
     return key;
   }
 
-  loadBlossom(key) {
-    // TODO!
-    //firebase.database().ref('/users/' + userId).once('value').then(function(snapshot) {
-    //var username = snapshot.val().username;
-    //});
+  loadBlossom(key, callback) {
+    try {
+      firebase.database().ref('/blossoms/' + key).once('value', (snapshot) => {
+        callback(snapshot.val());
+      });
+    } catch(err) {
+      console.log(err);
+      callback(null);
+    }
   }
 
 }

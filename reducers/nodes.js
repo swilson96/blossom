@@ -27,6 +27,8 @@ const nodes = (state = [], action) => {
       return addNode(state, action);
     case 'DELETE_NODE':
       return removeNode(state, action);
+    case 'SET_BLOSSOM':
+      return action.blossom.nodes;
     default:
       return state;
   }

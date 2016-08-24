@@ -18,3 +18,10 @@ export const setKey = (key) => {
     key: key
   };
 };
+
+export const setBlossom = (blossom) => {
+  return {
+    type: 'SET_BLOSSOM',
+    blossom: blossom
+  }
+}
