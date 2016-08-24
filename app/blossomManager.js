@@ -27,12 +27,11 @@ class BlossomManager extends React.Component {
         this.setState({message:''});
         this.props.setBlossom(blossom);
         this.props.setKey(this._blossomInput.value);
+        this._blossomInput.value = "";
       } else {
         this.setState({message:"Not a valid blossom key"});
       }
     });
-
-    this._blossomInput.value = "";
   }
 
   render() {
