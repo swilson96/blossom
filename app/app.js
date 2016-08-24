@@ -1,8 +1,8 @@
 import React from 'react';
 
-import BlossomManager from './blossomManager.jsx';
-import AddNode from './addNode.jsx';
-import InputGrid from './inputGrid.jsx';
+import BlossomManager from './blossomManager';
+import AddNode from './addNode';
+import InputGrid from './inputGrid';
 
 require("./css/app.scss");
 

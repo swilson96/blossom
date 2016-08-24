@@ -1,5 +1,5 @@
 import React from 'react';
-import BlossomStore from './blossomStore.js';
+import BlossomStore from './blossomStore';
 
 require("./css/blossomManager.scss");
 

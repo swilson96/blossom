@@ -20,7 +20,7 @@ class InputGrid extends React.Component {
     let createInputCell = function(x, y) {
       var className = "inputCell";
       if (x.key == y.key) {
-        className += " diagonal"
+        className += " diagonal";
       }
       return <td className={className} id={x.key + ":" + y.key} key={x.key}></td>
     }
