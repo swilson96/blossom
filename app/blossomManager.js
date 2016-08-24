@@ -12,11 +12,15 @@ class BlossomManager extends React.Component {
     this.state = {};
   }
 
+  clearMessage() {
+    this.setState({message:''});
+  }
+
   saveNewBlossom(e) {
     e.preventDefault();
     var key = this.blossomStore.saveNewBlossom(this.props.blossom);
     this.props.setKey(key);
-    this.setState({message:''});
+    this.clearMessage();
   }
 
   loadBlossom(e) {
@@ -24,7 +28,7 @@ class BlossomManager extends React.Component {
 
     this.blossomStore.loadBlossom(this._blossomInput.value, blossom => {
       if (blossom) {
-        this.setState({message:''});
+        this.clearMessage();
         this.props.setBlossom(blossom);
         this.props.setKey(this._blossomInput.value);
         this._blossomInput.value = "";
