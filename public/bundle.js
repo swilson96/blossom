@@ -23816,11 +23816,15 @@
 	    }
 	  }, {
 	    key: "loadBlossom",
-	    value: function loadBlossom(key) {
-	      // TODO!
-	      //firebase.database().ref('/users/' + userId).once('value').then(function(snapshot) {
-	      //var username = snapshot.val().username;
-	      //});
+	    value: function loadBlossom(key, callback) {
+	      try {
+	        firebase.database().ref('/blossoms/' + key).once('value', function (snapshot) {
+	          callback(snapshot.val());
+	        });
+	      } catch (err) {
+	        console.log(err);
+	        callback(null);
+	      }
 	    }
 	  }]);
 	
@@ -24197,7 +24201,7 @@
 	
 	
 	// module
-	exports.push([module.id, ".blossomManager {\n  float: right; }\n  .blossomManager .currentBlossom, .blossomManager .blossomAction {\n    display: inline-block; }\n  .blossomManager .currentBlossom {\n    margin: 5px; }\n", ""]);
+	exports.push([module.id, ".blossomManager {\n  float: right; }\n  .blossomManager .currentBlossom, .blossomManager .blossomAction {\n    display: inline-block; }\n  .blossomManager .currentBlossom {\n    margin: 5px; }\n  .blossomManager .blossomMessage {\n    margin: 5px;\n    color: red; }\n", ""]);
 	
 	// exports
 
@@ -24549,6 +24553,13 @@
 	    key: key
 	  };
 	};
+	
+	var setBlossom = exports.setBlossom = function setBlossom(blossom) {
+	  return {
+	    type: 'SET_BLOSSOM',
+	    blossom: blossom
+	  };
+	};
 
 /***/ },
 /* 214 */
@@ -24812,53 +24823,48 @@
 	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(BlossomManager).call(this));
 	
 	    _this.blossomStore = new _blossomStore2.default();
+	    _this.state = {};
 	    return _this;
 	  }
 	
 	  _createClass(BlossomManager, [{
 	    key: 'saveNewBlossom',
 	    value: function saveNewBlossom(e) {
+	      e.preventDefault();
 	      var key = this.blossomStore.saveNewBlossom(this.props.blossom);
-	      this.props.onSaveBlossom(key);
-	      e.preventDefault();
-	    }
-	  }, {
-	    key: 'saveExistingBlossom',
-	    value: function saveExistingBlossom(e) {
-	      // TODO!
-	      e.preventDefault();
+	      this.props.setKey(key);
+	      this.setState({ message: '' });
 	    }
 	  }, {
 	    key: 'loadBlossom',
 	    value: function loadBlossom(e) {
-	      this.setState({ key: this._blossomInput.value });
-	      // TODO: load from firebase, and dispatch
-	      this._blossomInput = "";
+	      var _this2 = this;
+	
 	      e.preventDefault();
+	
+	      this.blossomStore.loadBlossom(this._blossomInput.value, function (blossom) {
+	        if (blossom) {
+	          _this2.setState({ message: '' });
+	          _this2.props.setBlossom(blossom);
+	          _this2.props.setKey(_this2._blossomInput.value);
+	        } else {
+	          _this2.setState({ message: "Not a valid blossom key" });
+	        }
+	      });
+	
+	      this._blossomInput.value = "";
 	    }
 	  }, {
 	    key: 'render',
 	    value: function render() {
-	      var _this2 = this;
+	      var _this3 = this;
 	
-	      var action;
-	      if (this.props.keyValue) {
+	      var action = "";
+	      if (!this.props.keyValue) {
 	        action = _react2.default.createElement(
 	          'form',
 	          { onSubmit: function onSubmit(e) {
-	              return _this2.saveExistingBlossom(e);
-	            } },
-	          _react2.default.createElement(
-	            'button',
-	            { type: 'submit' },
-	            'Save this existing blossom'
-	          )
-	        );
-	      } else {
-	        action = _react2.default.createElement(
-	          'form',
-	          { onSubmit: function onSubmit(e) {
-	              return _this2.saveNewBlossom(e);
+	              return _this3.saveNewBlossom(e);
 	            } },
 	          _react2.default.createElement(
 	            'button',
@@ -24892,10 +24898,10 @@
 	          _react2.default.createElement(
 	            'form',
 	            { onSubmit: function onSubmit(e) {
-	                return _this2.loadBlossom(e);
+	                return _this3.loadBlossom(e);
 	              } },
 	            _react2.default.createElement('input', { ref: function ref(b) {
-	                return _this2._blossomInput = b;
+	                return _this3._blossomInput = b;
 	              }, placeholder: 'enter blossom key' }),
 	            _react2.default.createElement(
 	              'button',
@@ -24903,6 +24909,11 @@
 	              'Load'
 	            )
 	          )
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'blossomMessage' },
+	          this.state.message
 	        )
 	      );
 	    }
@@ -24923,8 +24934,11 @@
 	
 	var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 	  return {
-	    onSaveBlossom: function onSaveBlossom(key) {
+	    setKey: function setKey(key) {
 	      dispatch((0, _actions.setKey)(key));
+	    },
+	    setBlossom: function setBlossom(blossom) {
+	      dispatch((0, _actions.setBlossom)(blossom));
 	    }
 	  };
 	};
@@ -25134,4 +25148,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=bundle.js.map
+//# sourceMappingURL=bundle.js.mapURL=bundle.js.map
