@@ -1,12 +1,13 @@
 import React from 'react';
+import { connect } from 'react-redux';
 
 require("./css/inputGrid.scss");
 
 class InputGrid extends React.Component {
   render() {
-    var nodes = this.props.blossom.nodes;
+    let nodes = this.props.nodes;
 
-    function createNameCell(item) {
+    let createNameCell = function(item) {
       return (
         <th className="nameCell rotate" id={item.key + "_column"} key={item.key}>
           <div>
@@ -16,7 +17,7 @@ class InputGrid extends React.Component {
       )
     }
 
-    function createInputCell(x, y) {
+    let createInputCell = function(x, y) {
       var className = "inputCell";
       if (x.key == y.key) {
         className += " diagonal"
@@ -24,7 +25,7 @@ class InputGrid extends React.Component {
       return <td className={className} id={x.key + ":" + y.key} key={x.key}></td>
     }
 
-    function createRow(item) {
+    let createRow = function(item) {
       var inputCells = nodes.map(n => createInputCell(n, item));
       return (
         <tr key={item.key}>
@@ -34,8 +35,8 @@ class InputGrid extends React.Component {
       )
     }
 
-    var nameCells = nodes.map(createNameCell);
-    var rows = nodes.map(createRow);
+    let nameCells = nodes.map(createNameCell);
+    let rows = nodes.map(createRow);
 
     return (
       <table id="inputGrid" className="inputGrid">
@@ -53,4 +54,10 @@ class InputGrid extends React.Component {
   }
 }
 
-export default InputGrid;
+const mapStateToProps = (state) => {
+  return {
+    nodes: state.nodes
+  }
+}
+
+export default connect(mapStateToProps)(InputGrid);
