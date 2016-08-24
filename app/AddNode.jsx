@@ -4,23 +4,24 @@ import { addNode } from '../actions';
 
 require("./css/addNode.scss");
 
-let AddNode = ({ dispatch }) => {
-  let inputElement;
+class AddNode extends React.Component {
 
-  let addNodeHandler = function(e) {
+  addNodeHandler(e) {
     e.preventDefault();
-    dispatch(addNode(inputElement.value));
-    inputElement.value = "";
+    this.props.dispatch(addNode(this._inputElement.value));
+    this._inputElement.value = "";
   }
 
-  return (
-    <div className="addNodeMain">
-      <form onSubmit={addNodeHandler}>
-        <input id="addNodeInput" ref={a => inputElement = a} placeholder="new node"></input>
-        <button id="addNodeSubmit" type="submit">Add</button>
-      </form>
-    </div>
-  );
+  render() {
+    return (
+      <div className="addNodeMain">
+        <form onSubmit={(e) => this.addNodeHandler(e)}>
+          <input id="addNodeInput" ref={(a) => this._inputElement = a} placeholder="new node"></input>
+          <button id="addNodeSubmit" type="submit">Add</button>
+        </form>
+      </div>
+    );
+  }
 }
 
 export default connect()(AddNode);
