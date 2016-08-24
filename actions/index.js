@@ -11,3 +11,10 @@ export const deleteNode = (key) => {
     key: key
   };
 };
+
+export const setKey = (key) => {
+  return {
+    type: 'SET_KEY',
+    key: key
+  };
+};

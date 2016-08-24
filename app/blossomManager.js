@@ -1,4 +1,6 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { setKey } from '../actions';
 import BlossomStore from './blossomStore';
 
 require("./css/blossomManager.scss");
@@ -7,47 +9,45 @@ class BlossomManager extends React.Component {
   constructor() {
     super();
     this.blossomStore = new BlossomStore();
-    this.state = {};
   }
 
-  resetBlossom(e) {
-    this.setState({key: null});
-    this.props.reset();
+  saveNewBlossom(e) {
+    var key = this.blossomStore.saveNewBlossom(this.props.blossom);
+    this.props.onSaveBlossom(key);
     e.preventDefault();
   }
 
-  saveBlossom(e) {
-    // Generate a new key
-    var key = this.blossomStore.saveNewBlossom({nodes:{"ABC":"Simon"}});
-    this.setState({key: key});
+  saveExistingBlossom(e) {
+    // TODO!
     e.preventDefault();
   }
 
   loadBlossom(e) {
     this.setState({key: this._blossomInput.value});
+    // TODO: load from firebase, and dispatch
     this._blossomInput = "";
     e.preventDefault();
   }
 
   render() {
     var action;
-    if (this.state.key) {
+    if (this.props.keyValue) {
       action = (
-        <form onSubmit={(e) => this.resetBlossom(e)}>
-          <button type="submit">Reset page</button>
+        <form onSubmit={(e) => this.saveExistingBlossom(e)}>
+          <button type="submit">Save this existing blossom</button>
         </form>
       );
     } else {
       action = (
-        <form onSubmit={(e) => this.saveBlossom(e)}>
+        <form onSubmit={(e) => this.saveNewBlossom(e)}>
           <button type="submit">Save as new blossom</button>
         </form>
       );
     }
 
     var currentBlossom = "";
-    if (this.state.key) {
-      currentBlossom = <div className="currentBlossom">{this.state.key}</div>
+    if (this.props.keyValue) {
+      currentBlossom = <div className="currentBlossom">{this.props.keyValue}</div>
     }
 
     return (
@@ -65,4 +65,22 @@ class BlossomManager extends React.Component {
   }
 }
 
-export default BlossomManager;
+const mapStateToProps = (state) => {
+  return {
+    blossom: {
+      nodes: state.nodes,
+      edges: []
+    },
+    keyValue: state.key
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onSaveBlossom: (key) => {
+      dispatch(setKey(key))
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(BlossomManager);

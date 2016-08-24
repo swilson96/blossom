@@ -3,8 +3,7 @@ const node = (state, action) => {
     case 'ADD_NODE':
       return {
         key: Date.now(),
-        name: action.name,
-        completed: false
+        name: action.name
       };
     default:
       return state;
