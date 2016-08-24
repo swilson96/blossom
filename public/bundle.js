@@ -24847,12 +24847,11 @@
 	          _this2.setState({ message: '' });
 	          _this2.props.setBlossom(blossom);
 	          _this2.props.setKey(_this2._blossomInput.value);
+	          _this2._blossomInput.value = "";
 	        } else {
 	          _this2.setState({ message: "Not a valid blossom key" });
 	        }
 	      });
-	
-	      this._blossomInput.value = "";
 	    }
 	  }, {
 	    key: 'render',
@@ -25148,4 +25147,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=bundle.js.mapURL=bundle.js.map
+//# sourceMappingURL=bundle.js.map
