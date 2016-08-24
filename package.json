@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "Finds your maximal graph",
   "scripts": {
-    "dev": "webpack -d --watch",
+    "dev": "webpack -d",
+    "watch": "webpack -d --watch",
     "test": "jasmine",
     "build": "webpack -p"
   },
