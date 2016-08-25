@@ -26,7 +26,7 @@
     "react-redux": "^4.4.5",
     "redux": "^3.5.2",
     "redux-devtools": "^3.3.1",
-    "riek": "^1.0.3",
+    "riek": "swilson96/riek#release",
     "sass-loader": "^4.0.0",
     "selenium-webdriver": "^3.0.0-beta-2",
     "style-loader": "^0.13.1",
