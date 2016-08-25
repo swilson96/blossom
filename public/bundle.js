@@ -63,7 +63,7 @@
 	
 	var _reducers2 = _interopRequireDefault(_reducers);
 	
-	var _app = __webpack_require__(/*! ./app/app */ 221);
+	var _app = __webpack_require__(/*! ./app/app */ 201);
 	
 	var _app2 = _interopRequireDefault(_app);
 	
@@ -23667,6 +23667,10 @@
 	
 	var _nodes2 = _interopRequireDefault(_nodes);
 	
+	var _edges = __webpack_require__(/*! ./edges */ 232);
+	
+	var _edges2 = _interopRequireDefault(_edges);
+	
 	var _key = __webpack_require__(/*! ./key */ 200);
 	
 	var _key2 = _interopRequireDefault(_key);
@@ -23674,7 +23678,7 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var blossomApp = (0, _redux.combineReducers)({
-	  nodes: _nodes2.default, key: _key2.default
+	  nodes: _nodes2.default, edges: _edges2.default, key: _key2.default
 	});
 	
 	exports.default = blossomApp;
@@ -23725,6 +23729,8 @@
 	      return addNode(state, action);
 	    case 'DELETE_NODE':
 	      return removeNode(state, action);
+	    case 'SET_BLOSSOM':
+	      return action.blossom.nodes;
 	    default:
 	      return state;
 	  }
@@ -23770,9 +23776,304 @@
 	exports.default = key;
 
 /***/ },
-/* 201 */,
-/* 202 */,
+/* 201 */
+/*!********************!*\
+  !*** ./app/app.js ***!
+  \********************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _blossomManager = __webpack_require__(/*! ./blossomManager */ 202);
+	
+	var _blossomManager2 = _interopRequireDefault(_blossomManager);
+	
+	var _addNode = __webpack_require__(/*! ./addNode */ 213);
+	
+	var _addNode2 = _interopRequireDefault(_addNode);
+	
+	var _inputGrid = __webpack_require__(/*! ./inputGrid */ 216);
+	
+	var _inputGrid2 = _interopRequireDefault(_inputGrid);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	__webpack_require__(/*! ./css/app.scss */ 228);
+	
+	var App = function (_React$Component) {
+	  _inherits(App, _React$Component);
+	
+	  function App() {
+	    _classCallCheck(this, App);
+	
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(App).apply(this, arguments));
+	  }
+	
+	  _createClass(App, [{
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        null,
+	        _react2.default.createElement(
+	          'nav',
+	          null,
+	          _react2.default.createElement(
+	            'h1',
+	            null,
+	            'I AM BLOSSOM'
+	          ),
+	          _react2.default.createElement(_blossomManager2.default, null)
+	        ),
+	        _react2.default.createElement(_addNode2.default, null),
+	        _react2.default.createElement(_inputGrid2.default, null)
+	      );
+	    }
+	  }]);
+	
+	  return App;
+	}(_react2.default.Component);
+	
+	exports.default = App;
+
+/***/ },
+/* 202 */
+/*!*******************************!*\
+  !*** ./app/blossomManager.js ***!
+  \*******************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactRedux = __webpack_require__(/*! react-redux */ 175);
+	
+	var _actions = __webpack_require__(/*! ../actions */ 203);
+	
+	var _blossomStore = __webpack_require__(/*! ./blossomStore */ 204);
+	
+	var _blossomStore2 = _interopRequireDefault(_blossomStore);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	__webpack_require__(/*! ./css/blossomManager.scss */ 209);
+	
+	var BlossomManager = function (_React$Component) {
+	  _inherits(BlossomManager, _React$Component);
+	
+	  function BlossomManager() {
+	    _classCallCheck(this, BlossomManager);
+	
+	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(BlossomManager).call(this));
+	
+	    _this.blossomStore = new _blossomStore2.default();
+	    _this.state = {};
+	    return _this;
+	  }
+	
+	  _createClass(BlossomManager, [{
+	    key: 'clearMessage',
+	    value: function clearMessage() {
+	      this.setState({ message: '' });
+	    }
+	  }, {
+	    key: 'saveNewBlossom',
+	    value: function saveNewBlossom(e) {
+	      e.preventDefault();
+	      var key = this.blossomStore.saveNewBlossom(this.props.blossom);
+	      this.props.setKey(key);
+	      this.clearMessage();
+	    }
+	  }, {
+	    key: 'loadBlossom',
+	    value: function loadBlossom(e) {
+	      var _this2 = this;
+	
+	      e.preventDefault();
+	
+	      this.blossomStore.loadBlossom(this._blossomInput.value, function (blossom) {
+	        if (blossom) {
+	          _this2.clearMessage();
+	          _this2.props.setBlossom(blossom);
+	          _this2.props.setKey(_this2._blossomInput.value);
+	          _this2._blossomInput.value = "";
+	        } else {
+	          _this2.setState({ message: "Not a valid blossom key" });
+	        }
+	      });
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _this3 = this;
+	
+	      var action = "";
+	      if (!this.props.keyValue) {
+	        action = _react2.default.createElement(
+	          'form',
+	          { onSubmit: function onSubmit(e) {
+	              return _this3.saveNewBlossom(e);
+	            } },
+	          _react2.default.createElement(
+	            'button',
+	            { type: 'submit' },
+	            'Save as new blossom'
+	          )
+	        );
+	      }
+	
+	      var currentBlossom = "";
+	      if (this.props.keyValue) {
+	        currentBlossom = _react2.default.createElement(
+	          'div',
+	          { className: 'currentBlossom' },
+	          this.props.keyValue
+	        );
+	      }
+	
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'blossomManager' },
+	        currentBlossom,
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'blossomAction' },
+	          action
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'blossomLoad' },
+	          _react2.default.createElement(
+	            'form',
+	            { onSubmit: function onSubmit(e) {
+	                return _this3.loadBlossom(e);
+	              } },
+	            _react2.default.createElement('input', { ref: function ref(b) {
+	                return _this3._blossomInput = b;
+	              }, placeholder: 'enter blossom key' }),
+	            _react2.default.createElement(
+	              'button',
+	              { type: 'submit' },
+	              'Load'
+	            )
+	          )
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'blossomMessage' },
+	          this.state.message
+	        )
+	      );
+	    }
+	  }]);
+	
+	  return BlossomManager;
+	}(_react2.default.Component);
+	
+	var mapStateToProps = function mapStateToProps(state) {
+	  return {
+	    blossom: {
+	      nodes: state.nodes,
+	      edges: state.edges
+	    },
+	    keyValue: state.key
+	  };
+	};
+	
+	var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+	  return {
+	    setKey: function setKey(key) {
+	      dispatch((0, _actions.setKey)(key));
+	    },
+	    setBlossom: function setBlossom(blossom) {
+	      dispatch((0, _actions.setBlossom)(blossom));
+	    }
+	  };
+	};
+	
+	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(BlossomManager);
+
+/***/ },
 /* 203 */
+/*!**************************!*\
+  !*** ./actions/index.js ***!
+  \**************************/
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var addNode = exports.addNode = function addNode(text) {
+	  return {
+	    type: 'ADD_NODE',
+	    name: text
+	  };
+	};
+	
+	var deleteNode = exports.deleteNode = function deleteNode(key) {
+	  return {
+	    type: 'DELETE_NODE',
+	    key: key
+	  };
+	};
+	
+	var setKey = exports.setKey = function setKey(key) {
+	  return {
+	    type: 'SET_KEY',
+	    key: key
+	  };
+	};
+	
+	var setBlossom = exports.setBlossom = function setBlossom(blossom) {
+	  return {
+	    type: 'SET_BLOSSOM',
+	    blossom: blossom
+	  };
+	};
+	
+	var setEdge = exports.setEdge = function setEdge(key, weight) {
+	  return {
+	    type: 'SET_EDGE',
+	    key: key,
+	    weight: weight
+	  };
+	};
+
+/***/ },
+/* 204 */
 /*!*****************************!*\
   !*** ./app/blossomStore.js ***!
   \*****************************/
@@ -23792,8 +24093,8 @@
 	  function BlossomStore() {
 	    _classCallCheck(this, BlossomStore);
 	
-	    var firebase = __webpack_require__(/*! firebase/app */ 204);
-	    __webpack_require__(/*! firebase/database */ 206);
+	    var firebase = __webpack_require__(/*! firebase/app */ 205);
+	    __webpack_require__(/*! firebase/database */ 207);
 	
 	    var config = {
 	      apiKey: "AIzaSyC1RZbfWfMyKPFrJX-LAPwCiu00EF-86FU",
@@ -23834,7 +24135,7 @@
 	exports.default = BlossomStore;
 
 /***/ },
-/* 204 */
+/* 205 */
 /*!***************************!*\
   !*** ./~/firebase/app.js ***!
   \***************************/
@@ -23847,12 +24148,12 @@
 	 *
 	 *   firebase = require('firebase/app');
 	 */
-	__webpack_require__(/*! ./firebase-app */ 205);
+	__webpack_require__(/*! ./firebase-app */ 206);
 	module.exports = firebase;
 
 
 /***/ },
-/* 205 */
+/* 206 */
 /*!************************************!*\
   !*** ./~/firebase/firebase-app.js ***!
   \************************************/
@@ -23890,7 +24191,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 206 */
+/* 207 */
 /*!********************************!*\
   !*** ./~/firebase/database.js ***!
   \********************************/
@@ -23903,13 +24204,13 @@
 	 *
 	 *   database = require('firebase/database');
 	 */
-	__webpack_require__(/*! ./firebase-app */ 205);
-	__webpack_require__(/*! ./firebase-database */ 207);
+	__webpack_require__(/*! ./firebase-app */ 206);
+	__webpack_require__(/*! ./firebase-database */ 208);
 	module.exports = firebase.database;
 
 
 /***/ },
-/* 207 */
+/* 208 */
 /*!*****************************************!*\
   !*** ./~/firebase/firebase-database.js ***!
   \*****************************************/
@@ -24161,7 +24462,7 @@
 
 
 /***/ },
-/* 208 */
+/* 209 */
 /*!*************************************!*\
   !*** ./app/css/blossomManager.scss ***!
   \*************************************/
@@ -24170,10 +24471,10 @@
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(/*! !./../../~/css-loader!./../../~/sass-loader!./blossomManager.scss */ 209);
+	var content = __webpack_require__(/*! !./../../~/css-loader!./../../~/sass-loader!./blossomManager.scss */ 210);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(/*! ./../../~/style-loader/addStyles.js */ 211)(content, {});
+	var update = __webpack_require__(/*! ./../../~/style-loader/addStyles.js */ 212)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -24190,13 +24491,13 @@
 	}
 
 /***/ },
-/* 209 */
+/* 210 */
 /*!********************************************************************!*\
   !*** ./~/css-loader!./~/sass-loader!./app/css/blossomManager.scss ***!
   \********************************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(/*! ./../../~/css-loader/lib/css-base.js */ 210)();
+	exports = module.exports = __webpack_require__(/*! ./../../~/css-loader/lib/css-base.js */ 211)();
 	// imports
 	
 	
@@ -24207,7 +24508,7 @@
 
 
 /***/ },
-/* 210 */
+/* 211 */
 /*!**************************************!*\
   !*** ./~/css-loader/lib/css-base.js ***!
   \**************************************/
@@ -24266,7 +24567,7 @@
 
 
 /***/ },
-/* 211 */
+/* 212 */
 /*!*************************************!*\
   !*** ./~/style-loader/addStyles.js ***!
   \*************************************/
@@ -24521,431 +24822,7 @@
 
 
 /***/ },
-/* 212 */,
 /* 213 */
-/*!**************************!*\
-  !*** ./actions/index.js ***!
-  \**************************/
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var addNode = exports.addNode = function addNode(text) {
-	  return {
-	    type: 'ADD_NODE',
-	    name: text
-	  };
-	};
-	
-	var deleteNode = exports.deleteNode = function deleteNode(key) {
-	  return {
-	    type: 'DELETE_NODE',
-	    key: key
-	  };
-	};
-	
-	var setKey = exports.setKey = function setKey(key) {
-	  return {
-	    type: 'SET_KEY',
-	    key: key
-	  };
-	};
-	
-	var setBlossom = exports.setBlossom = function setBlossom(blossom) {
-	  return {
-	    type: 'SET_BLOSSOM',
-	    blossom: blossom
-	  };
-	};
-
-/***/ },
-/* 214 */
-/*!******************************!*\
-  !*** ./app/css/addNode.scss ***!
-  \******************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-	
-	// load the styles
-	var content = __webpack_require__(/*! !./../../~/css-loader!./../../~/sass-loader!./addNode.scss */ 215);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(/*! ./../../~/style-loader/addStyles.js */ 211)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js!./addNode.scss", function() {
-				var newContent = require("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js!./addNode.scss");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 215 */
-/*!*************************************************************!*\
-  !*** ./~/css-loader!./~/sass-loader!./app/css/addNode.scss ***!
-  \*************************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(/*! ./../../~/css-loader/lib/css-base.js */ 210)();
-	// imports
-	
-	
-	// module
-	exports.push([module.id, "\r\n", ""]);
-	
-	// exports
-
-
-/***/ },
-/* 216 */,
-/* 217 */
-/*!********************************!*\
-  !*** ./app/css/inputGrid.scss ***!
-  \********************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-	
-	// load the styles
-	var content = __webpack_require__(/*! !./../../~/css-loader!./../../~/sass-loader!./inputGrid.scss */ 218);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(/*! ./../../~/style-loader/addStyles.js */ 211)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js!./inputGrid.scss", function() {
-				var newContent = require("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js!./inputGrid.scss");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 218 */
-/*!***************************************************************!*\
-  !*** ./~/css-loader!./~/sass-loader!./app/css/inputGrid.scss ***!
-  \***************************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(/*! ./../../~/css-loader/lib/css-base.js */ 210)();
-	// imports
-	
-	
-	// module
-	exports.push([module.id, "table {\n  border-collapse: collapse;\n  margin-top: -40px; }\n\ntd {\n  text-align: center;\n  padding: 10px 5px;\n  border: 1px solid #ccc; }\n  td.inputCell {\n    width: 27px; }\n\n.nameCell {\n  font-weight: bold; }\n\nth {\n  padding: 0 10px;\n  border-bottom: 1px solid #ccc; }\n\n/* Header rotation from https://css-tricks.com/rotated-table-column-headers/ */\nth.rotate {\n  /* Something you can count on */\n  height: 140px;\n  width: 27px;\n  white-space: nowrap; }\n  th.rotate > div {\n    transform: translate(26px, 50px) rotate(315deg);\n    width: 30px; }\n  th.rotate > div > span {\n    border-bottom: 1px solid #ccc;\n    padding: 5px 10px; }\n", ""]);
-	
-	// exports
-
-
-/***/ },
-/* 219 */
-/*!**************************!*\
-  !*** ./app/css/app.scss ***!
-  \**************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-	
-	// load the styles
-	var content = __webpack_require__(/*! !./../../~/css-loader!./../../~/sass-loader!./app.scss */ 220);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(/*! ./../../~/style-loader/addStyles.js */ 211)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js!./app.scss", function() {
-				var newContent = require("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js!./app.scss");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 220 */
-/*!*********************************************************!*\
-  !*** ./~/css-loader!./~/sass-loader!./app/css/app.scss ***!
-  \*********************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(/*! ./../../~/css-loader/lib/css-base.js */ 210)();
-	// imports
-	
-	
-	// module
-	exports.push([module.id, "body {\n  padding: 10px;\n  background-color: #66CCFF;\n  font-family: sans-serif; }\n\nform {\n  margin: 0; }\n\ninput {\n  padding: 10px;\n  margin: 5px;\n  font-size: 16px;\n  border: 2px solid #FFF; }\n\nbutton {\n  padding: 10px;\n  font-size: 16px;\n  margin: 5px;\n  background-color: #0066FF;\n  color: #FFF;\n  border: 2px solid #0066FF; }\n\nbutton:hover {\n  background-color: #003399;\n  border: 2px solid #003399;\n  cursor: pointer; }\n\nnav {\n  height: 100px; }\n\nh1 {\n  margin: 5px;\n  float: left; }\n", ""]);
-	
-	// exports
-
-
-/***/ },
-/* 221 */
-/*!********************!*\
-  !*** ./app/app.js ***!
-  \********************/
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _react = __webpack_require__(/*! react */ 1);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _blossomManager = __webpack_require__(/*! ./blossomManager */ 222);
-	
-	var _blossomManager2 = _interopRequireDefault(_blossomManager);
-	
-	var _addNode = __webpack_require__(/*! ./addNode */ 223);
-	
-	var _addNode2 = _interopRequireDefault(_addNode);
-	
-	var _inputGrid = __webpack_require__(/*! ./inputGrid */ 224);
-	
-	var _inputGrid2 = _interopRequireDefault(_inputGrid);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	__webpack_require__(/*! ./css/app.scss */ 219);
-	
-	var App = function (_React$Component) {
-	  _inherits(App, _React$Component);
-	
-	  function App() {
-	    _classCallCheck(this, App);
-	
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(App).apply(this, arguments));
-	  }
-	
-	  _createClass(App, [{
-	    key: 'render',
-	    value: function render() {
-	      return _react2.default.createElement(
-	        'div',
-	        null,
-	        _react2.default.createElement(
-	          'nav',
-	          null,
-	          _react2.default.createElement(
-	            'h1',
-	            null,
-	            'I AM BLOSSOM'
-	          ),
-	          _react2.default.createElement(_blossomManager2.default, null)
-	        ),
-	        _react2.default.createElement(_addNode2.default, null),
-	        _react2.default.createElement(_inputGrid2.default, null)
-	      );
-	    }
-	  }]);
-	
-	  return App;
-	}(_react2.default.Component);
-	
-	exports.default = App;
-
-/***/ },
-/* 222 */
-/*!*******************************!*\
-  !*** ./app/blossomManager.js ***!
-  \*******************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _react = __webpack_require__(/*! react */ 1);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _reactRedux = __webpack_require__(/*! react-redux */ 175);
-	
-	var _actions = __webpack_require__(/*! ../actions */ 213);
-	
-	var _blossomStore = __webpack_require__(/*! ./blossomStore */ 203);
-	
-	var _blossomStore2 = _interopRequireDefault(_blossomStore);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	__webpack_require__(/*! ./css/blossomManager.scss */ 208);
-	
-	var BlossomManager = function (_React$Component) {
-	  _inherits(BlossomManager, _React$Component);
-	
-	  function BlossomManager() {
-	    _classCallCheck(this, BlossomManager);
-	
-	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(BlossomManager).call(this));
-	
-	    _this.blossomStore = new _blossomStore2.default();
-	    _this.state = {};
-	    return _this;
-	  }
-	
-	  _createClass(BlossomManager, [{
-	    key: 'saveNewBlossom',
-	    value: function saveNewBlossom(e) {
-	      e.preventDefault();
-	      var key = this.blossomStore.saveNewBlossom(this.props.blossom);
-	      this.props.setKey(key);
-	      this.setState({ message: '' });
-	    }
-	  }, {
-	    key: 'loadBlossom',
-	    value: function loadBlossom(e) {
-	      var _this2 = this;
-	
-	      e.preventDefault();
-	
-	      this.blossomStore.loadBlossom(this._blossomInput.value, function (blossom) {
-	        if (blossom) {
-	          _this2.setState({ message: '' });
-	          _this2.props.setBlossom(blossom);
-	          _this2.props.setKey(_this2._blossomInput.value);
-	          _this2._blossomInput.value = "";
-	        } else {
-	          _this2.setState({ message: "Not a valid blossom key" });
-	        }
-	      });
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      var _this3 = this;
-	
-	      var action = "";
-	      if (!this.props.keyValue) {
-	        action = _react2.default.createElement(
-	          'form',
-	          { onSubmit: function onSubmit(e) {
-	              return _this3.saveNewBlossom(e);
-	            } },
-	          _react2.default.createElement(
-	            'button',
-	            { type: 'submit' },
-	            'Save as new blossom'
-	          )
-	        );
-	      }
-	
-	      var currentBlossom = "";
-	      if (this.props.keyValue) {
-	        currentBlossom = _react2.default.createElement(
-	          'div',
-	          { className: 'currentBlossom' },
-	          this.props.keyValue
-	        );
-	      }
-	
-	      return _react2.default.createElement(
-	        'div',
-	        { className: 'blossomManager' },
-	        currentBlossom,
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'blossomAction' },
-	          action
-	        ),
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'blossomLoad' },
-	          _react2.default.createElement(
-	            'form',
-	            { onSubmit: function onSubmit(e) {
-	                return _this3.loadBlossom(e);
-	              } },
-	            _react2.default.createElement('input', { ref: function ref(b) {
-	                return _this3._blossomInput = b;
-	              }, placeholder: 'enter blossom key' }),
-	            _react2.default.createElement(
-	              'button',
-	              { type: 'submit' },
-	              'Load'
-	            )
-	          )
-	        ),
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'blossomMessage' },
-	          this.state.message
-	        )
-	      );
-	    }
-	  }]);
-	
-	  return BlossomManager;
-	}(_react2.default.Component);
-	
-	var mapStateToProps = function mapStateToProps(state) {
-	  return {
-	    blossom: {
-	      nodes: state.nodes,
-	      edges: []
-	    },
-	    keyValue: state.key
-	  };
-	};
-	
-	var mapDispatchToProps = function mapDispatchToProps(dispatch) {
-	  return {
-	    setKey: function setKey(key) {
-	      dispatch((0, _actions.setKey)(key));
-	    },
-	    setBlossom: function setBlossom(blossom) {
-	      dispatch((0, _actions.setBlossom)(blossom));
-	    }
-	  };
-	};
-	
-	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(BlossomManager);
-
-/***/ },
-/* 223 */
 /*!************************!*\
   !*** ./app/addNode.js ***!
   \************************/
@@ -24965,7 +24842,7 @@
 	
 	var _reactRedux = __webpack_require__(/*! react-redux */ 175);
 	
-	var _actions = __webpack_require__(/*! ../actions */ 213);
+	var _actions = __webpack_require__(/*! ../actions */ 203);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -25025,7 +24902,53 @@
 	exports.default = (0, _reactRedux.connect)()(AddNode);
 
 /***/ },
-/* 224 */
+/* 214 */
+/*!******************************!*\
+  !*** ./app/css/addNode.scss ***!
+  \******************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(/*! !./../../~/css-loader!./../../~/sass-loader!./addNode.scss */ 215);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(/*! ./../../~/style-loader/addStyles.js */ 212)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js!./addNode.scss", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js!./addNode.scss");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 215 */
+/*!*************************************************************!*\
+  !*** ./~/css-loader!./~/sass-loader!./app/css/addNode.scss ***!
+  \*************************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(/*! ./../../~/css-loader/lib/css-base.js */ 211)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, "\r\n", ""]);
+	
+	// exports
+
+
+/***/ },
+/* 216 */
 /*!**************************!*\
   !*** ./app/inputGrid.js ***!
   \**************************/
@@ -25045,6 +24968,8 @@
 	
 	var _reactRedux = __webpack_require__(/*! react-redux */ 175);
 	
+	var _inputGridComponents = __webpack_require__(/*! ./inputGridComponents */ 217);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -25053,7 +24978,7 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	__webpack_require__(/*! ./css/inputGrid.scss */ 217);
+	__webpack_require__(/*! ./css/inputGrid.scss */ 226);
 	
 	var InputGrid = function (_React$Component) {
 	  _inherits(InputGrid, _React$Component);
@@ -25069,62 +24994,16 @@
 	    value: function render() {
 	      var nodes = this.props.nodes;
 	
-	      var createNameCell = function createNameCell(item) {
-	        return _react2.default.createElement(
-	          'th',
-	          { className: 'nameCell rotate', id: item.key + "_column", key: item.key },
-	          _react2.default.createElement(
-	            'div',
-	            null,
-	            _react2.default.createElement(
-	              'span',
-	              null,
-	              item.name
-	            )
-	          )
-	        );
-	      };
-	
-	      var createInputCell = function createInputCell(x, y) {
-	        var className = "inputCell";
-	        if (x.key == y.key) {
-	          className += " diagonal";
-	        }
-	        return _react2.default.createElement('td', { className: className, id: x.key + ":" + y.key, key: x.key });
-	      };
-	
 	      var createRow = function createRow(item) {
-	        var inputCells = nodes.map(function (n) {
-	          return createInputCell(n, item);
-	        });
-	        return _react2.default.createElement(
-	          'tr',
-	          { key: item.key },
-	          _react2.default.createElement(
-	            'td',
-	            { className: 'nameCell', id: item.key + "_row" },
-	            item.name
-	          ),
-	          inputCells
-	        );
+	        return _react2.default.createElement(_inputGridComponents.InputGridRow, { key: item.key, currentNode: item, nodes: nodes });
 	      };
 	
-	      var nameCells = nodes.map(createNameCell);
 	      var rows = nodes.map(createRow);
 	
 	      return _react2.default.createElement(
 	        'table',
 	        { id: 'inputGrid', className: 'inputGrid' },
-	        _react2.default.createElement(
-	          'thead',
-	          null,
-	          _react2.default.createElement(
-	            'tr',
-	            null,
-	            _react2.default.createElement('th', null),
-	            nameCells
-	          )
-	        ),
+	        _react2.default.createElement(_inputGridComponents.TableHeader, { nodes: nodes }),
 	        _react2.default.createElement(
 	          'tbody',
 	          null,
@@ -25144,6 +25023,1171 @@
 	};
 	
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(InputGrid);
+
+/***/ },
+/* 217 */
+/*!************************************!*\
+  !*** ./app/inputGridComponents.js ***!
+  \************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.InputGridRow = exports.TableHeader = undefined;
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _inputCell = __webpack_require__(/*! ./inputCell */ 218);
+	
+	var _inputCell2 = _interopRequireDefault(_inputCell);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var NodeHeader = function (_React$Component) {
+	  _inherits(NodeHeader, _React$Component);
+	
+	  function NodeHeader() {
+	    _classCallCheck(this, NodeHeader);
+	
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(NodeHeader).apply(this, arguments));
+	  }
+	
+	  _createClass(NodeHeader, [{
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'th',
+	        { className: 'nameCell rotate', id: this.props.node.key + "_column" },
+	        _react2.default.createElement(
+	          'div',
+	          null,
+	          _react2.default.createElement(
+	            'span',
+	            null,
+	            this.props.node.name
+	          )
+	        )
+	      );
+	    }
+	  }]);
+	
+	  return NodeHeader;
+	}(_react2.default.Component);
+	
+	var TableHeader = function (_React$Component2) {
+	  _inherits(TableHeader, _React$Component2);
+	
+	  function TableHeader() {
+	    _classCallCheck(this, TableHeader);
+	
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(TableHeader).apply(this, arguments));
+	  }
+	
+	  _createClass(TableHeader, [{
+	    key: 'createNameCell',
+	    value: function createNameCell(item) {
+	      return _react2.default.createElement(NodeHeader, { key: item.key, node: item });
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var nameCells = this.props.nodes.map(this.createNameCell);
+	
+	      return _react2.default.createElement(
+	        'thead',
+	        null,
+	        _react2.default.createElement(
+	          'tr',
+	          null,
+	          _react2.default.createElement('th', null),
+	          nameCells
+	        )
+	      );
+	    }
+	  }]);
+	
+	  return TableHeader;
+	}(_react2.default.Component);
+	
+	var InputGridRow = function (_React$Component3) {
+	  _inherits(InputGridRow, _React$Component3);
+	
+	  function InputGridRow() {
+	    _classCallCheck(this, InputGridRow);
+	
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(InputGridRow).apply(this, arguments));
+	  }
+	
+	  _createClass(InputGridRow, [{
+	    key: 'createInputCell',
+	    value: function createInputCell(x, y) {
+	      return _react2.default.createElement(_inputCell2.default, { key: x.key, x: x, y: y });
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _this4 = this;
+	
+	      var inputCells = this.props.nodes.map(function (n) {
+	        return _this4.createInputCell(n, _this4.props.currentNode);
+	      });
+	      return _react2.default.createElement(
+	        'tr',
+	        { key: this.props.currentNode.key },
+	        _react2.default.createElement(
+	          'td',
+	          { className: 'nameCell', id: this.props.currentNode.key + "_row" },
+	          this.props.currentNode.name
+	        ),
+	        inputCells
+	      );
+	    }
+	  }]);
+	
+	  return InputGridRow;
+	}(_react2.default.Component);
+	
+	exports.TableHeader = TableHeader;
+	exports.InputGridRow = InputGridRow;
+
+/***/ },
+/* 218 */
+/*!**************************!*\
+  !*** ./app/inputCell.js ***!
+  \**************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactRedux = __webpack_require__(/*! react-redux */ 175);
+	
+	var _actions = __webpack_require__(/*! ../actions */ 203);
+	
+	var _riek = __webpack_require__(/*! riek */ 219);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	__webpack_require__(/*! ./css/inputCell.scss */ 230);
+	
+	var InputCell = function (_React$Component) {
+	  _inherits(InputCell, _React$Component);
+	
+	  function InputCell() {
+	    _classCallCheck(this, InputCell);
+	
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(InputCell).apply(this, arguments));
+	  }
+	
+	  _createClass(InputCell, [{
+	    key: 'getKey',
+	    value: function getKey() {
+	      return this.props.x.key + ":" + this.props.y.key;
+	    }
+	  }, {
+	    key: 'onChange',
+	    value: function onChange(value) {
+	      this.props.setEdge(this.getKey(), value.number);
+	    }
+	  }, {
+	    key: 'isValidWeight',
+	    value: function isValidWeight(value) {
+	      return true;
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _this2 = this;
+	
+	      var className = "inputCell";
+	      var inner = "";
+	      if (this.props.x.key == this.props.y.key) {
+	        className += " diagonal";
+	      } else {
+	        var matches = this.props.edges.filter(function (e) {
+	          return e.key == _this2.getKey();
+	        });
+	        var value = matches.length > 0 ? matches[0].weight : 0;
+	
+	        inner = _react2.default.createElement(_riek.RIENumber, {
+	          value: value,
+	          change: function change(v) {
+	            return _this2.onChange(v);
+	          },
+	          propName: 'number',
+	          validate: this.isValidWeight,
+	          className: 'cellInput',
+	          classLoading: 'loading',
+	          classInvalid: 'invalid' });
+	      }
+	      return _react2.default.createElement(
+	        'td',
+	        { className: className, id: this.getKey() },
+	        inner
+	      );
+	    }
+	  }]);
+	
+	  return InputCell;
+	}(_react2.default.Component);
+	
+	var mapStateToProps = function mapStateToProps(state) {
+	  return {
+	    edges: state.edges
+	  };
+	};
+	
+	var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+	  return {
+	    setEdge: function setEdge(key, weight) {
+	      dispatch((0, _actions.setEdge)(key, weight));
+	    }
+	  };
+	};
+	
+	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(InputCell);
+
+/***/ },
+/* 219 */
+/*!*****************************!*\
+  !*** ./~/riek/lib/index.js ***!
+  \*****************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.RIETags = exports.RIENumber = exports.RIETextArea = exports.RIEInput = exports.RIEToggle = undefined;
+	
+	var _RIEToggle = __webpack_require__(/*! ./RIEToggle */ 220);
+	
+	var _RIEToggle2 = _interopRequireDefault(_RIEToggle);
+	
+	var _RIEStatefulBase2 = __webpack_require__(/*! ./RIEStatefulBase */ 222);
+	
+	var _RIEStatefulBase3 = _interopRequireDefault(_RIEStatefulBase2);
+	
+	var _RIETextArea = __webpack_require__(/*! ./RIETextArea */ 223);
+	
+	var _RIETextArea2 = _interopRequireDefault(_RIETextArea);
+	
+	var _RIENumber = __webpack_require__(/*! ./RIENumber */ 224);
+	
+	var _RIENumber2 = _interopRequireDefault(_RIENumber);
+	
+	var _RIETags = __webpack_require__(/*! ./RIETags */ 225);
+	
+	var _RIETags2 = _interopRequireDefault(_RIETags);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var RIEInput = function (_RIEStatefulBase) {
+	  _inherits(RIEInput, _RIEStatefulBase);
+	
+	  function RIEInput() {
+	    _classCallCheck(this, RIEInput);
+	
+	    return _possibleConstructorReturn(this, (RIEInput.__proto__ || Object.getPrototypeOf(RIEInput)).apply(this, arguments));
+	  }
+	
+	  return RIEInput;
+	}(_RIEStatefulBase3.default);
+	
+	exports.RIEToggle = _RIEToggle2.default;
+	exports.RIEInput = RIEInput;
+	exports.RIETextArea = _RIETextArea2.default;
+	exports.RIENumber = _RIENumber2.default;
+	exports.RIETags = _RIETags2.default;
+
+/***/ },
+/* 220 */
+/*!*********************************!*\
+  !*** ./~/riek/lib/RIEToggle.js ***!
+  \*********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _RIEBase2 = __webpack_require__(/*! ./RIEBase */ 221);
+	
+	var _RIEBase3 = _interopRequireDefault(_RIEBase2);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var RIEToggle = function (_RIEBase) {
+	    _inherits(RIEToggle, _RIEBase);
+	
+	    function RIEToggle() {
+	        var _ref;
+	
+	        var _temp, _this, _ret;
+	
+	        _classCallCheck(this, RIEToggle);
+	
+	        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	            args[_key] = arguments[_key];
+	        }
+	
+	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = RIEToggle.__proto__ || Object.getPrototypeOf(RIEToggle)).call.apply(_ref, [this].concat(args))), _this), _this.elementClick = function (e) {
+	            _this.setState({ value: !_this.props.value });
+	            _this.commit(!_this.props.value);
+	        }, _this.render = function () {
+	            var valueToRender = _this.state.loading ? _this.state.value : _this.props.value;
+	            return _react2.default.createElement(
+	                'span',
+	                {
+	                    tabIndex: '0',
+	                    onKeyPress: _this.elementClick,
+	                    onClick: _this.elementClick,
+	                    className: _this.makeClassString() },
+	                valueToRender ? _this.props.textTrue || 'yes' : _this.props.textFalse || 'no'
+	            );
+	        }, _temp), _possibleConstructorReturn(_this, _ret);
+	    }
+	
+	    return RIEToggle;
+	}(_RIEBase3.default);
+	
+	RIEToggle.propTypes = {
+	    textTrue: _react2.default.PropTypes.string,
+	    textFalse: _react2.default.PropTypes.string
+	};
+	exports.default = RIEToggle;
+
+/***/ },
+/* 221 */
+/*!*******************************!*\
+  !*** ./~/riek/lib/RIEBase.js ***!
+  \*******************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var RIEBase = function (_React$Component) {
+	    _inherits(RIEBase, _React$Component);
+	
+	    function RIEBase(props) {
+	        _classCallCheck(this, RIEBase);
+	
+	        var _this = _possibleConstructorReturn(this, (RIEBase.__proto__ || Object.getPrototypeOf(RIEBase)).call(this, props));
+	
+	        _this.doValidations = function (value) {
+	            if (_this.props.validate) {
+	                _this.setState({ invalid: !_this.props.validate(value) });
+	            } else if (_this.validate) {
+	                _this.setState({ invalid: !_this.validate(value) });
+	            }
+	        };
+	
+	        _this.selectInputText = function (element) {
+	            element.setSelectionRange(0, element.value.length);
+	        };
+	
+	        _this.elementClick = function (event) {
+	            throw "RIEBase must be subclassed first: use a concrete class like RIEInput, RIEToggle, RIEDate et.c";
+	        };
+	
+	        _this.componentWillReceiveProps = function (nextProps) {
+	            if ('value' in nextProps) _this.setState({ loading: false, editing: false, invalid: false, newValue: null });
+	        };
+	
+	        _this.commit = function (value) {
+	            if (!_this.state.invalid) {
+	                var newProp = {};
+	                newProp[_this.props.propName] = value;
+	                _this.setState({ loading: true, newValue: value });
+	                _this.props.change(newProp);
+	            }
+	        };
+	
+	        _this.makeClassString = function () {
+	            var classNames = [];
+	            if (_this.props.className) classNames.push(_this.props.className);
+	            if (_this.state.editing && _this.props.classEditing) classNames.push(_this.props.classEditing);
+	            if (_this.state.loading && _this.props.classLoading) classNames.push(_this.props.classLoading);
+	            if (_this.state.disabled && _this.props.classDisabled) classNames.push(_this.props.classDisabled);
+	            if (_this.state.invalid && _this.props.classInvalid) classNames.push(_this.props.classInvalid);
+	            return classNames.join(' ');
+	        };
+	
+	        _this.render = function () {
+	            return _react2.default.createElement(
+	                "span",
+	                { tabindex: "0", className: _this.makeClassString(), onClick: _this.elementClick },
+	                _this.props.value
+	            );
+	        };
+	
+	        if (!_this.props.propName) throw "RTFM: missing 'propName' prop";
+	        if (!_this.props.change) throw "RTFM: missing 'change' prop";
+	        if (_this.props.value == undefined) throw "RTFM: missing 'value' prop";
+	
+	        _this.state = {
+	            editing: false,
+	            loading: false,
+	            disabled: false,
+	            invalid: false
+	        };
+	        return _this;
+	    }
+	
+	    return RIEBase;
+	}(_react2.default.Component);
+	
+	RIEBase.propTypes = {
+	    value: _react2.default.PropTypes.any.isRequired,
+	    change: _react2.default.PropTypes.func.isRequired,
+	    propName: _react2.default.PropTypes.string.isRequired,
+	    isDisabled: _react2.default.PropTypes.bool,
+	    validate: _react2.default.PropTypes.func,
+	    shouldBlockWhileLoading: _react2.default.PropTypes.bool,
+	    classLoading: _react2.default.PropTypes.string,
+	    classEditing: _react2.default.PropTypes.string,
+	    classDisabled: _react2.default.PropTypes.string,
+	    classInvalid: _react2.default.PropTypes.string,
+	    className: _react2.default.PropTypes.string
+	};
+	exports.default = RIEBase;
+
+/***/ },
+/* 222 */
+/*!***************************************!*\
+  !*** ./~/riek/lib/RIEStatefulBase.js ***!
+  \***************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactDom = __webpack_require__(/*! react-dom */ 35);
+	
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+	
+	var _RIEBase2 = __webpack_require__(/*! ./RIEBase */ 221);
+	
+	var _RIEBase3 = _interopRequireDefault(_RIEBase2);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var RIEStatefulBase = function (_RIEBase) {
+	    _inherits(RIEStatefulBase, _RIEBase);
+	
+	    function RIEStatefulBase(props) {
+	        _classCallCheck(this, RIEStatefulBase);
+	
+	        var _this = _possibleConstructorReturn(this, (RIEStatefulBase.__proto__ || Object.getPrototypeOf(RIEStatefulBase)).call(this, props));
+	
+	        _this.startEditing = function () {
+	            _this.setState({ editing: true });
+	        };
+	
+	        _this.finishEditing = function () {
+	            var newValue = _reactDom2.default.findDOMNode(_this.refs.input).value;
+	            _this.doValidations(newValue);
+	            if (!_this.state.invalid && _this.props.value !== newValue) {
+	                _this.commit(newValue);
+	            }
+	            _this.cancelEditing();
+	        };
+	
+	        _this.cancelEditing = function () {
+	            _this.setState({ editing: false, invalid: false });
+	        };
+	
+	        _this.keyDown = function (event) {
+	            if (event.keyCode === 13) {
+	                _this.finishEditing();
+	            } // Enter
+	            else if (event.keyCode === 27) {
+	                    _this.cancelEditing();
+	                } // Escape
+	        };
+	
+	        _this.textChanged = function (event) {
+	            _this.doValidations(event.target.value.trim());
+	        };
+	
+	        _this.componentDidUpdate = function (prevProps, prevState) {
+	            var inputElem = _reactDom2.default.findDOMNode(_this.refs.input);
+	            if (_this.state.editing && !prevState.editing) {
+	                inputElem.focus();
+	                _this.selectInputText(inputElem);
+	            } else if (_this.state.editing && prevProps.text != _this.props.text) {
+	                _this.finishEditing();
+	            }
+	        };
+	
+	        _this.renderEditingComponent = function () {
+	            return _react2.default.createElement('input', {
+	                disabled: _this.state.loading,
+	                className: _this.makeClassString(),
+	                defaultValue: _this.props.value,
+	                onInput: _this.textChanged,
+	                onBlur: _this.finishEditing,
+	                ref: 'input',
+	                onKeyDown: _this.keyDown });
+	        };
+	
+	        _this.renderNormalComponent = function () {
+	            return _react2.default.createElement(
+	                'span',
+	                {
+	                    tabIndex: '0',
+	                    className: _this.makeClassString(),
+	                    onFocus: _this.startEditing,
+	                    onClick: _this.startEditing },
+	                _this.state.newValue || _this.props.value
+	            );
+	        };
+	
+	        _this.elementBlur = function (event) {
+	            _this.finishEditing();
+	        };
+	
+	        _this.elementClick = function (event) {
+	            _this.startEditing();
+	            event.target.element.focus();
+	        };
+	
+	        _this.render = function () {
+	            if (_this.state.editing) {
+	                return _this.renderEditingComponent();
+	            } else {
+	                return _this.renderNormalComponent();
+	            }
+	        };
+	
+	        return _this;
+	    }
+	
+	    return RIEStatefulBase;
+	}(_RIEBase3.default);
+	
+	exports.default = RIEStatefulBase;
+
+/***/ },
+/* 223 */
+/*!***********************************!*\
+  !*** ./~/riek/lib/RIETextArea.js ***!
+  \***********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactDom = __webpack_require__(/*! react-dom */ 35);
+	
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+	
+	var _RIEStatefulBase2 = __webpack_require__(/*! ./RIEStatefulBase */ 222);
+	
+	var _RIEStatefulBase3 = _interopRequireDefault(_RIEStatefulBase2);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var RIETextArea = function (_RIEStatefulBase) {
+	    _inherits(RIETextArea, _RIEStatefulBase);
+	
+	    function RIETextArea() {
+	        var _ref;
+	
+	        var _temp, _this, _ret;
+	
+	        _classCallCheck(this, RIETextArea);
+	
+	        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	            args[_key] = arguments[_key];
+	        }
+	
+	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = RIETextArea.__proto__ || Object.getPrototypeOf(RIETextArea)).call.apply(_ref, [this].concat(args))), _this), _this.keyDown = function (event) {
+	            if (event.keyCode === 27) {
+	                _this.cancelEditing();
+	            } // Escape
+	        }, _this.renderEditingComponent = function () {
+	            return _react2.default.createElement('textarea', {
+	                rows: _this.props.rows,
+	                cols: _this.props.cols,
+	                disabled: _this.state.loading,
+	                className: _this.makeClassString(),
+	                defaultValue: _this.props.value,
+	                onInput: _this.textChanged,
+	                onBlur: _this.finishEditing,
+	                ref: 'input',
+	                onKeyDown: _this.keyDown });
+	        }, _this.renderNormalComponent = function () {
+	            var value = _this.state.newValue || _this.props.value;
+	            var spans_and_brs = [];
+	            var i = 0;
+	            value.split("\n").map(function (line) {
+	                spans_and_brs.push(_react2.default.createElement(
+	                    'span',
+	                    { key: i },
+	                    line
+	                ));
+	                spans_and_brs.push(_react2.default.createElement('br', { key: i + 1 }));
+	                i += 2;
+	            });
+	            spans_and_brs.pop(); // remove last br tag
+	
+	            return _react2.default.createElement(
+	                'span',
+	                {
+	                    tabIndex: '0',
+	                    className: _this.makeClassString(),
+	                    onFocus: _this.startEditing,
+	                    onClick: _this.startEditing },
+	                spans_and_brs
+	            );
+	        }, _temp), _possibleConstructorReturn(_this, _ret);
+	    }
+	
+	    return RIETextArea;
+	}(_RIEStatefulBase3.default);
+	
+	exports.default = RIETextArea;
+
+/***/ },
+/* 224 */
+/*!*********************************!*\
+  !*** ./~/riek/lib/RIENumber.js ***!
+  \*********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _RIEStatefulBase2 = __webpack_require__(/*! ./RIEStatefulBase */ 222);
+	
+	var _RIEStatefulBase3 = _interopRequireDefault(_RIEStatefulBase2);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var RIENumber = function (_RIEStatefulBase) {
+	    _inherits(RIENumber, _RIEStatefulBase);
+	
+	    function RIENumber(props) {
+	        _classCallCheck(this, RIENumber);
+	
+	        var _this = _possibleConstructorReturn(this, (RIENumber.__proto__ || Object.getPrototypeOf(RIENumber)).call(this, props));
+	
+	        _this.validate = function (value) {
+	            return !isNaN(value) && isFinite(value) && value.length > 0;
+	        };
+	
+	        _this.selectInputText = function (element) {
+	            // element.setSelectionRange won't work for an input of type "number"
+	            setTimeout(function () {
+	                element.select();
+	            }, 10);
+	        };
+	
+	        _this.renderNormalComponent = function () {
+	            return _react2.default.createElement(
+	                'span',
+	                {
+	                    tabIndex: '0',
+	                    className: _this.makeClassString(),
+	                    onFocus: _this.startEditing,
+	                    onClick: _this.startEditing },
+	                _this.props.format ? _this.props.format(_this.state.newValue || _this.props.value) : _this.state.newValue || _this.props.value
+	            );
+	        };
+	
+	        _this.renderEditingComponent = function () {
+	            return _react2.default.createElement('input', { disabled: _this.props.shouldBlockWhileLoading && _this.state.loading,
+	                type: 'number',
+	                className: _this.makeClassString(),
+	                defaultValue: _this.props.value,
+	                onInput: _this.textChanged,
+	                onBlur: _this.finishEditing,
+	                ref: 'input',
+	                onKeyDown: _this.keyDown });
+	        };
+	
+	        return _this;
+	    }
+	
+	    return RIENumber;
+	}(_RIEStatefulBase3.default);
+	
+	RIENumber.propTypes = {
+	    format: _react2.default.PropTypes.func
+	};
+	exports.default = RIENumber;
+
+/***/ },
+/* 225 */
+/*!*******************************!*\
+  !*** ./~/riek/lib/RIETags.js ***!
+  \*******************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactDom = __webpack_require__(/*! react-dom */ 35);
+	
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+	
+	var _RIEStatefulBase2 = __webpack_require__(/*! ./RIEStatefulBase */ 222);
+	
+	var _RIEStatefulBase3 = _interopRequireDefault(_RIEStatefulBase2);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var RIETag = function (_React$Component) {
+	    _inherits(RIETag, _React$Component);
+	
+	    function RIETag(props) {
+	        _classCallCheck(this, RIETag);
+	
+	        var _this = _possibleConstructorReturn(this, (RIETag.__proto__ || Object.getPrototypeOf(RIETag)).call(this, props));
+	
+	        _this.remove = function () {
+	            _this.props.removeHandler(_this.props.text);
+	        };
+	
+	        _this.render = function () {
+	            return _react2.default.createElement(
+	                'div',
+	                { key: _this.props.text },
+	                _this.props.text,
+	                _react2.default.createElement(
+	                    'div',
+	                    { onClick: _this.remove, className: _this.props.className || "remove" },
+	                    ' × '
+	                )
+	            );
+	        };
+	
+	        return _this;
+	    }
+	
+	    return RIETag;
+	}(_react2.default.Component);
+	
+	RIETag.propTypes = {
+	    text: _react2.default.PropTypes.string.isRequired,
+	    removeHandler: _react2.default.PropTypes.func,
+	    className: _react2.default.PropTypes.string
+	};
+	
+	var RIETags = function (_RIEStatefulBase) {
+	    _inherits(RIETags, _RIEStatefulBase);
+	
+	    function RIETags(props) {
+	        _classCallCheck(this, RIETags);
+	
+	        var _this2 = _possibleConstructorReturn(this, (RIETags.__proto__ || Object.getPrototypeOf(RIETags)).call(this, props));
+	
+	        _this2.addTag = function (tag) {
+	            if ([].concat(_toConsumableArray(_this2.props.value)).length < (_this2.props.maxTags || 65535)) {
+	                _this2.commit(_this2.props.value.add(tag));
+	            }
+	        };
+	
+	        _this2.removeTag = function (tag) {
+	
+	            clearTimeout(_this2.state.blurTimer);
+	
+	            if ([].concat(_toConsumableArray(_this2.props.value)).length >= (_this2.props.minTags || 1)) {
+	                var newSet = _this2.props.value;
+	                newSet.delete(tag);
+	                _this2.commit(newSet);
+	            }
+	        };
+	
+	        _this2.componentWillReceiveProps = function (nextProps) {
+	            if ('value' in nextProps) _this2.setState({ loading: false, invalid: false });
+	        };
+	
+	        _this2.keyDown = function (event) {
+	            if (event.keyCode === 8) {
+	                // Backspace
+	                if (event.target.value.length == 0) {
+	                    var tagToRemove = [].concat(_toConsumableArray(_this2.props.value)).pop();
+	                    _this2.removeTag(tagToRemove);
+	                }
+	            } else if (event.keyCode === 13) {
+	                // Enter
+	                event.preventDefault();
+	                if (event.target.value.length === 0) {
+	                    _this2.cancelEditing();
+	                } else {
+	                    _this2.addTag(event.target.value);
+	                    event.target.value = "";
+	                }
+	            } else if (event.keyCode === 27) {
+	                // Escape
+	                _this2.cancelEditing();
+	            }
+	        };
+	
+	        _this2.cancelEditingDelayed = function () {
+	            _this2.setState({ blurTimer: setTimeout(_this2.cancelEditing, _this2.props.blurDelay || 180) });
+	        };
+	
+	        _this2.cancelEditing = function () {
+	            _this2.setState({ editing: false, invalid: false });
+	        };
+	
+	        _this2.componentDidUpdate = function (prevProps, prevState) {
+	            var inputElem = _reactDom2.default.findDOMNode(_this2.refs.input);
+	            if (_this2.state.editing) {
+	                inputElem.focus();
+	            }
+	        };
+	
+	        _this2.renderNormalComponent = function () {
+	            var tags = [].concat(_toConsumableArray(_this2.props.value)).join(_this2.props.separator || ", ");
+	            return _react2.default.createElement(
+	                'span',
+	                {
+	                    tabIndex: '0',
+	                    className: _this2.makeClassString(),
+	                    onFocus: _this2.startEditing },
+	                tags
+	            );
+	        };
+	
+	        _this2.makeTagElement = function (text) {
+	            return _react2.default.createElement(RIETag, { key: text, text: text, removeHandler: _this2.removeTag });
+	        };
+	
+	        _this2.renderEditingComponent = function () {
+	            var elements = [].concat(_toConsumableArray(_this2.props.value)).map(_this2.makeTagElement);
+	            return _react2.default.createElement(
+	                'div',
+	                { tabIndex: '1', onClick: _this2.startEditing, className: _this2.makeClassString() },
+	                elements,
+	                _react2.default.createElement('input', {
+	                    onBlur: _this2.cancelEditingDelayed,
+	                    onKeyDown: _this2.keyDown,
+	                    placeholder: _this2.props.placeholder || "New tag",
+	                    ref: 'input' })
+	            );
+	        };
+	
+	        _this2.state.currentText = "";
+	        _this2.state.blurTimer = null;
+	        return _this2;
+	    }
+	
+	    return RIETags;
+	}(_RIEStatefulBase3.default);
+	
+	RIETags.propTyes = {
+	    value: _react2.default.PropTypes.object.isRequired,
+	    maxTags: _react2.default.PropTypes.number,
+	    minTags: _react2.default.PropTypes.number,
+	    separator: _react2.default.PropTypes.string,
+	    elementClass: _react2.default.PropTypes.string,
+	    blurDelay: _react2.default.PropTypes.number,
+	    placeholder: _react2.default.PropTypes.string
+	};
+	exports.default = RIETags;
+
+/***/ },
+/* 226 */
+/*!********************************!*\
+  !*** ./app/css/inputGrid.scss ***!
+  \********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(/*! !./../../~/css-loader!./../../~/sass-loader!./inputGrid.scss */ 227);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(/*! ./../../~/style-loader/addStyles.js */ 212)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js!./inputGrid.scss", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js!./inputGrid.scss");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 227 */
+/*!***************************************************************!*\
+  !*** ./~/css-loader!./~/sass-loader!./app/css/inputGrid.scss ***!
+  \***************************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(/*! ./../../~/css-loader/lib/css-base.js */ 211)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, "table {\n  border-collapse: collapse;\n  margin-top: -40px; }\n\ntd {\n  text-align: center;\n  padding: 10px 5px;\n  border: 1px solid #ccc; }\n  td.inputCell {\n    width: 27px; }\n\n.nameCell {\n  font-weight: bold; }\n\nth {\n  padding: 0 10px;\n  border-bottom: 1px solid #ccc; }\n\n/* Header rotation from https://css-tricks.com/rotated-table-column-headers/ */\nth.rotate {\n  /* Something you can count on */\n  height: 140px;\n  width: 27px;\n  white-space: nowrap; }\n  th.rotate > div {\n    transform: translate(26px, 50px) rotate(315deg);\n    width: 30px; }\n  th.rotate > div > span {\n    border-bottom: 1px solid #ccc;\n    padding: 5px 10px; }\n", ""]);
+	
+	// exports
+
+
+/***/ },
+/* 228 */
+/*!**************************!*\
+  !*** ./app/css/app.scss ***!
+  \**************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(/*! !./../../~/css-loader!./../../~/sass-loader!./app.scss */ 229);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(/*! ./../../~/style-loader/addStyles.js */ 212)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js!./app.scss", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js!./app.scss");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 229 */
+/*!*********************************************************!*\
+  !*** ./~/css-loader!./~/sass-loader!./app/css/app.scss ***!
+  \*********************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(/*! ./../../~/css-loader/lib/css-base.js */ 211)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, "body {\n  padding: 10px;\n  background-color: #66CCFF;\n  font-family: sans-serif; }\n\nform {\n  margin: 0; }\n\ninput {\n  padding: 10px;\n  margin: 5px;\n  font-size: 16px;\n  border: 2px solid #FFF; }\n\nbutton {\n  padding: 10px;\n  font-size: 16px;\n  margin: 5px;\n  background-color: #0066FF;\n  color: #FFF;\n  border: 2px solid #0066FF; }\n\nbutton:hover {\n  background-color: #003399;\n  border: 2px solid #003399;\n  cursor: pointer; }\n\nnav {\n  height: 100px; }\n\nh1 {\n  margin: 5px;\n  float: left; }\n", ""]);
+	
+	// exports
+
+
+/***/ },
+/* 230 */
+/*!********************************!*\
+  !*** ./app/css/inputCell.scss ***!
+  \********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(/*! !./../../~/css-loader!./../../~/sass-loader!./inputCell.scss */ 231);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(/*! ./../../~/style-loader/addStyles.js */ 212)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js!./inputCell.scss", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js!./inputCell.scss");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 231 */
+/*!***************************************************************!*\
+  !*** ./~/css-loader!./~/sass-loader!./app/css/inputCell.scss ***!
+  \***************************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(/*! ./../../~/css-loader/lib/css-base.js */ 211)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, ".cellInput {\n  width: 60px; }\n\n.invalid {\n  outline-color: red; }\n", ""]);
+	
+	// exports
+
+
+/***/ },
+/* 232 */
+/*!***************************!*\
+  !*** ./reducers/edges.js ***!
+  \***************************/
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+	
+	var setEdge = function setEdge(state, action) {
+	  var matches = state.filter(function (e) {
+	    return e.key == action.key;
+	  });
+	  if (matches.length > 0) {
+	    matches[0].weight = action.weight;
+	    return state;
+	  }
+	
+	  // No match, so add the edge
+	  return [].concat(_toConsumableArray(state), [{ key: action.key, weight: action.weight }]);
+	};
+	
+	var edges = function edges() {
+	  var state = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
+	  var action = arguments[1];
+	
+	  switch (action.type) {
+	    case 'SET_EDGE':
+	      return setEdge(state, action);
+	    case 'SET_BLOSSOM':
+	      return action.blossom.edges;
+	    default:
+	      return state;
+	  }
+	};
+	
+	exports.default = edges;
 
 /***/ }
 /******/ ]);
