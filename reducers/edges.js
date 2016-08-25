@@ -1,14 +1,11 @@
 const setEdge = (state, action) => {
-  console.log("edge set! " + action.key + " " + action.weight)
   var matches = state.filter(e => e.key == action.key);
   if (matches.length > 0) {
-    console.log("updating edge");
     matches[0].weight = action.weight;
     return state;
   }
 
   // No match, so add the edge
-  console.log("adding edge");
   return [
     ...state,
     { key: action.key, weight: action.weight }

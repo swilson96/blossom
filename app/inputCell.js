@@ -26,7 +26,6 @@ class InputCell extends React.Component {
       className += " diagonal";
     } else {
       var matches = this.props.edges.filter(e => e.key == this.getKey());
-      console.log("edges.length: " + this.props.edges.length + " matches.length: " + matches.length);
       var value = matches.length > 0 ? matches[0].weight : 0;
 
       inner = (
