@@ -73,7 +73,7 @@ const mapStateToProps = (state) => {
   return {
     blossom: {
       nodes: state.nodes,
-      edges: []
+      edges: state.edges
     },
     keyValue: state.key
   }

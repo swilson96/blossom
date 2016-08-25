@@ -25,3 +25,11 @@ export const setBlossom = (blossom) => {
     blossom: blossom
   }
 }
+
+export const setEdge = (key, weight) => {
+  return {
+    type: 'SET_EDGE',
+    key: key,
+    weight: weight
+  }
+}
