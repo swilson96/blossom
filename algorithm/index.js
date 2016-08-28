@@ -59,7 +59,7 @@ export const convertForDisplay = (result, nodes) => {
   var i = 0;
   result.forEach(j => {
     if (j > i) {
-      ret.push([nodes[i].name, nodes[j].name])
+      ret.push([nodes[i], nodes[j]])
     }
     i += 1;
   });

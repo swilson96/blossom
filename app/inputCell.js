@@ -19,12 +19,23 @@ class InputCell extends React.Component {
     return value && !isNaN(parseFloat(value));
   }
 
-  render() {
-    var className = "inputCell";
-    var inner = "";
+  getClassName() {
+    var classname = "inputCell";
+
+    if (this.props.highlights.indexOf(this.getKey()) >= 0) {
+      classname += ' highlight';
+    }
+
     if (this.props.x.key == this.props.y.key) {
-      className += " diagonal";
-    } else {
+      classname += ' diagonal';
+    }
+
+    return classname;
+  }
+
+  render() {
+    var inner = "";
+    if (this.props.x.key != this.props.y.key) {
       var match = this.props.edges[this.getKey()];
       var value = match ? match.weight : 0;
 
@@ -40,7 +51,7 @@ class InputCell extends React.Component {
       )
     }
     return (
-      <td className={className} id={this.getKey()}>
+      <td id={this.getKey()} className={this.getClassName()}>
         {inner}
       </td>
     )
@@ -49,7 +60,8 @@ class InputCell extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    edges: state.edges
+    edges: state.edges,
+    highlights: state.highlights
   };
 }
 

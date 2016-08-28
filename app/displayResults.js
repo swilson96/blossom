@@ -10,7 +10,7 @@ class DisplayResults extends React.Component {
         {this.props.result.length? <h2>RESULTS</h2> : ''}
         {this.props.result.map(pair => {
             return(
-              <div key={pair[0]}>{pair[0]}, {pair[1]}</div>
+              <div key={pair[0].key}>{pair[0].name}, {pair[1].name}</div>
             )
         })}
       </div>
