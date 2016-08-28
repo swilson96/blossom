@@ -63,7 +63,7 @@
 	
 	var _reducers2 = _interopRequireDefault(_reducers);
 	
-	var _app = __webpack_require__(/*! ./app/app */ 202);
+	var _app = __webpack_require__(/*! ./app/app */ 204);
 	
 	var _app2 = _interopRequireDefault(_app);
 	
@@ -23675,11 +23675,11 @@
 	
 	var _key2 = _interopRequireDefault(_key);
 	
-	var _result = __webpack_require__(/*! ./result */ 238);
+	var _result = __webpack_require__(/*! ./result */ 202);
 	
 	var _result2 = _interopRequireDefault(_result);
 	
-	var _highlights = __webpack_require__(/*! ./highlights */ 243);
+	var _highlights = __webpack_require__(/*! ./highlights */ 203);
 	
 	var _highlights2 = _interopRequireDefault(_highlights);
 	
@@ -23703,36 +23703,37 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	
-	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-	
 	var addNode = function addNode(state, action) {
-	  if (action.node.key && state.filter(function (n) {
-	    return n.key == action.node.key;
-	  }).length > 0) {
+	  if (action.key && state[action.key]) {
 	    // This can happen when we first save and start listening to firebase.
 	    return renameNode(state, action);
 	  }
-	
-	  return [].concat(_toConsumableArray(state), [action.node]);
+	  var newNodes = {};
+	  for (var k in state) {
+	    newNodes[k] = state[k];
+	  }
+	  newNodes[action.key] = action.node;
+	  return newNodes;
 	};
 	
 	var removeNode = function removeNode(state, action) {
-	  state.splice(action.index, 1);
+	  delete state[action.key];
 	  return state;
 	};
 	
 	var renameNode = function renameNode(state, action) {
-	  return state.map(function (n) {
-	    if (n.key == action.node.key) {
-	      n.name = action.node.name;
+	  var newNodes = {};
+	  for (var k in state) {
+	    if (action.key == k) {
+	      state[k] = action.node;
 	    }
-	    return n;
-	  });
+	    newNodes[k] = state[k];
+	  }
+	  return newNodes;
 	};
 	
 	var nodes = function nodes() {
-	  var state = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
+	  var state = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 	  var action = arguments[1];
 	
 	  switch (action.type) {
@@ -23840,6 +23841,64 @@
 
 /***/ },
 /* 202 */
+/*!****************************!*\
+  !*** ./reducers/result.js ***!
+  \****************************/
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var result = function result() {
+	  var state = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
+	  var action = arguments[1];
+	
+	  switch (action.type) {
+	    case 'SET_RESULT':
+	      console.log(JSON.stringify(action.result));
+	      return action.result;
+	    default:
+	      return state;
+	  }
+	};
+	
+	exports.default = result;
+
+/***/ },
+/* 203 */
+/*!********************************!*\
+  !*** ./reducers/highlights.js ***!
+  \********************************/
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var highlights = function highlights() {
+	  var state = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
+	  var action = arguments[1];
+	
+	  switch (action.type) {
+	    case 'SET_RESULT':
+	      var cells = [];
+	      action.result.forEach(function (pair) {
+	        cells.push(pair[0].key + ":" + pair[1].key);
+	        cells.push(pair[1].key + ":" + pair[0].key);
+	      });
+	      return cells;
+	    default:
+	      return state;
+	  }
+	};
+	
+	exports.default = highlights;
+
+/***/ },
+/* 204 */
 /*!********************!*\
   !*** ./app/app.js ***!
   \********************/
@@ -23857,23 +23916,23 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _blossomManager = __webpack_require__(/*! ./blossomManager */ 203);
+	var _blossomManager = __webpack_require__(/*! ./blossomManager */ 205);
 	
 	var _blossomManager2 = _interopRequireDefault(_blossomManager);
 	
-	var _addNode = __webpack_require__(/*! ./addNode */ 214);
+	var _addNode = __webpack_require__(/*! ./addNode */ 218);
 	
 	var _addNode2 = _interopRequireDefault(_addNode);
 	
-	var _inputGrid = __webpack_require__(/*! ./inputGrid */ 217);
+	var _inputGrid = __webpack_require__(/*! ./inputGrid */ 221);
 	
 	var _inputGrid2 = _interopRequireDefault(_inputGrid);
 	
-	var _calculateMatching = __webpack_require__(/*! ./calculateMatching */ 232);
+	var _calculateMatching = __webpack_require__(/*! ./calculateMatching */ 236);
 	
 	var _calculateMatching2 = _interopRequireDefault(_calculateMatching);
 	
-	var _displayResults = __webpack_require__(/*! ./displayResults */ 239);
+	var _displayResults = __webpack_require__(/*! ./displayResults */ 241);
 	
 	var _displayResults2 = _interopRequireDefault(_displayResults);
 	
@@ -23885,7 +23944,7 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	__webpack_require__(/*! ./css/app.scss */ 233);
+	__webpack_require__(/*! ./css/app.scss */ 244);
 	
 	var App = function (_React$Component) {
 	  _inherits(App, _React$Component);
@@ -23926,7 +23985,7 @@
 	exports.default = App;
 
 /***/ },
-/* 203 */
+/* 205 */
 /*!*******************************!*\
   !*** ./app/blossomManager.js ***!
   \*******************************/
@@ -23946,9 +24005,13 @@
 	
 	var _reactRedux = __webpack_require__(/*! react-redux */ 175);
 	
-	var _actions = __webpack_require__(/*! ../actions */ 204);
+	var _actions = __webpack_require__(/*! ../actions */ 206);
 	
-	var _blossomStore = __webpack_require__(/*! ./blossomStore */ 205);
+	var _nodeActions = __webpack_require__(/*! ../actions/nodeActions */ 207);
+	
+	var _edgeActions = __webpack_require__(/*! ../actions/edgeActions */ 208);
+	
+	var _blossomStore = __webpack_require__(/*! ./blossomStore */ 209);
 	
 	var _blossomStore2 = _interopRequireDefault(_blossomStore);
 	
@@ -23960,7 +24023,7 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	__webpack_require__(/*! ./css/blossomManager.scss */ 210);
+	__webpack_require__(/*! ./css/blossomManager.scss */ 214);
 	
 	var BlossomManager = function (_React$Component) {
 	  _inherits(BlossomManager, _React$Component);
@@ -23988,8 +24051,8 @@
 	      this.props.setKey(key);
 	      this.clearMessage();
 	
-	      // And now listen to the DB for changes
-	      this.connectToFirebase(key, function (s) {});
+	      // And now listen for changes
+	      this.connectToStore(key, function (s) {});
 	    }
 	  }, {
 	    key: 'loadBlossomClick',
@@ -23997,7 +24060,7 @@
 	      var _this2 = this;
 	
 	      e.preventDefault();
-	      this.connectToFirebase(this._blossomInput.value, function (success) {
+	      this.connectToStore(this._blossomInput.value, function (success) {
 	        if (success) {
 	          _this2.clearMessage();
 	          _this2.props.setKey(_this2._blossomInput.value);
@@ -24008,18 +24071,20 @@
 	      });
 	    }
 	  }, {
-	    key: 'connectToFirebase',
-	    value: function connectToFirebase(key, callback) {
+	    key: 'connectToStore',
+	    value: function connectToStore(key, callback) {
 	      var _this3 = this;
 	
-	      this.blossomStore.loadBlossom(key, callback, function (n) {
-	        return _this3.props.addNode(n);
-	      }, function (n) {
-	        return _this3.props.renameNode(n);
+	      this.blossomStore.loadBlossom(key, callback, function (i, n) {
+	        return _this3.props.addNodeFromStore(i, n);
+	      }, function (i, n) {
+	        return _this3.props.renameNodeFromStore(i, n);
+	      }, function (i) {
+	        return _this3.props.removeNodeFromStore(i);
 	      }, function (k, e) {
-	        return _this3.props.setEdge(k, e);
+	        return _this3.props.setEdgeFromStore(k, e);
 	      }, function (k, e) {
-	        return _this3.props.setEdge(k, e);
+	        return _this3.props.setEdgeFromStore(k, e);
 	      });
 	    }
 	  }, {
@@ -24105,17 +24170,17 @@
 	    setKey: function setKey(key) {
 	      dispatch((0, _actions.setKey)(key));
 	    },
-	    setBlossom: function setBlossom(blossom) {
-	      dispatch((0, _actions.setBlossom)(blossom));
+	    addNodeFromStore: function addNodeFromStore(index, node) {
+	      dispatch((0, _nodeActions.addNodeFromStore)(index, node, true));
 	    },
-	    addNode: function addNode(node) {
-	      dispatch((0, _actions.addNode)(node.key, node.name));
+	    renameNodeFromStore: function renameNodeFromStore(index, node) {
+	      dispatch((0, _nodeActions.renameNode)(index, node.name, true));
 	    },
-	    renameNode: function renameNode(node) {
-	      dispatch((0, _actions.renameNode)(node.key, node.name));
+	    removeNodeFromStore: function removeNodeFromStore(index) {
+	      dispatch((0, _nodeActions.deleteNode)(index, true));
 	    },
-	    setEdge: function setEdge(key, edge) {
-	      dispatch((0, _actions.setEdge)(key, edge.weight));
+	    setEdgeFromStore: function setEdgeFromStore(key, edge) {
+	      dispatch((0, _edgeActions.setEdge)(key, edge.weight, true));
 	    }
 	  };
 	};
@@ -24123,7 +24188,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(BlossomManager);
 
 /***/ },
-/* 204 */
+/* 206 */
 /*!**************************!*\
   !*** ./actions/index.js ***!
   \**************************/
@@ -24156,7 +24221,132 @@
 	};
 
 /***/ },
-/* 205 */
+/* 207 */
+/*!********************************!*\
+  !*** ./actions/nodeActions.js ***!
+  \********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.renameNode = exports.deleteNode = exports.addNodeFromStore = exports.addNode = undefined;
+	
+	var _blossomStore = __webpack_require__(/*! ../app/blossomStore */ 209);
+	
+	var _blossomStore2 = _interopRequireDefault(_blossomStore);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var blossomStore = new _blossomStore2.default();
+	
+	var createNode = function createNode(key, name) {
+	  var node = { name: name };
+	  if (key) {
+	    node.key = key;
+	  }
+	  return node;
+	};
+	
+	var addNode = exports.addNode = function addNode(name) {
+	  var node = createNode(undefined, name);
+	  blossomStore.addNode(node);
+	  return {
+	    type: 'NO_ACTION',
+	    node: node
+	  };
+	};
+	
+	var addNodeFromStore = exports.addNodeFromStore = function addNodeFromStore(key, node) {
+	  if (!node.key) {
+	    node.key = key;
+	  }
+	  return {
+	    type: 'ADD_NODE',
+	    node: node,
+	    key: key,
+	    fromStore: true
+	  };
+	};
+	
+	var deleteNode = exports.deleteNode = function deleteNode(key, fromStore) {
+	  var type = 'ADD_NODE';
+	
+	  if (!fromStore) {
+	    blossomStore.removeNode(key);
+	    type = 'NO_ACTION'; // The store listeners will fire another action.
+	  }
+	
+	  return {
+	    type: 'DELETE_NODE',
+	    key: key,
+	    fromStore: fromStore
+	  };
+	};
+	
+	var renameNode = exports.renameNode = function renameNode(key, name, fromStore) {
+	  var node = createNode(key, name);
+	  var type = 'RENAME_NODE';
+	
+	  if (!fromStore) {
+	    blossomStore.renameNode(key, node);
+	    type = 'NO_ACTION'; // The store listeners will fire another action.
+	  }
+	
+	  return {
+	    type: type,
+	    key: key,
+	    node: node,
+	    fromStore: fromStore
+	  };
+	};
+
+/***/ },
+/* 208 */
+/*!********************************!*\
+  !*** ./actions/edgeActions.js ***!
+  \********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.setEdge = undefined;
+	
+	var _blossomStore = __webpack_require__(/*! ../app/blossomStore */ 209);
+	
+	var _blossomStore2 = _interopRequireDefault(_blossomStore);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var blossomStore = new _blossomStore2.default();
+	
+	var createEdge = function createEdge(weight) {
+	  return { weight: weight };
+	};
+	
+	var setEdge = exports.setEdge = function setEdge(key, weight, fromStore) {
+	  var newEdge = createEdge(weight);
+	  var type = 'SET_EDGE';
+	
+	  if (!fromStore) {
+	    blossomStore.setEdge(key, newEdge);
+	    type = 'NO_ACTION'; // The store listeners will fire another action.
+	  }
+	
+	  return {
+	    type: type,
+	    key: key,
+	    edge: newEdge
+	  };
+	};
+
+/***/ },
+/* 209 */
 /*!*****************************!*\
   !*** ./app/blossomStore.js ***!
   \*****************************/
@@ -24174,8 +24364,8 @@
 	
 	var lastKeyLoaded;
 	
-	var firebase = __webpack_require__(/*! firebase/app */ 206);
-	__webpack_require__(/*! firebase/database */ 208);
+	var firebase = __webpack_require__(/*! firebase/app */ 210);
+	__webpack_require__(/*! firebase/database */ 212);
 	
 	var config = {
 	  apiKey: "AIzaSyC1RZbfWfMyKPFrJX-LAPwCiu00EF-86FU",
@@ -24208,7 +24398,7 @@
 	        firebase.database().ref('/blossoms/' + key).once('value', function (snapshot) {
 	          if (snapshot.exists()) {
 	            firebase.database().ref('/blossoms/' + key + "/nodes").on("child_added", function (n) {
-	              return onNewNode(n.val());
+	              return onNewNode(n.key, n.val());
 	            });
 	            firebase.database().ref('/blossoms/' + key + "/nodes").on("child_changed", function (n) {
 	              return onChangedNode(n.key, n.val());
@@ -24260,7 +24450,7 @@
 	exports.default = BlossomStore;
 
 /***/ },
-/* 206 */
+/* 210 */
 /*!***************************!*\
   !*** ./~/firebase/app.js ***!
   \***************************/
@@ -24273,12 +24463,12 @@
 	 *
 	 *   firebase = require('firebase/app');
 	 */
-	__webpack_require__(/*! ./firebase-app */ 207);
+	__webpack_require__(/*! ./firebase-app */ 211);
 	module.exports = firebase;
 
 
 /***/ },
-/* 207 */
+/* 211 */
 /*!************************************!*\
   !*** ./~/firebase/firebase-app.js ***!
   \************************************/
@@ -24316,7 +24506,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 208 */
+/* 212 */
 /*!********************************!*\
   !*** ./~/firebase/database.js ***!
   \********************************/
@@ -24329,13 +24519,13 @@
 	 *
 	 *   database = require('firebase/database');
 	 */
-	__webpack_require__(/*! ./firebase-app */ 207);
-	__webpack_require__(/*! ./firebase-database */ 209);
+	__webpack_require__(/*! ./firebase-app */ 211);
+	__webpack_require__(/*! ./firebase-database */ 213);
 	module.exports = firebase.database;
 
 
 /***/ },
-/* 209 */
+/* 213 */
 /*!*****************************************!*\
   !*** ./~/firebase/firebase-database.js ***!
   \*****************************************/
@@ -24587,7 +24777,7 @@
 
 
 /***/ },
-/* 210 */
+/* 214 */
 /*!*************************************!*\
   !*** ./app/css/blossomManager.scss ***!
   \*************************************/
@@ -24596,10 +24786,10 @@
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(/*! !./../../~/css-loader!./../../~/sass-loader!./blossomManager.scss */ 211);
+	var content = __webpack_require__(/*! !./../../~/css-loader!./../../~/sass-loader!./blossomManager.scss */ 215);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(/*! ./../../~/style-loader/addStyles.js */ 213)(content, {});
+	var update = __webpack_require__(/*! ./../../~/style-loader/addStyles.js */ 217)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -24616,13 +24806,13 @@
 	}
 
 /***/ },
-/* 211 */
+/* 215 */
 /*!********************************************************************!*\
   !*** ./~/css-loader!./~/sass-loader!./app/css/blossomManager.scss ***!
   \********************************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(/*! ./../../~/css-loader/lib/css-base.js */ 212)();
+	exports = module.exports = __webpack_require__(/*! ./../../~/css-loader/lib/css-base.js */ 216)();
 	// imports
 	
 	
@@ -24633,7 +24823,7 @@
 
 
 /***/ },
-/* 212 */
+/* 216 */
 /*!**************************************!*\
   !*** ./~/css-loader/lib/css-base.js ***!
   \**************************************/
@@ -24692,7 +24882,7 @@
 
 
 /***/ },
-/* 213 */
+/* 217 */
 /*!*************************************!*\
   !*** ./~/style-loader/addStyles.js ***!
   \*************************************/
@@ -24947,7 +25137,7 @@
 
 
 /***/ },
-/* 214 */
+/* 218 */
 /*!************************!*\
   !*** ./app/addNode.js ***!
   \************************/
@@ -24967,7 +25157,7 @@
 	
 	var _reactRedux = __webpack_require__(/*! react-redux */ 175);
 	
-	var _actions = __webpack_require__(/*! ../actions */ 204);
+	var _nodeActions = __webpack_require__(/*! ../actions/nodeActions */ 207);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -24977,7 +25167,7 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	__webpack_require__(/*! ./css/addNode.scss */ 215);
+	__webpack_require__(/*! ./css/addNode.scss */ 219);
 	
 	var AddNode = function (_React$Component) {
 	  _inherits(AddNode, _React$Component);
@@ -25000,7 +25190,7 @@
 	        return;
 	      }
 	
-	      this.props.dispatch((0, _actions.addNode)(undefined, this._inputElement.value));
+	      this.props.dispatch((0, _nodeActions.addNode)(this._inputElement.value));
 	      this._inputElement.value = "";
 	    }
 	  }, {
@@ -25050,7 +25240,7 @@
 	exports.default = (0, _reactRedux.connect)()(AddNode);
 
 /***/ },
-/* 215 */
+/* 219 */
 /*!******************************!*\
   !*** ./app/css/addNode.scss ***!
   \******************************/
@@ -25059,10 +25249,10 @@
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(/*! !./../../~/css-loader!./../../~/sass-loader!./addNode.scss */ 216);
+	var content = __webpack_require__(/*! !./../../~/css-loader!./../../~/sass-loader!./addNode.scss */ 220);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(/*! ./../../~/style-loader/addStyles.js */ 213)(content, {});
+	var update = __webpack_require__(/*! ./../../~/style-loader/addStyles.js */ 217)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -25079,13 +25269,13 @@
 	}
 
 /***/ },
-/* 216 */
+/* 220 */
 /*!*************************************************************!*\
   !*** ./~/css-loader!./~/sass-loader!./app/css/addNode.scss ***!
   \*************************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(/*! ./../../~/css-loader/lib/css-base.js */ 212)();
+	exports = module.exports = __webpack_require__(/*! ./../../~/css-loader/lib/css-base.js */ 216)();
 	// imports
 	
 	
@@ -25096,7 +25286,7 @@
 
 
 /***/ },
-/* 217 */
+/* 221 */
 /*!**************************!*\
   !*** ./app/inputGrid.js ***!
   \**************************/
@@ -25116,11 +25306,11 @@
 	
 	var _reactRedux = __webpack_require__(/*! react-redux */ 175);
 	
-	var _inputGridHeader = __webpack_require__(/*! ./inputGridHeader */ 218);
+	var _inputGridHeader = __webpack_require__(/*! ./inputGridHeader */ 222);
 	
 	var _inputGridHeader2 = _interopRequireDefault(_inputGridHeader);
 	
-	var _inputGridRow = __webpack_require__(/*! ./inputGridRow */ 219);
+	var _inputGridRow = __webpack_require__(/*! ./inputGridRow */ 223);
 	
 	var _inputGridRow2 = _interopRequireDefault(_inputGridRow);
 	
@@ -25132,7 +25322,7 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	__webpack_require__(/*! ./css/inputGrid.scss */ 230);
+	__webpack_require__(/*! ./css/inputGrid.scss */ 234);
 	
 	var InputGrid = function (_React$Component) {
 	  _inherits(InputGrid, _React$Component);
@@ -25148,16 +25338,14 @@
 	    value: function render() {
 	      var nodes = this.props.nodes;
 	
-	      var createRow = function createRow(index, item) {
-	        return _react2.default.createElement(_inputGridRow2.default, { key: item.key, currentNode: item, nodes: nodes, index: index });
+	      var createRow = function createRow(item) {
+	        return _react2.default.createElement(_inputGridRow2.default, { key: item.key, currentNode: item, nodes: nodes });
 	      };
 	
-	      var i = 0;
-	      var rows = nodes.map(function (n) {
-	        var row = createRow(i, n);
-	        i += 1;
-	        return row;
-	      });
+	      var rows = [];
+	      for (var k in nodes) {
+	        rows.push(createRow(nodes[k]));
+	      }
 	
 	      return _react2.default.createElement(
 	        'table',
@@ -25184,7 +25372,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(InputGrid);
 
 /***/ },
-/* 218 */
+/* 222 */
 /*!********************************!*\
   !*** ./app/inputGridHeader.js ***!
   \********************************/
@@ -25258,7 +25446,10 @@
 	  }, {
 	    key: "render",
 	    value: function render() {
-	      var nameCells = this.props.nodes.map(this.createNameCell);
+	      var nameCells = [];
+	      for (var k in this.props.nodes) {
+	        nameCells.push(this.createNameCell(this.props.nodes[k]));
+	      }
 	
 	      return _react2.default.createElement(
 	        "thead",
@@ -25279,7 +25470,7 @@
 	exports.default = InputGridHeader;
 
 /***/ },
-/* 219 */
+/* 223 */
 /*!*****************************!*\
   !*** ./app/inputGridRow.js ***!
   \*****************************/
@@ -25299,13 +25490,13 @@
 	
 	var _reactRedux = __webpack_require__(/*! react-redux */ 175);
 	
-	var _nodeActions = __webpack_require__(/*! ../actions/nodeActions */ 248);
+	var _nodeActions = __webpack_require__(/*! ../actions/nodeActions */ 207);
 	
-	var _inputCell = __webpack_require__(/*! ./inputCell */ 220);
+	var _inputCell = __webpack_require__(/*! ./inputCell */ 224);
 	
 	var _inputCell2 = _interopRequireDefault(_inputCell);
 	
-	var _riek = __webpack_require__(/*! riek */ 221);
+	var _riek = __webpack_require__(/*! riek */ 225);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -25332,7 +25523,7 @@
 	  }, {
 	    key: 'onChange',
 	    value: function onChange(valueObject) {
-	      this.props.renameNode(this.props.index, this.props.currentNode.key, valueObject.text);
+	      this.props.renameNode(this.props.currentNode.key, valueObject.text);
 	    }
 	  }, {
 	    key: 'isValid',
@@ -25344,9 +25535,10 @@
 	    value: function render() {
 	      var _this2 = this;
 	
-	      var inputCells = this.props.nodes.map(function (n) {
-	        return _this2.createInputCell(n, _this2.props.currentNode);
-	      });
+	      var inputCells = [];
+	      for (var k in this.props.nodes) {
+	        inputCells.push(this.createInputCell(this.props.nodes[k], this.props.currentNode));
+	      }
 	      return _react2.default.createElement(
 	        'tr',
 	        { key: this.props.currentNode.key },
@@ -25380,8 +25572,8 @@
 	
 	var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 	  return {
-	    renameNode: function renameNode(index, key, name) {
-	      dispatch((0, _nodeActions.renameNode)(index, key, name));
+	    renameNode: function renameNode(key, name) {
+	      dispatch((0, _nodeActions.renameNode)(key, name));
 	    }
 	  };
 	};
@@ -25389,7 +25581,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(InputGridRow);
 
 /***/ },
-/* 220 */
+/* 224 */
 /*!**************************!*\
   !*** ./app/inputCell.js ***!
   \**************************/
@@ -25409,9 +25601,9 @@
 	
 	var _reactRedux = __webpack_require__(/*! react-redux */ 175);
 	
-	var _actions = __webpack_require__(/*! ../actions */ 204);
+	var _edgeActions = __webpack_require__(/*! ../actions/edgeActions */ 208);
 	
-	var _riek = __webpack_require__(/*! riek */ 221);
+	var _riek = __webpack_require__(/*! riek */ 225);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -25421,7 +25613,7 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	__webpack_require__(/*! ./css/inputCell.scss */ 228);
+	__webpack_require__(/*! ./css/inputCell.scss */ 232);
 	
 	var InputCell = function (_React$Component) {
 	  _inherits(InputCell, _React$Component);
@@ -25506,7 +25698,7 @@
 	var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 	  return {
 	    setEdge: function setEdge(key, weight) {
-	      dispatch((0, _actions.setEdge)(key, weight));
+	      dispatch((0, _edgeActions.setEdge)(key, weight));
 	    }
 	  };
 	};
@@ -25514,7 +25706,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(InputCell);
 
 /***/ },
-/* 221 */
+/* 225 */
 /*!*****************************!*\
   !*** ./~/riek/lib/index.js ***!
   \*****************************/
@@ -25527,23 +25719,23 @@
 	});
 	exports.RIETags = exports.RIENumber = exports.RIETextArea = exports.RIEInput = exports.RIEToggle = undefined;
 	
-	var _RIEToggle = __webpack_require__(/*! ./RIEToggle */ 222);
+	var _RIEToggle = __webpack_require__(/*! ./RIEToggle */ 226);
 	
 	var _RIEToggle2 = _interopRequireDefault(_RIEToggle);
 	
-	var _RIEStatefulBase2 = __webpack_require__(/*! ./RIEStatefulBase */ 224);
+	var _RIEStatefulBase2 = __webpack_require__(/*! ./RIEStatefulBase */ 228);
 	
 	var _RIEStatefulBase3 = _interopRequireDefault(_RIEStatefulBase2);
 	
-	var _RIETextArea = __webpack_require__(/*! ./RIETextArea */ 225);
+	var _RIETextArea = __webpack_require__(/*! ./RIETextArea */ 229);
 	
 	var _RIETextArea2 = _interopRequireDefault(_RIETextArea);
 	
-	var _RIENumber = __webpack_require__(/*! ./RIENumber */ 226);
+	var _RIENumber = __webpack_require__(/*! ./RIENumber */ 230);
 	
 	var _RIENumber2 = _interopRequireDefault(_RIENumber);
 	
-	var _RIETags = __webpack_require__(/*! ./RIETags */ 227);
+	var _RIETags = __webpack_require__(/*! ./RIETags */ 231);
 	
 	var _RIETags2 = _interopRequireDefault(_RIETags);
 	
@@ -25574,7 +25766,7 @@
 	exports.RIETags = _RIETags2.default;
 
 /***/ },
-/* 222 */
+/* 226 */
 /*!*********************************!*\
   !*** ./~/riek/lib/RIEToggle.js ***!
   \*********************************/
@@ -25590,7 +25782,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _RIEBase2 = __webpack_require__(/*! ./RIEBase */ 223);
+	var _RIEBase2 = __webpack_require__(/*! ./RIEBase */ 227);
 	
 	var _RIEBase3 = _interopRequireDefault(_RIEBase2);
 	
@@ -25643,7 +25835,7 @@
 	exports.default = RIEToggle;
 
 /***/ },
-/* 223 */
+/* 227 */
 /*!*******************************!*\
   !*** ./~/riek/lib/RIEBase.js ***!
   \*******************************/
@@ -25754,7 +25946,7 @@
 	exports.default = RIEBase;
 
 /***/ },
-/* 224 */
+/* 228 */
 /*!***************************************!*\
   !*** ./~/riek/lib/RIEStatefulBase.js ***!
   \***************************************/
@@ -25774,7 +25966,7 @@
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _RIEBase2 = __webpack_require__(/*! ./RIEBase */ 223);
+	var _RIEBase2 = __webpack_require__(/*! ./RIEBase */ 227);
 	
 	var _RIEBase3 = _interopRequireDefault(_RIEBase2);
 	
@@ -25883,7 +26075,7 @@
 	exports.default = RIEStatefulBase;
 
 /***/ },
-/* 225 */
+/* 229 */
 /*!***********************************!*\
   !*** ./~/riek/lib/RIETextArea.js ***!
   \***********************************/
@@ -25903,7 +26095,7 @@
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _RIEStatefulBase2 = __webpack_require__(/*! ./RIEStatefulBase */ 224);
+	var _RIEStatefulBase2 = __webpack_require__(/*! ./RIEStatefulBase */ 228);
 	
 	var _RIEStatefulBase3 = _interopRequireDefault(_RIEStatefulBase2);
 	
@@ -25977,7 +26169,7 @@
 	exports.default = RIETextArea;
 
 /***/ },
-/* 226 */
+/* 230 */
 /*!*********************************!*\
   !*** ./~/riek/lib/RIENumber.js ***!
   \*********************************/
@@ -25993,7 +26185,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _RIEStatefulBase2 = __webpack_require__(/*! ./RIEStatefulBase */ 224);
+	var _RIEStatefulBase2 = __webpack_require__(/*! ./RIEStatefulBase */ 228);
 	
 	var _RIEStatefulBase3 = _interopRequireDefault(_RIEStatefulBase2);
 	
@@ -26059,7 +26251,7 @@
 	exports.default = RIENumber;
 
 /***/ },
-/* 227 */
+/* 231 */
 /*!*******************************!*\
   !*** ./~/riek/lib/RIETags.js ***!
   \*******************************/
@@ -26079,7 +26271,7 @@
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _RIEStatefulBase2 = __webpack_require__(/*! ./RIEStatefulBase */ 224);
+	var _RIEStatefulBase2 = __webpack_require__(/*! ./RIEStatefulBase */ 228);
 	
 	var _RIEStatefulBase3 = _interopRequireDefault(_RIEStatefulBase2);
 	
@@ -26246,7 +26438,7 @@
 	exports.default = RIETags;
 
 /***/ },
-/* 228 */
+/* 232 */
 /*!********************************!*\
   !*** ./app/css/inputCell.scss ***!
   \********************************/
@@ -26255,10 +26447,10 @@
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(/*! !./../../~/css-loader!./../../~/sass-loader!./inputCell.scss */ 229);
+	var content = __webpack_require__(/*! !./../../~/css-loader!./../../~/sass-loader!./inputCell.scss */ 233);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(/*! ./../../~/style-loader/addStyles.js */ 213)(content, {});
+	var update = __webpack_require__(/*! ./../../~/style-loader/addStyles.js */ 217)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -26275,13 +26467,13 @@
 	}
 
 /***/ },
-/* 229 */
+/* 233 */
 /*!***************************************************************!*\
   !*** ./~/css-loader!./~/sass-loader!./app/css/inputCell.scss ***!
   \***************************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(/*! ./../../~/css-loader/lib/css-base.js */ 212)();
+	exports = module.exports = __webpack_require__(/*! ./../../~/css-loader/lib/css-base.js */ 216)();
 	// imports
 	
 	
@@ -26292,7 +26484,7 @@
 
 
 /***/ },
-/* 230 */
+/* 234 */
 /*!********************************!*\
   !*** ./app/css/inputGrid.scss ***!
   \********************************/
@@ -26301,10 +26493,10 @@
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(/*! !./../../~/css-loader!./../../~/sass-loader!./inputGrid.scss */ 231);
+	var content = __webpack_require__(/*! !./../../~/css-loader!./../../~/sass-loader!./inputGrid.scss */ 235);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(/*! ./../../~/style-loader/addStyles.js */ 213)(content, {});
+	var update = __webpack_require__(/*! ./../../~/style-loader/addStyles.js */ 217)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -26321,13 +26513,13 @@
 	}
 
 /***/ },
-/* 231 */
+/* 235 */
 /*!***************************************************************!*\
   !*** ./~/css-loader!./~/sass-loader!./app/css/inputGrid.scss ***!
   \***************************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(/*! ./../../~/css-loader/lib/css-base.js */ 212)();
+	exports = module.exports = __webpack_require__(/*! ./../../~/css-loader/lib/css-base.js */ 216)();
 	// imports
 	
 	
@@ -26338,7 +26530,7 @@
 
 
 /***/ },
-/* 232 */
+/* 236 */
 /*!**********************************!*\
   !*** ./app/calculateMatching.js ***!
   \**********************************/
@@ -26360,7 +26552,7 @@
 	
 	var _algorithm = __webpack_require__(/*! ../algorithm */ 237);
 	
-	var _actions = __webpack_require__(/*! ../actions */ 204);
+	var _actions = __webpack_require__(/*! ../actions */ 206);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -26370,7 +26562,7 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	__webpack_require__(/*! ./css/calculateMatching.scss */ 235);
+	__webpack_require__(/*! ./css/calculateMatching.scss */ 239);
 	
 	var CalculateMatching = function (_React$Component) {
 	  _inherits(CalculateMatching, _React$Component);
@@ -26426,98 +26618,6 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(CalculateMatching);
 
 /***/ },
-/* 233 */
-/*!**************************!*\
-  !*** ./app/css/app.scss ***!
-  \**************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-	
-	// load the styles
-	var content = __webpack_require__(/*! !./../../~/css-loader!./../../~/sass-loader!./app.scss */ 234);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(/*! ./../../~/style-loader/addStyles.js */ 213)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js!./app.scss", function() {
-				var newContent = require("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js!./app.scss");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 234 */
-/*!*********************************************************!*\
-  !*** ./~/css-loader!./~/sass-loader!./app/css/app.scss ***!
-  \*********************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(/*! ./../../~/css-loader/lib/css-base.js */ 212)();
-	// imports
-	
-	
-	// module
-	exports.push([module.id, "body {\n  padding: 10px;\n  background-color: #66CCFF;\n  font-family: sans-serif; }\n\nform {\n  margin: 0; }\n\ninput {\n  padding: 10px;\n  margin: 5px;\n  font-size: 16px;\n  border: 2px solid #FFF; }\n\nbutton {\n  padding: 10px;\n  font-size: 16px;\n  margin: 5px;\n  background-color: #0066FF;\n  color: #FFF;\n  border: 2px solid #0066FF; }\n\nbutton:hover {\n  background-color: #003399;\n  border: 2px solid #003399;\n  cursor: pointer; }\n\nnav {\n  height: 100px; }\n\nh1 {\n  margin: 5px;\n  float: left; }\n\n.invalid {\n  outline-color: red; }\n", ""]);
-	
-	// exports
-
-
-/***/ },
-/* 235 */
-/*!****************************************!*\
-  !*** ./app/css/calculateMatching.scss ***!
-  \****************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-	
-	// load the styles
-	var content = __webpack_require__(/*! !./../../~/css-loader!./../../~/sass-loader!./calculateMatching.scss */ 236);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(/*! ./../../~/style-loader/addStyles.js */ 213)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js!./calculateMatching.scss", function() {
-				var newContent = require("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js!./calculateMatching.scss");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 236 */
-/*!***********************************************************************!*\
-  !*** ./~/css-loader!./~/sass-loader!./app/css/calculateMatching.scss ***!
-  \***********************************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(/*! ./../../~/css-loader/lib/css-base.js */ 212)();
-	// imports
-	
-	
-	// module
-	exports.push([module.id, ".calculateBlossom {\n  position: fixed;\n  bottom: 0;\n  right: 0; }\n", ""]);
-	
-	// exports
-
-
-/***/ },
 /* 237 */
 /*!****************************!*\
   !*** ./algorithm/index.js ***!
@@ -26531,7 +26631,7 @@
 	});
 	exports.convertForDisplay = exports.convertForAlgorithm = exports.firstMatching = exports.blossomMatching = undefined;
 	
-	var _edmondsBlossom = __webpack_require__(/*! edmonds-blossom */ 242);
+	var _edmondsBlossom = __webpack_require__(/*! edmonds-blossom */ 238);
 	
 	var _edmondsBlossom2 = _interopRequireDefault(_edmondsBlossom);
 	
@@ -26605,154 +26705,6 @@
 
 /***/ },
 /* 238 */
-/*!****************************!*\
-  !*** ./reducers/result.js ***!
-  \****************************/
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var result = function result() {
-	  var state = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
-	  var action = arguments[1];
-	
-	  switch (action.type) {
-	    case 'SET_RESULT':
-	      console.log(JSON.stringify(action.result));
-	      return action.result;
-	    default:
-	      return state;
-	  }
-	};
-	
-	exports.default = result;
-
-/***/ },
-/* 239 */
-/*!*******************************!*\
-  !*** ./app/displayResults.js ***!
-  \*******************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _react = __webpack_require__(/*! react */ 1);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _reactRedux = __webpack_require__(/*! react-redux */ 175);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	__webpack_require__(/*! ./css/displayResults.scss */ 240);
-	
-	var DisplayResults = function (_React$Component) {
-	  _inherits(DisplayResults, _React$Component);
-	
-	  function DisplayResults() {
-	    _classCallCheck(this, DisplayResults);
-	
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(DisplayResults).apply(this, arguments));
-	  }
-	
-	  _createClass(DisplayResults, [{
-	    key: 'render',
-	    value: function render() {
-	      return _react2.default.createElement(
-	        'div',
-	        { className: 'results' },
-	        this.props.result.length ? _react2.default.createElement(
-	          'h2',
-	          null,
-	          'RESULTS'
-	        ) : '',
-	        this.props.result.map(function (pair) {
-	          return _react2.default.createElement(
-	            'div',
-	            { key: pair[0].key },
-	            pair[0].name,
-	            ', ',
-	            pair[1].name
-	          );
-	        })
-	      );
-	    }
-	  }]);
-	
-	  return DisplayResults;
-	}(_react2.default.Component);
-	
-	var mapStateToProps = function mapStateToProps(state) {
-	  return {
-	    result: state.result
-	  };
-	};
-	
-	exports.default = (0, _reactRedux.connect)(mapStateToProps)(DisplayResults);
-
-/***/ },
-/* 240 */
-/*!*************************************!*\
-  !*** ./app/css/displayResults.scss ***!
-  \*************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-	
-	// load the styles
-	var content = __webpack_require__(/*! !./../../~/css-loader!./../../~/sass-loader!./displayResults.scss */ 241);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(/*! ./../../~/style-loader/addStyles.js */ 213)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js!./displayResults.scss", function() {
-				var newContent = require("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js!./displayResults.scss");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 241 */
-/*!********************************************************************!*\
-  !*** ./~/css-loader!./~/sass-loader!./app/css/displayResults.scss ***!
-  \********************************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(/*! ./../../~/css-loader/lib/css-base.js */ 212)();
-	// imports
-	
-	
-	// module
-	exports.push([module.id, "", ""]);
-	
-	// exports
-
-
-/***/ },
-/* 242 */
 /*!******************************************!*\
   !*** ./~/edmonds-blossom/app/blossom.js ***!
   \******************************************/
@@ -27405,45 +27357,56 @@
 
 
 /***/ },
-/* 243 */
-/*!********************************!*\
-  !*** ./reducers/highlights.js ***!
-  \********************************/
-/***/ function(module, exports) {
+/* 239 */
+/*!****************************************!*\
+  !*** ./app/css/calculateMatching.scss ***!
+  \****************************************/
+/***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var highlights = function highlights() {
-	  var state = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
-	  var action = arguments[1];
-	
-	  switch (action.type) {
-	    case 'SET_RESULT':
-	      var cells = [];
-	      action.result.forEach(function (pair) {
-	        cells.push(pair[0].key + ":" + pair[1].key);
-	        cells.push(pair[1].key + ":" + pair[0].key);
-	      });
-	      return cells;
-	    default:
-	      return state;
-	  }
-	};
-	
-	exports.default = highlights;
+	// load the styles
+	var content = __webpack_require__(/*! !./../../~/css-loader!./../../~/sass-loader!./calculateMatching.scss */ 240);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(/*! ./../../~/style-loader/addStyles.js */ 217)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js!./calculateMatching.scss", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js!./calculateMatching.scss");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
 
 /***/ },
-/* 244 */,
-/* 245 */,
-/* 246 */,
-/* 247 */,
-/* 248 */
-/*!********************************!*\
-  !*** ./actions/nodeActions.js ***!
-  \********************************/
+/* 240 */
+/*!***********************************************************************!*\
+  !*** ./~/css-loader!./~/sass-loader!./app/css/calculateMatching.scss ***!
+  \***********************************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(/*! ./../../~/css-loader/lib/css-base.js */ 216)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, ".calculateBlossom {\n  position: fixed;\n  bottom: 0;\n  right: 0; }\n", ""]);
+	
+	// exports
+
+
+/***/ },
+/* 241 */
+/*!*******************************!*\
+  !*** ./app/displayResults.js ***!
+  \*******************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27451,70 +27414,160 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.renameNode = exports.deleteNode = exports.addNode = undefined;
 	
-	var _blossomStore = __webpack_require__(/*! ../app/blossomStore */ 205);
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var _blossomStore2 = _interopRequireDefault(_blossomStore);
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactRedux = __webpack_require__(/*! react-redux */ 175);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var blossomStore = new _blossomStore2.default();
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
-	var createNode = function createNode(key, name) {
-	  return {
-	    key: key || Date.now(),
-	    name: name
-	  };
-	};
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 	
-	var addNode = exports.addNode = function addNode(key, name, fromStore) {
-	  var node = createNode(key, name);
-	  var type = 'ADD_NODE';
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	  if (!fromStore) {
-	    blossomStore.addNode(node);
-	    type = 'NO_ACTION'; // The store listeners will fire another action.
+	__webpack_require__(/*! ./css/displayResults.scss */ 242);
+	
+	var DisplayResults = function (_React$Component) {
+	  _inherits(DisplayResults, _React$Component);
+	
+	  function DisplayResults() {
+	    _classCallCheck(this, DisplayResults);
+	
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(DisplayResults).apply(this, arguments));
 	  }
 	
+	  _createClass(DisplayResults, [{
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'results' },
+	        this.props.result.length ? _react2.default.createElement(
+	          'h2',
+	          null,
+	          'RESULTS'
+	        ) : '',
+	        this.props.result.map(function (pair) {
+	          return _react2.default.createElement(
+	            'div',
+	            { key: pair[0].key },
+	            pair[0].name,
+	            ', ',
+	            pair[1].name
+	          );
+	        })
+	      );
+	    }
+	  }]);
+	
+	  return DisplayResults;
+	}(_react2.default.Component);
+	
+	var mapStateToProps = function mapStateToProps(state) {
 	  return {
-	    type: type,
-	    node: node,
-	    fromStore: fromStore
+	    result: state.result
 	  };
 	};
 	
-	var deleteNode = exports.deleteNode = function deleteNode(index, fromStore) {
-	  var type = 'ADD_NODE';
+	exports.default = (0, _reactRedux.connect)(mapStateToProps)(DisplayResults);
+
+/***/ },
+/* 242 */
+/*!*************************************!*\
+  !*** ./app/css/displayResults.scss ***!
+  \*************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
-	  if (!fromStore) {
-	    blossomStore.removeNode(index);
-	    type = 'NO_ACTION'; // The store listeners will fire another action.
-	  }
+	// load the styles
+	var content = __webpack_require__(/*! !./../../~/css-loader!./../../~/sass-loader!./displayResults.scss */ 243);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(/*! ./../../~/style-loader/addStyles.js */ 217)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js!./displayResults.scss", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js!./displayResults.scss");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 243 */
+/*!********************************************************************!*\
+  !*** ./~/css-loader!./~/sass-loader!./app/css/displayResults.scss ***!
+  \********************************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(/*! ./../../~/css-loader/lib/css-base.js */ 216)();
+	// imports
 	
-	  return {
-	    type: 'DELETE_NODE',
-	    index: index,
-	    fromStore: fromStore
-	  };
-	};
 	
-	var renameNode = exports.renameNode = function renameNode(index, key, name, fromStore) {
-	  var node = createNode(key, name);
-	  var type = 'RENAME_NODE';
+	// module
+	exports.push([module.id, "", ""]);
 	
-	  if (!fromStore) {
-	    blossomStore.renameNode(index, node);
-	    type = 'NO_ACTION'; // The store listeners will fire another action.
-	  }
+	// exports
+
+
+/***/ },
+/* 244 */
+/*!**************************!*\
+  !*** ./app/css/app.scss ***!
+  \**************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
-	  return {
-	    type: type,
-	    index: index,
-	    node: node,
-	    fromStore: fromStore
-	  };
-	};
+	// load the styles
+	var content = __webpack_require__(/*! !./../../~/css-loader!./../../~/sass-loader!./app.scss */ 245);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(/*! ./../../~/style-loader/addStyles.js */ 217)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js!./app.scss", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js!./app.scss");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 245 */
+/*!*********************************************************!*\
+  !*** ./~/css-loader!./~/sass-loader!./app/css/app.scss ***!
+  \*********************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(/*! ./../../~/css-loader/lib/css-base.js */ 216)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, "body {\n  padding: 10px;\n  background-color: #66CCFF;\n  font-family: sans-serif; }\n\nform {\n  margin: 0; }\n\ninput {\n  padding: 10px;\n  margin: 5px;\n  font-size: 16px;\n  border: 2px solid #FFF; }\n\nbutton {\n  padding: 10px;\n  font-size: 16px;\n  margin: 5px;\n  background-color: #0066FF;\n  color: #FFF;\n  border: 2px solid #0066FF; }\n\nbutton:hover {\n  background-color: #003399;\n  border: 2px solid #003399;\n  cursor: pointer; }\n\nnav {\n  height: 100px; }\n\nh1 {\n  margin: 5px;\n  float: left; }\n\n.invalid {\n  outline-color: red; }\n", ""]);
+	
+	// exports
+
 
 /***/ }
 /******/ ]);
