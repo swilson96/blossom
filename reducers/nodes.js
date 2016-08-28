@@ -2,7 +2,7 @@ const node = (state, action) => {
   switch (action.type) {
     case 'ADD_NODE':
       return {
-        key: Date.now(),
+        key: action.key || Date.now(),
         name: action.name
       };
     default:
@@ -11,6 +11,10 @@ const node = (state, action) => {
 };
 
 const addNode = (state, action) => {
+  if (action.key && state.filter(n => n.key == action.key).length > 0) {
+    // This can happen when we first save and start listening to firebase.
+    return renameNode(state, action);
+  }
   return [
     ...state,
     node(undefined, action)
@@ -39,7 +43,7 @@ const nodes = (state = [], action) => {
     case 'RENAME_NODE':
       return renameNode(state, action);
     case 'SET_BLOSSOM':
-      return action.blossom.nodes;
+      return action.blossom.nodes || [];
     default:
       return state;
   }

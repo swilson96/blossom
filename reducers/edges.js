@@ -23,7 +23,7 @@ const edges = (state = {}, action) => {
     case 'SET_EDGE':
       return setEdge(state, action);
     case 'SET_BLOSSOM':
-      return action.blossom.edges;
+      return action.blossom.edges || {};
     default:
       return state;
   }

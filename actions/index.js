@@ -1,6 +1,7 @@
-export const addNode = (text) => {
+export const addNode = (key, text) => {
   return {
     type: 'ADD_NODE',
+    key: key,
     name: text
   };
 };

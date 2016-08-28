@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { setKey, setBlossom } from '../actions';
+import { addNode, renameNode, setEdge } from '../actions';
 import BlossomStore from './blossomStore';
 
 require("./css/blossomManager.scss");
@@ -21,21 +22,31 @@ class BlossomManager extends React.Component {
     var key = this.blossomStore.saveNewBlossom(this.props.blossom);
     this.props.setKey(key);
     this.clearMessage();
+
+    // And now listen to the DB for changes
+    this.connectToFirebase(key, s => {});
   }
 
-  loadBlossom(e) {
-    e.preventDefault();
+  loadBlossomClick(e) {
+      e.preventDefault();
+      this.connectToFirebase(this._blossomInput.value, success => {
+        if (success) {
+          this.clearMessage();
+          this.props.setKey(this._blossomInput.value);
+          this._blossomInput.value = "";
+        } else {
+          this.setState({message:"Not a valid blossom key"});
+        }
+      });
+  }
 
-    this.blossomStore.loadBlossom(this._blossomInput.value, blossom => {
-      if (blossom) {
-        this.clearMessage();
-        this.props.setBlossom(blossom);
-        this.props.setKey(this._blossomInput.value);
-        this._blossomInput.value = "";
-      } else {
-        this.setState({message:"Not a valid blossom key"});
-      }
-    });
+  connectToFirebase(key, callback) {
+    this.blossomStore.loadBlossom(key,
+      callback,
+      n => this.props.addNode(n),
+      n => this.props.renameNode(n),
+      (k, e) => this.props.setEdge(k, e),
+      (k, e) => this.props.setEdge(k, e));
   }
 
   render() {
@@ -58,7 +69,7 @@ class BlossomManager extends React.Component {
         {currentBlossom}
         <div className="blossomAction">{action}</div>
         <div className="blossomLoad">
-          <form onSubmit={(e) => this.loadBlossom(e)}>
+          <form onSubmit={(e) => this.loadBlossomClick(e)}>
             <input ref={(b) => this._blossomInput = b} placeholder="enter blossom key"></input>
             <button type="submit">Load</button>
           </form>
@@ -86,6 +97,15 @@ const mapDispatchToProps = (dispatch) => {
     },
     setBlossom: (blossom) => {
       dispatch(setBlossom(blossom));
+    },
+    addNode: node => {
+      dispatch(addNode(node.key, node.name));
+    },
+    renameNode: node => {
+      dispatch(renameNode(node.key, node.name));
+    },
+    setEdge: (key, edge) => {
+      dispatch(setEdge(key, edge.weight));
     }
   };
 }

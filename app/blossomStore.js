@@ -21,10 +21,18 @@ class BlossomStore {
     return key;
   }
 
-  loadBlossom(key, callback) {
+  loadBlossom(key, callback, onNewNode, onChangedNode, onNewEdge, onChangedEdge) {
     try {
       firebase.database().ref('/blossoms/' + key).once('value', (snapshot) => {
-        callback(snapshot.val());
+        if (snapshot.exists()) {
+          firebase.database().ref('/blossoms/' + key + "/nodes").on("child_added", n => onNewNode(n.val()));
+          firebase.database().ref('/blossoms/' + key + "/nodes").on("child_changed", n => onChangedNode(n.val()));
+
+          firebase.database().ref('/blossoms/' + key + "/edges").on("child_added", e => onNewEdge(e.key, e.val()));
+          firebase.database().ref('/blossoms/' + key + "/edges").on("child_changed", e => onChangedEdge(e.key, e.val()));
+        }
+
+        callback(snapshot.exists());
       });
     } catch(err) {
       console.log(err);
