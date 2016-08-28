@@ -38,15 +38,6 @@ export const setBlossom = (blossom) => {
   }
 }
 
-export const setEdge = (key, weight, fromStore) => {
-  return {
-    type: 'SET_EDGE',
-    key: key,
-    weight: weight,
-    fromStore: fromStore
-  }
-}
-
 export const setResult = (result) => {
   return {
     type: 'SET_RESULT',

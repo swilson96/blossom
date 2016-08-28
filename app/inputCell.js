@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { setEdge } from '../actions';
+import { setEdge } from '../actions/edgeActions';
 
 import { RIENumber } from 'riek';
 

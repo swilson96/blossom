@@ -1,7 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { setKey } from '../actions';
-import { addNode, renameNode, deleteNode, setEdge } from '../actions';
+import { addNode, renameNode, deleteNode } from '../actions';
+import { setEdge } from '../actions/edgeActions'
 import BlossomStore from './blossomStore';
 
 require("./css/blossomManager.scss");

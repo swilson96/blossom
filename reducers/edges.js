@@ -1,11 +1,3 @@
-import BlossomStore from '../app/blossomStore';
-
-const blossomStore = new BlossomStore();
-
-const createEdge = action => {
-  return {weight: action.weight};
-}
-
 const setEdge = (state, action) => {
   var found = false;
   var newEdges = {};
@@ -15,13 +7,13 @@ const setEdge = (state, action) => {
     }
     var edgeToSet = state[k];
     if (k == action.key) {
-      edgeToSet.weight = action.weight;
+      edgeToSet = action.edge;
       found = true;
     }
     newEdges[k] = edgeToSet;
   }
   if (!found) {
-    newEdges[action.key] = createEdge(action);
+    newEdges[action.key] = action.edge;
   }
   return newEdges;
 };
@@ -29,12 +21,7 @@ const setEdge = (state, action) => {
 const edges = (state = {}, action) => {
   switch (action.type) {
     case 'SET_EDGE':
-      if (action.fromStore) {
-        return setEdge(state, action);
-      } else {
-        blossomStore.setEdge(action.key, createEdge(action));
-        return state;
-      }
+      return setEdge(state, action);
 
     case 'SET_BLOSSOM':
       return action.blossom.edges || {};
