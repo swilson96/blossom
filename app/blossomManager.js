@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { setKey, setBlossom } from '../actions';
-import { addNode, renameNode, setEdge } from '../actions';
+import { setKey } from '../actions';
+import { addNode, renameNode, deleteNode, setEdge } from '../actions';
 import BlossomStore from './blossomStore';
 
 require("./css/blossomManager.scss");
@@ -23,13 +23,13 @@ class BlossomManager extends React.Component {
     this.props.setKey(key);
     this.clearMessage();
 
-    // And now listen to the DB for changes
-    this.connectToFirebase(key, s => {});
+    // And now listen for changes
+    this.connectToStore(key, s => {});
   }
 
   loadBlossomClick(e) {
       e.preventDefault();
-      this.connectToFirebase(this._blossomInput.value, success => {
+      this.connectToStore(this._blossomInput.value, success => {
         if (success) {
           this.clearMessage();
           this.props.setKey(this._blossomInput.value);
@@ -40,13 +40,14 @@ class BlossomManager extends React.Component {
       });
   }
 
-  connectToFirebase(key, callback) {
+  connectToStore(key, callback) {
     this.blossomStore.loadBlossom(key,
       callback,
-      n => this.props.addNode(n),
-      n => this.props.renameNode(n),
-      (k, e) => this.props.setEdge(k, e),
-      (k, e) => this.props.setEdge(k, e));
+      n => this.props.addNodeFromStore(n),
+      n => this.props.renameNodeFromStore(n),
+      n => this.props.removeNodeFromStore(n),
+      (k, e) => this.props.setEdgeFromStore(k, e),
+      (k, e) => this.props.setEdgeFromStore(k, e));
   }
 
   render() {
@@ -95,17 +96,17 @@ const mapDispatchToProps = (dispatch) => {
     setKey: (key) => {
       dispatch(setKey(key))
     },
-    setBlossom: (blossom) => {
-      dispatch(setBlossom(blossom));
+    addNodeFromStore: node => {
+      dispatch(addNode(node.key, node.name, true));
     },
-    addNode: node => {
-      dispatch(addNode(node.key, node.name));
+    renameNodeFromStore: node => {
+      dispatch(renameNode(node.key, node.name, true));
     },
-    renameNode: node => {
-      dispatch(renameNode(node.key, node.name));
+    removeNodeFromStore: node => {
+      dispatch(deleteNode(node.key, true));
     },
-    setEdge: (key, edge) => {
-      dispatch(setEdge(key, edge.weight));
+    setEdgeFromStore: (key, edge) => {
+      dispatch(setEdge(key, edge.weight, true));
     }
   };
 }

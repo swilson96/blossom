@@ -1,23 +1,26 @@
-export const addNode = (key, text) => {
+export const addNode = (key, text, fromStore) => {
   return {
     type: 'ADD_NODE',
     key: key,
-    name: text
+    name: text,
+    fromStore: fromStore
   };
 };
 
-export const deleteNode = (key) => {
+export const deleteNode = (key, fromStore) => {
   return {
     type: 'DELETE_NODE',
-    key: key
+    key: key,
+    fromStore: fromStore
   };
 };
 
-export const renameNode = (key, name) => {
+export const renameNode = (key, name, fromStore) => {
    return {
      type: 'RENAME_NODE',
      key: key,
-     name: name
+     name: name,
+     fromStore: fromStore
    }
 };
 
@@ -35,11 +38,12 @@ export const setBlossom = (blossom) => {
   }
 }
 
-export const setEdge = (key, weight) => {
+export const setEdge = (key, weight, fromStore) => {
   return {
     type: 'SET_EDGE',
     key: key,
-    weight: weight
+    weight: weight,
+    fromStore: fromStore
   }
 }
 

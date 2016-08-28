@@ -1,13 +1,12 @@
-const node = (state, action) => {
-  switch (action.type) {
-    case 'ADD_NODE':
-      return {
-        key: action.key || Date.now(),
-        name: action.name
-      };
-    default:
-      return undefined;
-  }
+import BlossomStore from '../app/blossomStore';
+
+const blossomStore = new BlossomStore();
+
+const createNode = (action) => {
+    return {
+      key: action.key || Date.now(),
+      name: action.name
+    };
 };
 
 const addNode = (state, action) => {
@@ -15,23 +14,42 @@ const addNode = (state, action) => {
     // This can happen when we first save and start listening to firebase.
     return renameNode(state, action);
   }
+  var node = createNode(action);
+  if (!action.fromStore) {
+    blossomStore.addNode(node);
+    return state;
+  }
   return [
     ...state,
-    node(undefined, action)
+    node
   ];
 };
 
 const removeNode = (state, action) => {
-  return state.filter(n => n.key != action.key);
+  var i = 0;
+  var newState = state.filter(n => {
+    if (!action.fromStore && n.key == action.key) {
+        blossomStore.removeNode(i);
+    }
+    i += 1;
+    return n.key != action.key;
+  });
+  return action.fromStore ? newState : state;
 };
 
 const renameNode = (state, action) => {
-  return state.map(n => {
+  var i = 0;
+  var newState = state.map(n => {
     if (n.key == action.key) {
       n.name = action.name;
+      if (!action.fromStore) {
+        blossomStore.renameNode(i, createNode(action));
+      }
     }
+    i += 1;
     return n;
   });
+  return action.fromStore ? newState : state;
 };
 
 const nodes = (state = [], action) => {
