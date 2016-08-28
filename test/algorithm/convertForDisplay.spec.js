@@ -1,15 +1,34 @@
 import expect from 'expect'
-import { convertForAlgorithm } from '../../algorithm';
+import { convertForDisplay } from '../../algorithm';
 
 describe('Converting our state to algorithm input', () => {
 
-    it('should add the right edges and weights', () => {
-      var nodes = [{name:"a", key:1472373779321}, {name:"b", key:1472373780368}];
-      var edges = {"1472373779321:1472373780368":{weight:2}};
-      var result = convertForAlgorithm(nodes, edges);
+    var nodes = [
+      {name:"node1"},
+      {name:"node2"},
+      {name:"node3"},
+      {name:"node4"}
+    ];
+
+    it('should return the right pairs', () => {
+      var matching = [3,2,1,0];
+
+      var result = convertForDisplay(matching, nodes);
+
+      expect(result.length).toEqual(2);
+      expect(result[0][0]).toEqual("node1");
+      expect(result[0][1]).toEqual("node4");
+      expect(result[1][0]).toEqual("node2");
+      expect(result[1][1]).toEqual("node3");
+    });
+
+    it('should return the right pairs if some unused', () => {
+      var matching = [2,-1, 0, -1];
+
+      var result = convertForDisplay(matching, nodes);
+
       expect(result.length).toEqual(1);
-      expect(result[0][0]).toEqual(0);
-      expect(result[0][1]).toEqual(1);
-      expect(result[0][2]).toEqual(2);
+      expect(result[0][0]).toEqual("node1");
+      expect(result[0][1]).toEqual("node3");
     });
 })
