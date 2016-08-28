@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { setKey } from '../actions';
-import { addNode, renameNode, deleteNode } from '../actions';
+import { addNode, renameNode, deleteNode } from '../actions/nodeActions';
 import { setEdge } from '../actions/edgeActions'
 import BlossomStore from './blossomStore';
 
@@ -45,8 +45,8 @@ class BlossomManager extends React.Component {
     this.blossomStore.loadBlossom(key,
       callback,
       n => this.props.addNodeFromStore(n),
-      n => this.props.renameNodeFromStore(n),
-      n => this.props.removeNodeFromStore(n),
+      (i, n) => this.props.renameNodeFromStore(i, n),
+      i => this.props.removeNodeFromStore(i),
       (k, e) => this.props.setEdgeFromStore(k, e),
       (k, e) => this.props.setEdgeFromStore(k, e));
   }
@@ -100,11 +100,11 @@ const mapDispatchToProps = (dispatch) => {
     addNodeFromStore: node => {
       dispatch(addNode(node.key, node.name, true));
     },
-    renameNodeFromStore: node => {
-      dispatch(renameNode(node.key, node.name, true));
+    renameNodeFromStore: (index, node) => {
+      dispatch(renameNode(index, node.key, node.name, true));
     },
-    removeNodeFromStore: node => {
-      dispatch(deleteNode(node.key, true));
+    removeNodeFromStore: index => {
+      dispatch(deleteNode(node.index, true));
     },
     setEdgeFromStore: (key, edge) => {
       dispatch(setEdge(key, edge.weight, true));

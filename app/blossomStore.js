@@ -29,8 +29,8 @@ class BlossomStore {
       firebase.database().ref('/blossoms/' + key).once('value', (snapshot) => {
         if (snapshot.exists()) {
           firebase.database().ref('/blossoms/' + key + "/nodes").on("child_added", n => onNewNode(n.val()));
-          firebase.database().ref('/blossoms/' + key + "/nodes").on("child_changed", n => onChangedNode(n.val()));
-          firebase.database().ref('/blossoms/' + key + "/nodes").on("child_removed", n => onRemoveNode(n.val()));
+          firebase.database().ref('/blossoms/' + key + "/nodes").on("child_changed", n => onChangedNode(n.key, n.val()));
+          firebase.database().ref('/blossoms/' + key + "/nodes").on("child_removed", n => onRemoveNode(n.key));
           firebase.database().ref('/blossoms/' + key + "/edges").on("child_added", e => onNewEdge(e.key, e.val()));
           firebase.database().ref('/blossoms/' + key + "/edges").on("child_changed", e => onChangedEdge(e.key, e.val()));
         }

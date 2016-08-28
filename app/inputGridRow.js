@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { renameNode } from '../actions';
+import { renameNode } from '../actions/nodeActions';
 
 import InputCell from './inputCell'
 
@@ -13,7 +13,7 @@ class InputGridRow extends React.Component {
   }
 
   onChange(valueObject) {
-    this.props.renameNode(this.props.currentNode.key, valueObject.text);
+    this.props.renameNode(this.props.index, this.props.currentNode.key, valueObject.text);
   }
 
   isValid(value) {
@@ -47,8 +47,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    renameNode: (key, name) => {
-      dispatch(renameNode(key, name))
+    renameNode: (index, key, name) => {
+      dispatch(renameNode(index, key, name))
     }
   };
 }

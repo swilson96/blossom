@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { addNode } from '../actions';
+import { addNode } from '../actions/nodeActions';
 
 require("./css/addNode.scss");
 
