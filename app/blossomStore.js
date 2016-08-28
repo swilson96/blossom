@@ -59,6 +59,10 @@ class BlossomStore {
   setEdge(key, edge) {
     firebase.database().ref('/blossoms/' + lastKeyLoaded + "/edges/" + key).set(edge);
   }
+
+  isConnected() {
+    return lastKeyLoaded;
+  }
 }
 
 export default BlossomStore;

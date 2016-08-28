@@ -10,8 +10,13 @@ const createNode = (key, name) => {
     return node;
 };
 
+let nextId = 0;
+
 export const addNode = name => {
   var node = createNode(undefined, name);
+  if (!blossomStore.isConnected()) {
+    return addNodeFromStore(nextId++, node);
+  }
   blossomStore.addNode(node);
   return {
     type: 'NO_ACTION',
@@ -34,15 +39,14 @@ export const addNodeFromStore = (key, node) => {
 export const deleteNode = (key, fromStore) => {
   var type = 'ADD_NODE';
 
-  if (!fromStore) {
+  if (!fromStore && blossomStore.isConnected()) {
     blossomStore.removeNode(key);
     type = 'NO_ACTION'; // The store listeners will fire another action.
   }
 
   return {
     type: 'DELETE_NODE',
-    key: key,
-    fromStore: fromStore
+    key: key
   };
 };
 
@@ -50,7 +54,7 @@ export const renameNode = (key, name, fromStore) => {
   var node = createNode(key, name);
   var type = 'RENAME_NODE';
 
-  if (!fromStore) {
+  if (!fromStore && blossomStore.isConnected()) {
     blossomStore.renameNode(key, node);
     type = 'NO_ACTION'; // The store listeners will fire another action.
   }
@@ -58,7 +62,6 @@ export const renameNode = (key, name, fromStore) => {
   return {
     type: type,
     key: key,
-    node: node,
-    fromStore: fromStore
+    node: node
   }
 };
