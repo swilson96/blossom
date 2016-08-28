@@ -17,7 +17,7 @@ class AddNode extends React.Component {
       return;
     }
 
-    this.props.dispatch(addNode(undefined, this._inputElement.value));
+    this.props.dispatch(addNode(this._inputElement.value));
     this._inputElement.value = "";
   }
 

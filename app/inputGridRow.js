@@ -13,7 +13,7 @@ class InputGridRow extends React.Component {
   }
 
   onChange(valueObject) {
-    this.props.renameNode(this.props.index, this.props.currentNode.key, valueObject.text);
+    this.props.renameNode(this.props.currentNode.key, valueObject.text);
   }
 
   isValid(value) {
@@ -21,7 +21,10 @@ class InputGridRow extends React.Component {
   }
 
   render() {
-    var inputCells = this.props.nodes.map(n => this.createInputCell(n, this.props.currentNode));
+    var inputCells = [];
+    for (var k in this.props.nodes) {
+      inputCells.push(this.createInputCell(this.props.nodes[k], this.props.currentNode));
+    }
     return (
       <tr key={this.props.currentNode.key}>
         <td className="nameCell" id={this.props.currentNode.key + "_row"}>
@@ -47,8 +50,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    renameNode: (index, key, name) => {
-      dispatch(renameNode(index, key, name))
+    renameNode: (key, name) => {
+      dispatch(renameNode(key, name))
     }
   };
 }

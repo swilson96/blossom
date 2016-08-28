@@ -18,7 +18,10 @@ class InputGridHeader extends React.Component {
   }
 
   render() {
-    let nameCells = this.props.nodes.map(this.createNameCell);
+    let nameCells = [];
+    for (var k in this.props.nodes) {
+        nameCells.push(this.createNameCell(this.props.nodes[k]));
+    }
 
     return (
       <thead>

@@ -3,55 +3,61 @@ import BlossomStore from '../app/blossomStore';
 const blossomStore = new BlossomStore();
 
 const createNode = (key, name) => {
-    return {
-      key: key || Date.now(),
-      name: name
-    };
+    var node = { name: name };
+    if (key) {
+      node.key = key;
+    }
+    return node;
 };
 
-export const addNode = (key, name, fromStore) => {
-  var node = createNode(key, name);
-  var type = 'ADD_NODE';
-
-  if (!fromStore) {
-    blossomStore.addNode(node);
-    type = 'NO_ACTION'; // The store listeners will fire another action.
-  }
-
+export const addNode = name => {
+  var node = createNode(undefined, name);
+  blossomStore.addNode(node);
   return {
-    type: type,
+    type: 'NO_ACTION',
+    node: node
+  };
+}
+
+export const addNodeFromStore = (key, node) => {
+  if (!node.key) {
+    node.key = key;
+  }
+  return {
+    type: 'ADD_NODE',
     node: node,
-    fromStore: fromStore
+    key: key,
+    fromStore: true
   };
 };
 
-export const deleteNode = (index, fromStore) => {
+export const deleteNode = (key, fromStore) => {
   var type = 'ADD_NODE';
 
   if (!fromStore) {
-    blossomStore.removeNode(index);
+    blossomStore.removeNode(key);
     type = 'NO_ACTION'; // The store listeners will fire another action.
   }
 
   return {
     type: 'DELETE_NODE',
-    index: index,
+    key: key,
     fromStore: fromStore
   };
 };
 
-export const renameNode = (index, key, name, fromStore) => {
+export const renameNode = (key, name, fromStore) => {
   var node = createNode(key, name);
   var type = 'RENAME_NODE';
 
   if (!fromStore) {
-    blossomStore.renameNode(index, node);
+    blossomStore.renameNode(key, node);
     type = 'NO_ACTION'; // The store listeners will fire another action.
   }
 
   return {
     type: type,
-    index: index,
+    key: key,
     node: node,
     fromStore: fromStore
   }

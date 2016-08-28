@@ -1,30 +1,33 @@
 const addNode = (state, action) => {
-  if (action.node.key && state.filter(n => n.key == action.node.key).length > 0) {
+  if (action.key && state[action.key]) {
     // This can happen when we first save and start listening to firebase.
     return renameNode(state, action);
   }
-
-  return [
-    ...state,
-    action.node
-  ];
+  var newNodes = {};
+  for (var k in state){
+    newNodes[k] = state[k];
+  }
+  newNodes[action.key] = action.node;
+  return newNodes;
 };
 
 const removeNode = (state, action) => {
-  state.splice(action.index, 1);
+  delete state[action.key];
   return state;
 };
 
 const renameNode = (state, action) => {
-  return state.map(n => {
-    if (n.key == action.node.key) {
-      n.name = action.node.name;
+  var newNodes = {};
+  for (var k in state) {
+    if (action.key == k) {
+      state[k] = action.node;
     }
-    return n;
-  });
+    newNodes[k] = state[k];
+  }
+  return newNodes;
 };
 
-const nodes = (state = [], action) => {
+const nodes = (state = {}, action) => {
   switch (action.type) {
     case 'ADD_NODE':
       return addNode(state, action);

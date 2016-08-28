@@ -9,18 +9,16 @@ class InputGrid extends React.Component {
   render() {
     let nodes = this.props.nodes;
 
-    let createRow = function(index, item) {
+    let createRow = function(item) {
       return (
-        <InputGridRow key={item.key} currentNode={item} nodes={nodes} index={index} />
+        <InputGridRow key={item.key} currentNode={item} nodes={nodes} />
       )
     }
 
-    var i = 0;
-    let rows = nodes.map(n => {
-      var row = createRow(i, n);
-      i += 1;
-      return row;
-    });
+    var rows = []
+    for (var k in nodes) {
+      rows.push(createRow(nodes[k]));
+    }
 
     return (
       <table id="inputGrid" className="inputGrid">
