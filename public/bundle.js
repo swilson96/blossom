@@ -23706,32 +23706,26 @@
 	
 	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 	
-	var node = function node(state, action) {
-	  switch (action.type) {
-	    case 'ADD_NODE':
-	      return {
-	        key: Date.now(),
-	        name: action.name
-	      };
-	    default:
-	      return undefined;
-	  }
-	};
-	
 	var addNode = function addNode(state, action) {
-	  return [].concat(_toConsumableArray(state), [node(undefined, action)]);
+	  if (action.node.key && state.filter(function (n) {
+	    return n.key == action.node.key;
+	  }).length > 0) {
+	    // This can happen when we first save and start listening to firebase.
+	    return renameNode(state, action);
+	  }
+	
+	  return [].concat(_toConsumableArray(state), [action.node]);
 	};
 	
 	var removeNode = function removeNode(state, action) {
-	  return state.filter(function (n) {
-	    return n.key != action.key;
-	  });
+	  state.splice(action.index, 1);
+	  return state;
 	};
 	
 	var renameNode = function renameNode(state, action) {
 	  return state.map(function (n) {
-	    if (n.key == action.key) {
-	      n.name = action.name;
+	    if (n.key == action.node.key) {
+	      n.name = action.node.name;
 	    }
 	    return n;
 	  });
@@ -23749,7 +23743,7 @@
 	    case 'RENAME_NODE':
 	      return renameNode(state, action);
 	    case 'SET_BLOSSOM':
-	      return action.blossom.nodes;
+	      return action.blossom.nodes || [];
 	    default:
 	      return state;
 	  }
@@ -23778,13 +23772,13 @@
 	    }
 	    var edgeToSet = state[k];
 	    if (k == action.key) {
-	      edgeToSet.weight = action.weight;
+	      edgeToSet = action.edge;
 	      found = true;
 	    }
 	    newEdges[k] = edgeToSet;
 	  }
 	  if (!found) {
-	    newEdges[action.key] = { weight: action.weight };
+	    newEdges[action.key] = action.edge;
 	  }
 	  return newEdges;
 	};
@@ -23796,8 +23790,10 @@
 	  switch (action.type) {
 	    case 'SET_EDGE':
 	      return setEdge(state, action);
+	
 	    case 'SET_BLOSSOM':
-	      return action.blossom.edges;
+	      return action.blossom.edges || {};
+	
 	    default:
 	      return state;
 	  }
@@ -23991,18 +23987,19 @@
 	      var key = this.blossomStore.saveNewBlossom(this.props.blossom);
 	      this.props.setKey(key);
 	      this.clearMessage();
+	
+	      // And now listen to the DB for changes
+	      this.connectToFirebase(key, function (s) {});
 	    }
 	  }, {
-	    key: 'loadBlossom',
-	    value: function loadBlossom(e) {
+	    key: 'loadBlossomClick',
+	    value: function loadBlossomClick(e) {
 	      var _this2 = this;
 	
 	      e.preventDefault();
-	
-	      this.blossomStore.loadBlossom(this._blossomInput.value, function (blossom) {
-	        if (blossom) {
+	      this.connectToFirebase(this._blossomInput.value, function (success) {
+	        if (success) {
 	          _this2.clearMessage();
-	          _this2.props.setBlossom(blossom);
 	          _this2.props.setKey(_this2._blossomInput.value);
 	          _this2._blossomInput.value = "";
 	        } else {
@@ -24011,16 +24008,31 @@
 	      });
 	    }
 	  }, {
+	    key: 'connectToFirebase',
+	    value: function connectToFirebase(key, callback) {
+	      var _this3 = this;
+	
+	      this.blossomStore.loadBlossom(key, callback, function (n) {
+	        return _this3.props.addNode(n);
+	      }, function (n) {
+	        return _this3.props.renameNode(n);
+	      }, function (k, e) {
+	        return _this3.props.setEdge(k, e);
+	      }, function (k, e) {
+	        return _this3.props.setEdge(k, e);
+	      });
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
-	      var _this3 = this;
+	      var _this4 = this;
 	
 	      var action = "";
 	      if (!this.props.keyValue) {
 	        action = _react2.default.createElement(
 	          'form',
 	          { onSubmit: function onSubmit(e) {
-	              return _this3.saveNewBlossom(e);
+	              return _this4.saveNewBlossom(e);
 	            } },
 	          _react2.default.createElement(
 	            'button',
@@ -24054,10 +24066,10 @@
 	          _react2.default.createElement(
 	            'form',
 	            { onSubmit: function onSubmit(e) {
-	                return _this3.loadBlossom(e);
+	                return _this4.loadBlossomClick(e);
 	              } },
 	            _react2.default.createElement('input', { ref: function ref(b) {
-	                return _this3._blossomInput = b;
+	                return _this4._blossomInput = b;
 	              }, placeholder: 'enter blossom key' }),
 	            _react2.default.createElement(
 	              'button',
@@ -24095,6 +24107,15 @@
 	    },
 	    setBlossom: function setBlossom(blossom) {
 	      dispatch((0, _actions.setBlossom)(blossom));
+	    },
+	    addNode: function addNode(node) {
+	      dispatch((0, _actions.addNode)(node.key, node.name));
+	    },
+	    renameNode: function renameNode(node) {
+	      dispatch((0, _actions.renameNode)(node.key, node.name));
+	    },
+	    setEdge: function setEdge(key, edge) {
+	      dispatch((0, _actions.setEdge)(key, edge.weight));
 	    }
 	  };
 	};
@@ -24113,28 +24134,6 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	var addNode = exports.addNode = function addNode(text) {
-	  return {
-	    type: 'ADD_NODE',
-	    name: text
-	  };
-	};
-	
-	var deleteNode = exports.deleteNode = function deleteNode(key) {
-	  return {
-	    type: 'DELETE_NODE',
-	    key: key
-	  };
-	};
-	
-	var renameNode = exports.renameNode = function renameNode(key, name) {
-	  return {
-	    type: 'RENAME_NODE',
-	    key: key,
-	    name: name
-	  };
-	};
-	
 	var setKey = exports.setKey = function setKey(key) {
 	  return {
 	    type: 'SET_KEY',
@@ -24146,14 +24145,6 @@
 	  return {
 	    type: 'SET_BLOSSOM',
 	    blossom: blossom
-	  };
-	};
-	
-	var setEdge = exports.setEdge = function setEdge(key, weight) {
-	  return {
-	    type: 'SET_EDGE',
-	    key: key,
-	    weight: weight
 	  };
 	};
 	
@@ -24181,21 +24172,23 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
+	var lastKeyLoaded;
+	
+	var firebase = __webpack_require__(/*! firebase/app */ 206);
+	__webpack_require__(/*! firebase/database */ 208);
+	
+	var config = {
+	  apiKey: "AIzaSyC1RZbfWfMyKPFrJX-LAPwCiu00EF-86FU",
+	  authDomain: "blossom-c67b4.firebaseapp.com",
+	  databaseURL: "https://blossom-c67b4.firebaseio.com",
+	  storageBucket: "blossom-c67b4.appspot.com"
+	};
+	
+	firebase.initializeApp(config);
+	
 	var BlossomStore = function () {
 	  function BlossomStore() {
 	    _classCallCheck(this, BlossomStore);
-	
-	    var firebase = __webpack_require__(/*! firebase/app */ 206);
-	    __webpack_require__(/*! firebase/database */ 208);
-	
-	    var config = {
-	      apiKey: "AIzaSyC1RZbfWfMyKPFrJX-LAPwCiu00EF-86FU",
-	      authDomain: "blossom-c67b4.firebaseapp.com",
-	      databaseURL: "https://blossom-c67b4.firebaseio.com",
-	      storageBucket: "blossom-c67b4.appspot.com"
-	    };
-	
-	    firebase.initializeApp(config);
 	
 	    this.database = firebase.database();
 	  }
@@ -24205,19 +24198,59 @@
 	    value: function saveNewBlossom(blossom) {
 	      var key = this.database.ref("blossoms").push().key;
 	      this.database.ref('/blossoms/' + key).set(blossom);
+	      lastKeyLoaded = key;
 	      return key;
 	    }
 	  }, {
 	    key: "loadBlossom",
-	    value: function loadBlossom(key, callback) {
+	    value: function loadBlossom(key, callback, onNewNode, onChangedNode, onRemoveNode, onNewEdge, onChangedEdge) {
 	      try {
 	        firebase.database().ref('/blossoms/' + key).once('value', function (snapshot) {
-	          callback(snapshot.val());
+	          if (snapshot.exists()) {
+	            firebase.database().ref('/blossoms/' + key + "/nodes").on("child_added", function (n) {
+	              return onNewNode(n.val());
+	            });
+	            firebase.database().ref('/blossoms/' + key + "/nodes").on("child_changed", function (n) {
+	              return onChangedNode(n.key, n.val());
+	            });
+	            firebase.database().ref('/blossoms/' + key + "/nodes").on("child_removed", function (n) {
+	              return onRemoveNode(n.key);
+	            });
+	            firebase.database().ref('/blossoms/' + key + "/edges").on("child_added", function (e) {
+	              return onNewEdge(e.key, e.val());
+	            });
+	            firebase.database().ref('/blossoms/' + key + "/edges").on("child_changed", function (e) {
+	              return onChangedEdge(e.key, e.val());
+	            });
+	          }
+	
+	          lastKeyLoaded = key;
+	          callback(snapshot.exists());
 	        });
 	      } catch (err) {
 	        console.log(err);
 	        callback(null);
 	      }
+	    }
+	  }, {
+	    key: "addNode",
+	    value: function addNode(node) {
+	      firebase.database().ref('/blossoms/' + lastKeyLoaded + "/nodes").push(node);
+	    }
+	  }, {
+	    key: "renameNode",
+	    value: function renameNode(key, node) {
+	      firebase.database().ref('/blossoms/' + lastKeyLoaded + "/nodes/" + key).set(node);
+	    }
+	  }, {
+	    key: "removeNode",
+	    value: function removeNode(key) {
+	      firebase.database().ref('/blossoms/' + lastKeyLoaded + "/nodes/" + key).remove();
+	    }
+	  }, {
+	    key: "setEdge",
+	    value: function setEdge(key, edge) {
+	      firebase.database().ref('/blossoms/' + lastKeyLoaded + "/edges/" + key).set(edge);
 	    }
 	  }]);
 	
@@ -24967,7 +25000,7 @@
 	        return;
 	      }
 	
-	      this.props.dispatch((0, _actions.addNode)(this._inputElement.value));
+	      this.props.dispatch((0, _actions.addNode)(undefined, this._inputElement.value));
 	      this._inputElement.value = "";
 	    }
 	  }, {
@@ -25115,11 +25148,16 @@
 	    value: function render() {
 	      var nodes = this.props.nodes;
 	
-	      var createRow = function createRow(item) {
-	        return _react2.default.createElement(_inputGridRow2.default, { key: item.key, currentNode: item, nodes: nodes });
+	      var createRow = function createRow(index, item) {
+	        return _react2.default.createElement(_inputGridRow2.default, { key: item.key, currentNode: item, nodes: nodes, index: index });
 	      };
 	
-	      var rows = nodes.map(createRow);
+	      var i = 0;
+	      var rows = nodes.map(function (n) {
+	        var row = createRow(i, n);
+	        i += 1;
+	        return row;
+	      });
 	
 	      return _react2.default.createElement(
 	        'table',
@@ -25261,7 +25299,7 @@
 	
 	var _reactRedux = __webpack_require__(/*! react-redux */ 175);
 	
-	var _actions = __webpack_require__(/*! ../actions */ 204);
+	var _nodeActions = __webpack_require__(/*! ../actions/nodeActions */ 248);
 	
 	var _inputCell = __webpack_require__(/*! ./inputCell */ 220);
 	
@@ -25294,7 +25332,7 @@
 	  }, {
 	    key: 'onChange',
 	    value: function onChange(valueObject) {
-	      this.props.renameNode(this.props.currentNode.key, valueObject.text);
+	      this.props.renameNode(this.props.index, this.props.currentNode.key, valueObject.text);
 	    }
 	  }, {
 	    key: 'isValid',
@@ -25342,8 +25380,8 @@
 	
 	var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 	  return {
-	    renameNode: function renameNode(key, name) {
-	      dispatch((0, _actions.renameNode)(key, name));
+	    renameNode: function renameNode(index, key, name) {
+	      dispatch((0, _nodeActions.renameNode)(index, key, name));
 	    }
 	  };
 	};
@@ -27396,6 +27434,87 @@
 	};
 	
 	exports.default = highlights;
+
+/***/ },
+/* 244 */,
+/* 245 */,
+/* 246 */,
+/* 247 */,
+/* 248 */
+/*!********************************!*\
+  !*** ./actions/nodeActions.js ***!
+  \********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.renameNode = exports.deleteNode = exports.addNode = undefined;
+	
+	var _blossomStore = __webpack_require__(/*! ../app/blossomStore */ 205);
+	
+	var _blossomStore2 = _interopRequireDefault(_blossomStore);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var blossomStore = new _blossomStore2.default();
+	
+	var createNode = function createNode(key, name) {
+	  return {
+	    key: key || Date.now(),
+	    name: name
+	  };
+	};
+	
+	var addNode = exports.addNode = function addNode(key, name, fromStore) {
+	  var node = createNode(key, name);
+	  var type = 'ADD_NODE';
+	
+	  if (!fromStore) {
+	    blossomStore.addNode(node);
+	    type = 'NO_ACTION'; // The store listeners will fire another action.
+	  }
+	
+	  return {
+	    type: type,
+	    node: node,
+	    fromStore: fromStore
+	  };
+	};
+	
+	var deleteNode = exports.deleteNode = function deleteNode(index, fromStore) {
+	  var type = 'ADD_NODE';
+	
+	  if (!fromStore) {
+	    blossomStore.removeNode(index);
+	    type = 'NO_ACTION'; // The store listeners will fire another action.
+	  }
+	
+	  return {
+	    type: 'DELETE_NODE',
+	    index: index,
+	    fromStore: fromStore
+	  };
+	};
+	
+	var renameNode = exports.renameNode = function renameNode(index, key, name, fromStore) {
+	  var node = createNode(key, name);
+	  var type = 'RENAME_NODE';
+	
+	  if (!fromStore) {
+	    blossomStore.renameNode(index, node);
+	    type = 'NO_ACTION'; // The store listeners will fire another action.
+	  }
+	
+	  return {
+	    type: type,
+	    index: index,
+	    node: node,
+	    fromStore: fromStore
+	  };
+	};
 
 /***/ }
 /******/ ]);
