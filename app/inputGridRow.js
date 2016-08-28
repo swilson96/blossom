@@ -16,6 +16,10 @@ class InputGridRow extends React.Component {
     this.props.renameNode(this.props.currentNode.key, value.text);
   }
 
+  isValid(value) {
+    return value && value != '';
+  }
+
   render() {
     var inputCells = this.props.nodes.map(n => this.createInputCell(n, this.props.currentNode));
     return (
@@ -26,7 +30,7 @@ class InputGridRow extends React.Component {
             change={v => this.onChange(v)}
             propName="text"
             className="editable"
-            validate={v => true}
+            validate={v => this.isValid(v)}
             classLoading="loading"
             classInvalid="invalid"/>
         </td>

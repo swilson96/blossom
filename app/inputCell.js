@@ -16,7 +16,7 @@ class InputCell extends React.Component {
   }
 
   isValidWeight(value) {
-    return true;
+    return value && !isNaN(parseFloat(value));
   }
 
   render() {
@@ -33,7 +33,7 @@ class InputCell extends React.Component {
           value={value}
           change={v => this.onChange(v)}
           propName="number"
-          validate={this.isValidWeight}
+          validate={v => this.isValidWeight(v)}
           className="cellInput"
           classLoading="loading"
           classInvalid="invalid"/>
