@@ -63,7 +63,7 @@
 	
 	var _reducers2 = _interopRequireDefault(_reducers);
 	
-	var _app = __webpack_require__(/*! ./app/app */ 201);
+	var _app = __webpack_require__(/*! ./app/app */ 202);
 	
 	var _app2 = _interopRequireDefault(_app);
 	
@@ -23667,18 +23667,26 @@
 	
 	var _nodes2 = _interopRequireDefault(_nodes);
 	
-	var _edges = __webpack_require__(/*! ./edges */ 232);
+	var _edges = __webpack_require__(/*! ./edges */ 200);
 	
 	var _edges2 = _interopRequireDefault(_edges);
 	
-	var _key = __webpack_require__(/*! ./key */ 200);
+	var _key = __webpack_require__(/*! ./key */ 201);
 	
 	var _key2 = _interopRequireDefault(_key);
+	
+	var _result = __webpack_require__(/*! ./result */ 238);
+	
+	var _result2 = _interopRequireDefault(_result);
+	
+	var _highlights = __webpack_require__(/*! ./highlights */ 243);
+	
+	var _highlights2 = _interopRequireDefault(_highlights);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var blossomApp = (0, _redux.combineReducers)({
-	  nodes: _nodes2.default, edges: _edges2.default, key: _key2.default
+	  nodes: _nodes2.default, edges: _edges2.default, key: _key2.default, result: _result2.default, highlights: _highlights2.default
 	});
 	
 	exports.default = blossomApp;
@@ -23706,7 +23714,7 @@
 	        name: action.name
 	      };
 	    default:
-	      return state;
+	      return undefined;
 	  }
 	};
 	
@@ -23716,7 +23724,16 @@
 	
 	var removeNode = function removeNode(state, action) {
 	  return state.filter(function (n) {
-	    return n.key == action.key;
+	    return n.key != action.key;
+	  });
+	};
+	
+	var renameNode = function renameNode(state, action) {
+	  return state.map(function (n) {
+	    if (n.key == action.key) {
+	      n.name = action.name;
+	    }
+	    return n;
 	  });
 	};
 	
@@ -23729,6 +23746,8 @@
 	      return addNode(state, action);
 	    case 'DELETE_NODE':
 	      return removeNode(state, action);
+	    case 'RENAME_NODE':
+	      return renameNode(state, action);
 	    case 'SET_BLOSSOM':
 	      return action.blossom.nodes;
 	    default:
@@ -23740,6 +23759,54 @@
 
 /***/ },
 /* 200 */
+/*!***************************!*\
+  !*** ./reducers/edges.js ***!
+  \***************************/
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var setEdge = function setEdge(state, action) {
+	  var found = false;
+	  var newEdges = {};
+	  for (var k in state) {
+	    if (!state.hasOwnProperty(k)) {
+	      return;
+	    }
+	    var edgeToSet = state[k];
+	    if (k == action.key) {
+	      edgeToSet.weight = action.weight;
+	      found = true;
+	    }
+	    newEdges[k] = edgeToSet;
+	  }
+	  if (!found) {
+	    newEdges[action.key] = { weight: action.weight };
+	  }
+	  return newEdges;
+	};
+	
+	var edges = function edges() {
+	  var state = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+	  var action = arguments[1];
+	
+	  switch (action.type) {
+	    case 'SET_EDGE':
+	      return setEdge(state, action);
+	    case 'SET_BLOSSOM':
+	      return action.blossom.edges;
+	    default:
+	      return state;
+	  }
+	};
+	
+	exports.default = edges;
+
+/***/ },
+/* 201 */
 /*!*************************!*\
   !*** ./reducers/key.js ***!
   \*************************/
@@ -23776,7 +23843,7 @@
 	exports.default = key;
 
 /***/ },
-/* 201 */
+/* 202 */
 /*!********************!*\
   !*** ./app/app.js ***!
   \********************/
@@ -23794,17 +23861,25 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _blossomManager = __webpack_require__(/*! ./blossomManager */ 202);
+	var _blossomManager = __webpack_require__(/*! ./blossomManager */ 203);
 	
 	var _blossomManager2 = _interopRequireDefault(_blossomManager);
 	
-	var _addNode = __webpack_require__(/*! ./addNode */ 213);
+	var _addNode = __webpack_require__(/*! ./addNode */ 214);
 	
 	var _addNode2 = _interopRequireDefault(_addNode);
 	
-	var _inputGrid = __webpack_require__(/*! ./inputGrid */ 216);
+	var _inputGrid = __webpack_require__(/*! ./inputGrid */ 217);
 	
 	var _inputGrid2 = _interopRequireDefault(_inputGrid);
+	
+	var _calculateMatching = __webpack_require__(/*! ./calculateMatching */ 232);
+	
+	var _calculateMatching2 = _interopRequireDefault(_calculateMatching);
+	
+	var _displayResults = __webpack_require__(/*! ./displayResults */ 239);
+	
+	var _displayResults2 = _interopRequireDefault(_displayResults);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -23814,7 +23889,7 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	__webpack_require__(/*! ./css/app.scss */ 228);
+	__webpack_require__(/*! ./css/app.scss */ 233);
 	
 	var App = function (_React$Component) {
 	  _inherits(App, _React$Component);
@@ -23842,7 +23917,9 @@
 	          _react2.default.createElement(_blossomManager2.default, null)
 	        ),
 	        _react2.default.createElement(_addNode2.default, null),
-	        _react2.default.createElement(_inputGrid2.default, null)
+	        _react2.default.createElement(_inputGrid2.default, null),
+	        _react2.default.createElement(_calculateMatching2.default, null),
+	        _react2.default.createElement(_displayResults2.default, null)
 	      );
 	    }
 	  }]);
@@ -23853,7 +23930,7 @@
 	exports.default = App;
 
 /***/ },
-/* 202 */
+/* 203 */
 /*!*******************************!*\
   !*** ./app/blossomManager.js ***!
   \*******************************/
@@ -23873,9 +23950,9 @@
 	
 	var _reactRedux = __webpack_require__(/*! react-redux */ 175);
 	
-	var _actions = __webpack_require__(/*! ../actions */ 203);
+	var _actions = __webpack_require__(/*! ../actions */ 204);
 	
-	var _blossomStore = __webpack_require__(/*! ./blossomStore */ 204);
+	var _blossomStore = __webpack_require__(/*! ./blossomStore */ 205);
 	
 	var _blossomStore2 = _interopRequireDefault(_blossomStore);
 	
@@ -23887,7 +23964,7 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	__webpack_require__(/*! ./css/blossomManager.scss */ 209);
+	__webpack_require__(/*! ./css/blossomManager.scss */ 210);
 	
 	var BlossomManager = function (_React$Component) {
 	  _inherits(BlossomManager, _React$Component);
@@ -24025,7 +24102,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(BlossomManager);
 
 /***/ },
-/* 203 */
+/* 204 */
 /*!**************************!*\
   !*** ./actions/index.js ***!
   \**************************/
@@ -24050,6 +24127,14 @@
 	  };
 	};
 	
+	var renameNode = exports.renameNode = function renameNode(key, name) {
+	  return {
+	    type: 'RENAME_NODE',
+	    key: key,
+	    name: name
+	  };
+	};
+	
 	var setKey = exports.setKey = function setKey(key) {
 	  return {
 	    type: 'SET_KEY',
@@ -24071,9 +24156,16 @@
 	    weight: weight
 	  };
 	};
+	
+	var setResult = exports.setResult = function setResult(result) {
+	  return {
+	    type: 'SET_RESULT',
+	    result: result
+	  };
+	};
 
 /***/ },
-/* 204 */
+/* 205 */
 /*!*****************************!*\
   !*** ./app/blossomStore.js ***!
   \*****************************/
@@ -24093,8 +24185,8 @@
 	  function BlossomStore() {
 	    _classCallCheck(this, BlossomStore);
 	
-	    var firebase = __webpack_require__(/*! firebase/app */ 205);
-	    __webpack_require__(/*! firebase/database */ 207);
+	    var firebase = __webpack_require__(/*! firebase/app */ 206);
+	    __webpack_require__(/*! firebase/database */ 208);
 	
 	    var config = {
 	      apiKey: "AIzaSyC1RZbfWfMyKPFrJX-LAPwCiu00EF-86FU",
@@ -24135,7 +24227,7 @@
 	exports.default = BlossomStore;
 
 /***/ },
-/* 205 */
+/* 206 */
 /*!***************************!*\
   !*** ./~/firebase/app.js ***!
   \***************************/
@@ -24148,12 +24240,12 @@
 	 *
 	 *   firebase = require('firebase/app');
 	 */
-	__webpack_require__(/*! ./firebase-app */ 206);
+	__webpack_require__(/*! ./firebase-app */ 207);
 	module.exports = firebase;
 
 
 /***/ },
-/* 206 */
+/* 207 */
 /*!************************************!*\
   !*** ./~/firebase/firebase-app.js ***!
   \************************************/
@@ -24191,7 +24283,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 207 */
+/* 208 */
 /*!********************************!*\
   !*** ./~/firebase/database.js ***!
   \********************************/
@@ -24204,13 +24296,13 @@
 	 *
 	 *   database = require('firebase/database');
 	 */
-	__webpack_require__(/*! ./firebase-app */ 206);
-	__webpack_require__(/*! ./firebase-database */ 208);
+	__webpack_require__(/*! ./firebase-app */ 207);
+	__webpack_require__(/*! ./firebase-database */ 209);
 	module.exports = firebase.database;
 
 
 /***/ },
-/* 208 */
+/* 209 */
 /*!*****************************************!*\
   !*** ./~/firebase/firebase-database.js ***!
   \*****************************************/
@@ -24462,7 +24554,7 @@
 
 
 /***/ },
-/* 209 */
+/* 210 */
 /*!*************************************!*\
   !*** ./app/css/blossomManager.scss ***!
   \*************************************/
@@ -24471,10 +24563,10 @@
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(/*! !./../../~/css-loader!./../../~/sass-loader!./blossomManager.scss */ 210);
+	var content = __webpack_require__(/*! !./../../~/css-loader!./../../~/sass-loader!./blossomManager.scss */ 211);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(/*! ./../../~/style-loader/addStyles.js */ 212)(content, {});
+	var update = __webpack_require__(/*! ./../../~/style-loader/addStyles.js */ 213)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -24491,13 +24583,13 @@
 	}
 
 /***/ },
-/* 210 */
+/* 211 */
 /*!********************************************************************!*\
   !*** ./~/css-loader!./~/sass-loader!./app/css/blossomManager.scss ***!
   \********************************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(/*! ./../../~/css-loader/lib/css-base.js */ 211)();
+	exports = module.exports = __webpack_require__(/*! ./../../~/css-loader/lib/css-base.js */ 212)();
 	// imports
 	
 	
@@ -24508,7 +24600,7 @@
 
 
 /***/ },
-/* 211 */
+/* 212 */
 /*!**************************************!*\
   !*** ./~/css-loader/lib/css-base.js ***!
   \**************************************/
@@ -24567,7 +24659,7 @@
 
 
 /***/ },
-/* 212 */
+/* 213 */
 /*!*************************************!*\
   !*** ./~/style-loader/addStyles.js ***!
   \*************************************/
@@ -24822,7 +24914,7 @@
 
 
 /***/ },
-/* 213 */
+/* 214 */
 /*!************************!*\
   !*** ./app/addNode.js ***!
   \************************/
@@ -24842,7 +24934,7 @@
 	
 	var _reactRedux = __webpack_require__(/*! react-redux */ 175);
 	
-	var _actions = __webpack_require__(/*! ../actions */ 203);
+	var _actions = __webpack_require__(/*! ../actions */ 204);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -24852,7 +24944,7 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	__webpack_require__(/*! ./css/addNode.scss */ 214);
+	__webpack_require__(/*! ./css/addNode.scss */ 215);
 	
 	var AddNode = function (_React$Component) {
 	  _inherits(AddNode, _React$Component);
@@ -24860,15 +24952,33 @@
 	  function AddNode() {
 	    _classCallCheck(this, AddNode);
 	
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(AddNode).apply(this, arguments));
+	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(AddNode).call(this));
+	
+	    _this.state = { message: '', className: '' };
+	    return _this;
 	  }
 	
 	  _createClass(AddNode, [{
 	    key: 'addNodeHandler',
 	    value: function addNodeHandler(e) {
 	      e.preventDefault();
+	
+	      if (!this.validate()) {
+	        return;
+	      }
+	
 	      this.props.dispatch((0, _actions.addNode)(this._inputElement.value));
 	      this._inputElement.value = "";
+	    }
+	  }, {
+	    key: 'validate',
+	    value: function validate() {
+	      if (this._inputElement.value == '') {
+	        this.setState({ className: 'invalid', message: 'A node needs a name' });
+	        return false;
+	      }
+	      this.setState({ className: '', message: '' });
+	      return true;
 	    }
 	  }, {
 	    key: 'render',
@@ -24883,13 +24993,18 @@
 	          { onSubmit: function onSubmit(e) {
 	              return _this2.addNodeHandler(e);
 	            } },
-	          _react2.default.createElement('input', { id: 'addNodeInput', ref: function ref(a) {
+	          _react2.default.createElement('input', { id: 'addNodeInput', className: this.state.className, ref: function ref(a) {
 	              return _this2._inputElement = a;
 	            }, placeholder: 'new node' }),
 	          _react2.default.createElement(
 	            'button',
 	            { id: 'addNodeSubmit', type: 'submit' },
 	            'Add'
+	          ),
+	          _react2.default.createElement(
+	            'span',
+	            { className: 'errorMessage' },
+	            this.state.message
 	          )
 	        )
 	      );
@@ -24902,7 +25017,7 @@
 	exports.default = (0, _reactRedux.connect)()(AddNode);
 
 /***/ },
-/* 214 */
+/* 215 */
 /*!******************************!*\
   !*** ./app/css/addNode.scss ***!
   \******************************/
@@ -24911,10 +25026,10 @@
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(/*! !./../../~/css-loader!./../../~/sass-loader!./addNode.scss */ 215);
+	var content = __webpack_require__(/*! !./../../~/css-loader!./../../~/sass-loader!./addNode.scss */ 216);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(/*! ./../../~/style-loader/addStyles.js */ 212)(content, {});
+	var update = __webpack_require__(/*! ./../../~/style-loader/addStyles.js */ 213)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -24931,24 +25046,24 @@
 	}
 
 /***/ },
-/* 215 */
+/* 216 */
 /*!*************************************************************!*\
   !*** ./~/css-loader!./~/sass-loader!./app/css/addNode.scss ***!
   \*************************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(/*! ./../../~/css-loader/lib/css-base.js */ 211)();
+	exports = module.exports = __webpack_require__(/*! ./../../~/css-loader/lib/css-base.js */ 212)();
 	// imports
 	
 	
 	// module
-	exports.push([module.id, "\r\n", ""]);
+	exports.push([module.id, ".errorMessage {\n  margin: 5px;\n  color: red; }\n", ""]);
 	
 	// exports
 
 
 /***/ },
-/* 216 */
+/* 217 */
 /*!**************************!*\
   !*** ./app/inputGrid.js ***!
   \**************************/
@@ -24968,7 +25083,13 @@
 	
 	var _reactRedux = __webpack_require__(/*! react-redux */ 175);
 	
-	var _inputGridComponents = __webpack_require__(/*! ./inputGridComponents */ 217);
+	var _inputGridHeader = __webpack_require__(/*! ./inputGridHeader */ 218);
+	
+	var _inputGridHeader2 = _interopRequireDefault(_inputGridHeader);
+	
+	var _inputGridRow = __webpack_require__(/*! ./inputGridRow */ 219);
+	
+	var _inputGridRow2 = _interopRequireDefault(_inputGridRow);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -24978,7 +25099,7 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	__webpack_require__(/*! ./css/inputGrid.scss */ 226);
+	__webpack_require__(/*! ./css/inputGrid.scss */ 230);
 	
 	var InputGrid = function (_React$Component) {
 	  _inherits(InputGrid, _React$Component);
@@ -24995,7 +25116,7 @@
 	      var nodes = this.props.nodes;
 	
 	      var createRow = function createRow(item) {
-	        return _react2.default.createElement(_inputGridComponents.InputGridRow, { key: item.key, currentNode: item, nodes: nodes });
+	        return _react2.default.createElement(_inputGridRow2.default, { key: item.key, currentNode: item, nodes: nodes });
 	      };
 	
 	      var rows = nodes.map(createRow);
@@ -25003,7 +25124,7 @@
 	      return _react2.default.createElement(
 	        'table',
 	        { id: 'inputGrid', className: 'inputGrid' },
-	        _react2.default.createElement(_inputGridComponents.TableHeader, { nodes: nodes }),
+	        _react2.default.createElement(_inputGridHeader2.default, { nodes: nodes }),
 	        _react2.default.createElement(
 	          'tbody',
 	          null,
@@ -25025,28 +25146,23 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(InputGrid);
 
 /***/ },
-/* 217 */
-/*!************************************!*\
-  !*** ./app/inputGridComponents.js ***!
-  \************************************/
+/* 218 */
+/*!********************************!*\
+  !*** ./app/inputGridHeader.js ***!
+  \********************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
+	"use strict";
 	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.InputGridRow = exports.TableHeader = undefined;
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
 	var _react = __webpack_require__(/*! react */ 1);
 	
 	var _react2 = _interopRequireDefault(_react);
-	
-	var _inputCell = __webpack_require__(/*! ./inputCell */ 218);
-	
-	var _inputCell2 = _interopRequireDefault(_inputCell);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -25066,16 +25182,16 @@
 	  }
 	
 	  _createClass(NodeHeader, [{
-	    key: 'render',
+	    key: "render",
 	    value: function render() {
 	      return _react2.default.createElement(
-	        'th',
-	        { className: 'nameCell rotate', id: this.props.node.key + "_column" },
+	        "th",
+	        { className: "nameCell rotate", id: this.props.node.key + "_column" },
 	        _react2.default.createElement(
-	          'div',
+	          "div",
 	          null,
 	          _react2.default.createElement(
-	            'span',
+	            "span",
 	            null,
 	            this.props.node.name
 	          )
@@ -25087,43 +25203,82 @@
 	  return NodeHeader;
 	}(_react2.default.Component);
 	
-	var TableHeader = function (_React$Component2) {
-	  _inherits(TableHeader, _React$Component2);
+	var InputGridHeader = function (_React$Component2) {
+	  _inherits(InputGridHeader, _React$Component2);
 	
-	  function TableHeader() {
-	    _classCallCheck(this, TableHeader);
+	  function InputGridHeader() {
+	    _classCallCheck(this, InputGridHeader);
 	
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(TableHeader).apply(this, arguments));
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(InputGridHeader).apply(this, arguments));
 	  }
 	
-	  _createClass(TableHeader, [{
-	    key: 'createNameCell',
+	  _createClass(InputGridHeader, [{
+	    key: "createNameCell",
 	    value: function createNameCell(item) {
 	      return _react2.default.createElement(NodeHeader, { key: item.key, node: item });
 	    }
 	  }, {
-	    key: 'render',
+	    key: "render",
 	    value: function render() {
 	      var nameCells = this.props.nodes.map(this.createNameCell);
 	
 	      return _react2.default.createElement(
-	        'thead',
+	        "thead",
 	        null,
 	        _react2.default.createElement(
-	          'tr',
+	          "tr",
 	          null,
-	          _react2.default.createElement('th', null),
+	          _react2.default.createElement("th", null),
 	          nameCells
 	        )
 	      );
 	    }
 	  }]);
 	
-	  return TableHeader;
+	  return InputGridHeader;
 	}(_react2.default.Component);
 	
-	var InputGridRow = function (_React$Component3) {
-	  _inherits(InputGridRow, _React$Component3);
+	exports.default = InputGridHeader;
+
+/***/ },
+/* 219 */
+/*!*****************************!*\
+  !*** ./app/inputGridRow.js ***!
+  \*****************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactRedux = __webpack_require__(/*! react-redux */ 175);
+	
+	var _actions = __webpack_require__(/*! ../actions */ 204);
+	
+	var _inputCell = __webpack_require__(/*! ./inputCell */ 220);
+	
+	var _inputCell2 = _interopRequireDefault(_inputCell);
+	
+	var _riek = __webpack_require__(/*! riek */ 221);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var InputGridRow = function (_React$Component) {
+	  _inherits(InputGridRow, _React$Component);
 	
 	  function InputGridRow() {
 	    _classCallCheck(this, InputGridRow);
@@ -25137,12 +25292,22 @@
 	      return _react2.default.createElement(_inputCell2.default, { key: x.key, x: x, y: y });
 	    }
 	  }, {
+	    key: 'onChange',
+	    value: function onChange(valueObject) {
+	      this.props.renameNode(this.props.currentNode.key, valueObject.text);
+	    }
+	  }, {
+	    key: 'isValid',
+	    value: function isValid(value) {
+	      return value && value != '';
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
-	      var _this4 = this;
+	      var _this2 = this;
 	
 	      var inputCells = this.props.nodes.map(function (n) {
-	        return _this4.createInputCell(n, _this4.props.currentNode);
+	        return _this2.createInputCell(n, _this2.props.currentNode);
 	      });
 	      return _react2.default.createElement(
 	        'tr',
@@ -25150,7 +25315,18 @@
 	        _react2.default.createElement(
 	          'td',
 	          { className: 'nameCell', id: this.props.currentNode.key + "_row" },
-	          this.props.currentNode.name
+	          _react2.default.createElement(_riek.RIEInput, {
+	            value: this.props.currentNode.name,
+	            change: function change(vo) {
+	              return _this2.onChange(vo);
+	            },
+	            propName: 'text',
+	            className: 'editable',
+	            validate: function validate(v) {
+	              return _this2.isValid(v);
+	            },
+	            classLoading: 'loading',
+	            classInvalid: 'invalid' })
 	        ),
 	        inputCells
 	      );
@@ -25160,11 +25336,22 @@
 	  return InputGridRow;
 	}(_react2.default.Component);
 	
-	exports.TableHeader = TableHeader;
-	exports.InputGridRow = InputGridRow;
+	var mapStateToProps = function mapStateToProps(state) {
+	  return {};
+	};
+	
+	var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+	  return {
+	    renameNode: function renameNode(key, name) {
+	      dispatch((0, _actions.renameNode)(key, name));
+	    }
+	  };
+	};
+	
+	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(InputGridRow);
 
 /***/ },
-/* 218 */
+/* 220 */
 /*!**************************!*\
   !*** ./app/inputCell.js ***!
   \**************************/
@@ -25184,9 +25371,9 @@
 	
 	var _reactRedux = __webpack_require__(/*! react-redux */ 175);
 	
-	var _actions = __webpack_require__(/*! ../actions */ 203);
+	var _actions = __webpack_require__(/*! ../actions */ 204);
 	
-	var _riek = __webpack_require__(/*! riek */ 219);
+	var _riek = __webpack_require__(/*! riek */ 221);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -25196,7 +25383,7 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	__webpack_require__(/*! ./css/inputCell.scss */ 230);
+	__webpack_require__(/*! ./css/inputCell.scss */ 228);
 	
 	var InputCell = function (_React$Component) {
 	  _inherits(InputCell, _React$Component);
@@ -25214,43 +25401,55 @@
 	    }
 	  }, {
 	    key: 'onChange',
-	    value: function onChange(value) {
-	      this.props.setEdge(this.getKey(), value.number);
+	    value: function onChange(valueObject) {
+	      this.props.setEdge(this.getKey(), +valueObject.number);
 	    }
 	  }, {
 	    key: 'isValidWeight',
 	    value: function isValidWeight(value) {
-	      return true;
+	      return value && !isNaN(parseFloat(value));
+	    }
+	  }, {
+	    key: 'getClassName',
+	    value: function getClassName() {
+	      var classname = "inputCell";
+	
+	      if (this.props.highlights.indexOf(this.getKey()) >= 0) {
+	        classname += ' highlight';
+	      }
+	
+	      if (this.props.x.key == this.props.y.key) {
+	        classname += ' diagonal';
+	      }
+	
+	      return classname;
 	    }
 	  }, {
 	    key: 'render',
 	    value: function render() {
 	      var _this2 = this;
 	
-	      var className = "inputCell";
 	      var inner = "";
-	      if (this.props.x.key == this.props.y.key) {
-	        className += " diagonal";
-	      } else {
-	        var matches = this.props.edges.filter(function (e) {
-	          return e.key == _this2.getKey();
-	        });
-	        var value = matches.length > 0 ? matches[0].weight : 0;
+	      if (this.props.x.key != this.props.y.key) {
+	        var match = this.props.edges[this.getKey()];
+	        var value = match ? match.weight : 0;
 	
 	        inner = _react2.default.createElement(_riek.RIENumber, {
 	          value: value,
-	          change: function change(v) {
-	            return _this2.onChange(v);
+	          change: function change(vo) {
+	            return _this2.onChange(vo);
 	          },
 	          propName: 'number',
-	          validate: this.isValidWeight,
+	          validate: function validate(v) {
+	            return _this2.isValidWeight(v);
+	          },
 	          className: 'cellInput',
 	          classLoading: 'loading',
 	          classInvalid: 'invalid' });
 	      }
 	      return _react2.default.createElement(
 	        'td',
-	        { className: className, id: this.getKey() },
+	        { id: this.getKey(), className: this.getClassName() },
 	        inner
 	      );
 	    }
@@ -25261,7 +25460,8 @@
 	
 	var mapStateToProps = function mapStateToProps(state) {
 	  return {
-	    edges: state.edges
+	    edges: state.edges,
+	    highlights: state.highlights
 	  };
 	};
 	
@@ -25276,7 +25476,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(InputCell);
 
 /***/ },
-/* 219 */
+/* 221 */
 /*!*****************************!*\
   !*** ./~/riek/lib/index.js ***!
   \*****************************/
@@ -25289,23 +25489,23 @@
 	});
 	exports.RIETags = exports.RIENumber = exports.RIETextArea = exports.RIEInput = exports.RIEToggle = undefined;
 	
-	var _RIEToggle = __webpack_require__(/*! ./RIEToggle */ 220);
+	var _RIEToggle = __webpack_require__(/*! ./RIEToggle */ 222);
 	
 	var _RIEToggle2 = _interopRequireDefault(_RIEToggle);
 	
-	var _RIEStatefulBase2 = __webpack_require__(/*! ./RIEStatefulBase */ 222);
+	var _RIEStatefulBase2 = __webpack_require__(/*! ./RIEStatefulBase */ 224);
 	
 	var _RIEStatefulBase3 = _interopRequireDefault(_RIEStatefulBase2);
 	
-	var _RIETextArea = __webpack_require__(/*! ./RIETextArea */ 223);
+	var _RIETextArea = __webpack_require__(/*! ./RIETextArea */ 225);
 	
 	var _RIETextArea2 = _interopRequireDefault(_RIETextArea);
 	
-	var _RIENumber = __webpack_require__(/*! ./RIENumber */ 224);
+	var _RIENumber = __webpack_require__(/*! ./RIENumber */ 226);
 	
 	var _RIENumber2 = _interopRequireDefault(_RIENumber);
 	
-	var _RIETags = __webpack_require__(/*! ./RIETags */ 225);
+	var _RIETags = __webpack_require__(/*! ./RIETags */ 227);
 	
 	var _RIETags2 = _interopRequireDefault(_RIETags);
 	
@@ -25336,7 +25536,7 @@
 	exports.RIETags = _RIETags2.default;
 
 /***/ },
-/* 220 */
+/* 222 */
 /*!*********************************!*\
   !*** ./~/riek/lib/RIEToggle.js ***!
   \*********************************/
@@ -25352,7 +25552,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _RIEBase2 = __webpack_require__(/*! ./RIEBase */ 221);
+	var _RIEBase2 = __webpack_require__(/*! ./RIEBase */ 223);
 	
 	var _RIEBase3 = _interopRequireDefault(_RIEBase2);
 	
@@ -25405,7 +25605,7 @@
 	exports.default = RIEToggle;
 
 /***/ },
-/* 221 */
+/* 223 */
 /*!*******************************!*\
   !*** ./~/riek/lib/RIEBase.js ***!
   \*******************************/
@@ -25516,7 +25716,7 @@
 	exports.default = RIEBase;
 
 /***/ },
-/* 222 */
+/* 224 */
 /*!***************************************!*\
   !*** ./~/riek/lib/RIEStatefulBase.js ***!
   \***************************************/
@@ -25536,7 +25736,7 @@
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _RIEBase2 = __webpack_require__(/*! ./RIEBase */ 221);
+	var _RIEBase2 = __webpack_require__(/*! ./RIEBase */ 223);
 	
 	var _RIEBase3 = _interopRequireDefault(_RIEBase2);
 	
@@ -25645,7 +25845,7 @@
 	exports.default = RIEStatefulBase;
 
 /***/ },
-/* 223 */
+/* 225 */
 /*!***********************************!*\
   !*** ./~/riek/lib/RIETextArea.js ***!
   \***********************************/
@@ -25665,7 +25865,7 @@
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _RIEStatefulBase2 = __webpack_require__(/*! ./RIEStatefulBase */ 222);
+	var _RIEStatefulBase2 = __webpack_require__(/*! ./RIEStatefulBase */ 224);
 	
 	var _RIEStatefulBase3 = _interopRequireDefault(_RIEStatefulBase2);
 	
@@ -25739,7 +25939,7 @@
 	exports.default = RIETextArea;
 
 /***/ },
-/* 224 */
+/* 226 */
 /*!*********************************!*\
   !*** ./~/riek/lib/RIENumber.js ***!
   \*********************************/
@@ -25755,7 +25955,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _RIEStatefulBase2 = __webpack_require__(/*! ./RIEStatefulBase */ 222);
+	var _RIEStatefulBase2 = __webpack_require__(/*! ./RIEStatefulBase */ 224);
 	
 	var _RIEStatefulBase3 = _interopRequireDefault(_RIEStatefulBase2);
 	
@@ -25821,7 +26021,7 @@
 	exports.default = RIENumber;
 
 /***/ },
-/* 225 */
+/* 227 */
 /*!*******************************!*\
   !*** ./~/riek/lib/RIETags.js ***!
   \*******************************/
@@ -25841,7 +26041,7 @@
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _RIEStatefulBase2 = __webpack_require__(/*! ./RIEStatefulBase */ 222);
+	var _RIEStatefulBase2 = __webpack_require__(/*! ./RIEStatefulBase */ 224);
 	
 	var _RIEStatefulBase3 = _interopRequireDefault(_RIEStatefulBase2);
 	
@@ -26008,99 +26208,7 @@
 	exports.default = RIETags;
 
 /***/ },
-/* 226 */
-/*!********************************!*\
-  !*** ./app/css/inputGrid.scss ***!
-  \********************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-	
-	// load the styles
-	var content = __webpack_require__(/*! !./../../~/css-loader!./../../~/sass-loader!./inputGrid.scss */ 227);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(/*! ./../../~/style-loader/addStyles.js */ 212)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js!./inputGrid.scss", function() {
-				var newContent = require("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js!./inputGrid.scss");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 227 */
-/*!***************************************************************!*\
-  !*** ./~/css-loader!./~/sass-loader!./app/css/inputGrid.scss ***!
-  \***************************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(/*! ./../../~/css-loader/lib/css-base.js */ 211)();
-	// imports
-	
-	
-	// module
-	exports.push([module.id, "table {\n  border-collapse: collapse;\n  margin-top: -40px; }\n\ntd {\n  text-align: center;\n  padding: 10px 5px;\n  border: 1px solid #ccc; }\n  td.inputCell {\n    width: 27px; }\n\n.nameCell {\n  font-weight: bold; }\n\nth {\n  padding: 0 10px;\n  border-bottom: 1px solid #ccc; }\n\n/* Header rotation from https://css-tricks.com/rotated-table-column-headers/ */\nth.rotate {\n  /* Something you can count on */\n  height: 140px;\n  width: 27px;\n  white-space: nowrap; }\n  th.rotate > div {\n    transform: translate(26px, 50px) rotate(315deg);\n    width: 30px; }\n  th.rotate > div > span {\n    border-bottom: 1px solid #ccc;\n    padding: 5px 10px; }\n", ""]);
-	
-	// exports
-
-
-/***/ },
 /* 228 */
-/*!**************************!*\
-  !*** ./app/css/app.scss ***!
-  \**************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-	
-	// load the styles
-	var content = __webpack_require__(/*! !./../../~/css-loader!./../../~/sass-loader!./app.scss */ 229);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(/*! ./../../~/style-loader/addStyles.js */ 212)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js!./app.scss", function() {
-				var newContent = require("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js!./app.scss");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 229 */
-/*!*********************************************************!*\
-  !*** ./~/css-loader!./~/sass-loader!./app/css/app.scss ***!
-  \*********************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(/*! ./../../~/css-loader/lib/css-base.js */ 211)();
-	// imports
-	
-	
-	// module
-	exports.push([module.id, "body {\n  padding: 10px;\n  background-color: #66CCFF;\n  font-family: sans-serif; }\n\nform {\n  margin: 0; }\n\ninput {\n  padding: 10px;\n  margin: 5px;\n  font-size: 16px;\n  border: 2px solid #FFF; }\n\nbutton {\n  padding: 10px;\n  font-size: 16px;\n  margin: 5px;\n  background-color: #0066FF;\n  color: #FFF;\n  border: 2px solid #0066FF; }\n\nbutton:hover {\n  background-color: #003399;\n  border: 2px solid #003399;\n  cursor: pointer; }\n\nnav {\n  height: 100px; }\n\nh1 {\n  margin: 5px;\n  float: left; }\n", ""]);
-	
-	// exports
-
-
-/***/ },
-/* 230 */
 /*!********************************!*\
   !*** ./app/css/inputCell.scss ***!
   \********************************/
@@ -26109,10 +26217,10 @@
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(/*! !./../../~/css-loader!./../../~/sass-loader!./inputCell.scss */ 231);
+	var content = __webpack_require__(/*! !./../../~/css-loader!./../../~/sass-loader!./inputCell.scss */ 229);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(/*! ./../../~/style-loader/addStyles.js */ 212)(content, {});
+	var update = __webpack_require__(/*! ./../../~/style-loader/addStyles.js */ 213)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -26129,28 +26237,74 @@
 	}
 
 /***/ },
-/* 231 */
+/* 229 */
 /*!***************************************************************!*\
   !*** ./~/css-loader!./~/sass-loader!./app/css/inputCell.scss ***!
   \***************************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(/*! ./../../~/css-loader/lib/css-base.js */ 211)();
+	exports = module.exports = __webpack_require__(/*! ./../../~/css-loader/lib/css-base.js */ 212)();
 	// imports
 	
 	
 	// module
-	exports.push([module.id, ".cellInput {\n  width: 60px; }\n\n.invalid {\n  outline-color: red; }\n", ""]);
+	exports.push([module.id, ".cellInput {\n  width: 60px; }\n\n.highlight {\n  background-color: yellow; }\n", ""]);
+	
+	// exports
+
+
+/***/ },
+/* 230 */
+/*!********************************!*\
+  !*** ./app/css/inputGrid.scss ***!
+  \********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(/*! !./../../~/css-loader!./../../~/sass-loader!./inputGrid.scss */ 231);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(/*! ./../../~/style-loader/addStyles.js */ 213)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js!./inputGrid.scss", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js!./inputGrid.scss");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 231 */
+/*!***************************************************************!*\
+  !*** ./~/css-loader!./~/sass-loader!./app/css/inputGrid.scss ***!
+  \***************************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(/*! ./../../~/css-loader/lib/css-base.js */ 212)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, "table {\n  border-collapse: collapse;\n  margin-top: -40px; }\n\ntd {\n  text-align: center;\n  padding: 10px 5px;\n  border: 1px solid #ccc; }\n  td.inputCell {\n    width: 27px; }\n\n.nameCell {\n  font-weight: bold; }\n\nth {\n  padding: 0 10px;\n  border-bottom: 1px solid #ccc; }\n\n/* Header rotation from https://css-tricks.com/rotated-table-column-headers/ */\nth.rotate {\n  /* Something you can count on */\n  height: 140px;\n  width: 27px;\n  white-space: nowrap; }\n  th.rotate > div {\n    transform: translate(26px, 50px) rotate(315deg);\n    width: 30px; }\n  th.rotate > div > span {\n    border-bottom: 1px solid #ccc;\n    padding: 5px 10px; }\n", ""]);
 	
 	// exports
 
 
 /***/ },
 /* 232 */
-/*!***************************!*\
-  !*** ./reducers/edges.js ***!
-  \***************************/
-/***/ function(module, exports) {
+/*!**********************************!*\
+  !*** ./app/calculateMatching.js ***!
+  \**********************************/
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
@@ -26158,36 +26312,1090 @@
 	  value: true
 	});
 	
-	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var setEdge = function setEdge(state, action) {
-	  var matches = state.filter(function (e) {
-	    return e.key == action.key;
-	  });
-	  if (matches.length > 0) {
-	    matches[0].weight = action.weight;
-	    return state;
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactRedux = __webpack_require__(/*! react-redux */ 175);
+	
+	var _algorithm = __webpack_require__(/*! ../algorithm */ 237);
+	
+	var _actions = __webpack_require__(/*! ../actions */ 204);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	__webpack_require__(/*! ./css/calculateMatching.scss */ 235);
+	
+	var CalculateMatching = function (_React$Component) {
+	  _inherits(CalculateMatching, _React$Component);
+	
+	  function CalculateMatching() {
+	    _classCallCheck(this, CalculateMatching);
+	
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(CalculateMatching).apply(this, arguments));
 	  }
 	
-	  // No match, so add the edge
-	  return [].concat(_toConsumableArray(state), [{ key: action.key, weight: action.weight }]);
+	  _createClass(CalculateMatching, [{
+	    key: 'calculate',
+	    value: function calculate(e) {
+	      e.preventDefault();
+	
+	      var result = (0, _algorithm.blossomMatching)(this.props.nodes, this.props.edges);
+	
+	      this.props.dispatch((0, _actions.setResult)(result));
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _this2 = this;
+	
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'calculateBlossom' },
+	        _react2.default.createElement(
+	          'form',
+	          { onSubmit: function onSubmit(e) {
+	              return _this2.calculate(e);
+	            } },
+	          _react2.default.createElement(
+	            'button',
+	            { id: 'addNodeSubmit', type: 'submit' },
+	            'Calculate Matching'
+	          )
+	        )
+	      );
+	    }
+	  }]);
+	
+	  return CalculateMatching;
+	}(_react2.default.Component);
+	
+	var mapStateToProps = function mapStateToProps(state) {
+	  return {
+	    nodes: state.nodes,
+	    edges: state.edges
+	  };
 	};
 	
-	var edges = function edges() {
+	exports.default = (0, _reactRedux.connect)(mapStateToProps)(CalculateMatching);
+
+/***/ },
+/* 233 */
+/*!**************************!*\
+  !*** ./app/css/app.scss ***!
+  \**************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(/*! !./../../~/css-loader!./../../~/sass-loader!./app.scss */ 234);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(/*! ./../../~/style-loader/addStyles.js */ 213)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js!./app.scss", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js!./app.scss");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 234 */
+/*!*********************************************************!*\
+  !*** ./~/css-loader!./~/sass-loader!./app/css/app.scss ***!
+  \*********************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(/*! ./../../~/css-loader/lib/css-base.js */ 212)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, "body {\n  padding: 10px;\n  background-color: #66CCFF;\n  font-family: sans-serif; }\n\nform {\n  margin: 0; }\n\ninput {\n  padding: 10px;\n  margin: 5px;\n  font-size: 16px;\n  border: 2px solid #FFF; }\n\nbutton {\n  padding: 10px;\n  font-size: 16px;\n  margin: 5px;\n  background-color: #0066FF;\n  color: #FFF;\n  border: 2px solid #0066FF; }\n\nbutton:hover {\n  background-color: #003399;\n  border: 2px solid #003399;\n  cursor: pointer; }\n\nnav {\n  height: 100px; }\n\nh1 {\n  margin: 5px;\n  float: left; }\n\n.invalid {\n  outline-color: red; }\n", ""]);
+	
+	// exports
+
+
+/***/ },
+/* 235 */
+/*!****************************************!*\
+  !*** ./app/css/calculateMatching.scss ***!
+  \****************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(/*! !./../../~/css-loader!./../../~/sass-loader!./calculateMatching.scss */ 236);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(/*! ./../../~/style-loader/addStyles.js */ 213)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js!./calculateMatching.scss", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js!./calculateMatching.scss");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 236 */
+/*!***********************************************************************!*\
+  !*** ./~/css-loader!./~/sass-loader!./app/css/calculateMatching.scss ***!
+  \***********************************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(/*! ./../../~/css-loader/lib/css-base.js */ 212)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, ".calculateBlossom {\n  position: fixed;\n  bottom: 0;\n  right: 0; }\n", ""]);
+	
+	// exports
+
+
+/***/ },
+/* 237 */
+/*!****************************!*\
+  !*** ./algorithm/index.js ***!
+  \****************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.convertForDisplay = exports.convertForAlgorithm = exports.firstMatching = exports.blossomMatching = undefined;
+	
+	var _edmondsBlossom = __webpack_require__(/*! edmonds-blossom */ 242);
+	
+	var _edmondsBlossom2 = _interopRequireDefault(_edmondsBlossom);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var blossomMatching = exports.blossomMatching = function blossomMatching(nodes, edges) {
+	  var data = convertForAlgorithm(nodes, edges);
+	  console.log(JSON.stringify(data));
+	
+	  var result = (0, _edmondsBlossom2.default)(data);
+	  console.log(JSON.stringify(result));
+	
+	  return convertForDisplay(result, nodes);
+	};
+	
+	var firstMatching = exports.firstMatching = function firstMatching(nodes, edges) {
+	  var pairs = [];
+	  var previous;
+	  nodes.forEach(function (node) {
+	    if (previous) {
+	      pairs.push([previous.name, node.name]);
+	      previous = null;
+	    } else {
+	      previous = node;
+	    }
+	  });
+	  return pairs;
+	};
+	
+	var convertForAlgorithm = exports.convertForAlgorithm = function convertForAlgorithm(nodes, edges) {
+	  var ret = [];
+	  var i = 0;
+	  nodes.forEach(function (n1) {
+	    var j = 0;
+	    nodes.forEach(function (n2) {
+	      if (i >= j) {
+	        j += 1;
+	        return;
+	      };
+	
+	      var e1 = edges[n1.key + ':' + n2.key];
+	      var e2 = edges[n2.key + ':' + n1.key];
+	
+	      if (e1) {
+	        var weight = e1.weight;
+	        if (e2) {
+	          weight += e2.weight;
+	        }
+	        ret.push([i, j, weight]);
+	      } else if (e2) {
+	        ret.push([i, j, e2.weight]);
+	      }
+	      j += 1;
+	    });
+	    i += 1;
+	  });
+	  return ret;
+	};
+	
+	var convertForDisplay = exports.convertForDisplay = function convertForDisplay(result, nodes) {
+	  var ret = [];
+	  var i = 0;
+	  result.forEach(function (j) {
+	    if (j > i) {
+	      ret.push([nodes[i], nodes[j]]);
+	    }
+	    i += 1;
+	  });
+	  return ret;
+	};
+
+/***/ },
+/* 238 */
+/*!****************************!*\
+  !*** ./reducers/result.js ***!
+  \****************************/
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var result = function result() {
 	  var state = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
 	  var action = arguments[1];
 	
 	  switch (action.type) {
-	    case 'SET_EDGE':
-	      return setEdge(state, action);
-	    case 'SET_BLOSSOM':
-	      return action.blossom.edges;
+	    case 'SET_RESULT':
+	      console.log(JSON.stringify(action.result));
+	      return action.result;
 	    default:
 	      return state;
 	  }
 	};
 	
-	exports.default = edges;
+	exports.default = result;
+
+/***/ },
+/* 239 */
+/*!*******************************!*\
+  !*** ./app/displayResults.js ***!
+  \*******************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactRedux = __webpack_require__(/*! react-redux */ 175);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	__webpack_require__(/*! ./css/displayResults.scss */ 240);
+	
+	var DisplayResults = function (_React$Component) {
+	  _inherits(DisplayResults, _React$Component);
+	
+	  function DisplayResults() {
+	    _classCallCheck(this, DisplayResults);
+	
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(DisplayResults).apply(this, arguments));
+	  }
+	
+	  _createClass(DisplayResults, [{
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'results' },
+	        this.props.result.length ? _react2.default.createElement(
+	          'h2',
+	          null,
+	          'RESULTS'
+	        ) : '',
+	        this.props.result.map(function (pair) {
+	          return _react2.default.createElement(
+	            'div',
+	            { key: pair[0].key },
+	            pair[0].name,
+	            ', ',
+	            pair[1].name
+	          );
+	        })
+	      );
+	    }
+	  }]);
+	
+	  return DisplayResults;
+	}(_react2.default.Component);
+	
+	var mapStateToProps = function mapStateToProps(state) {
+	  return {
+	    result: state.result
+	  };
+	};
+	
+	exports.default = (0, _reactRedux.connect)(mapStateToProps)(DisplayResults);
+
+/***/ },
+/* 240 */
+/*!*************************************!*\
+  !*** ./app/css/displayResults.scss ***!
+  \*************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(/*! !./../../~/css-loader!./../../~/sass-loader!./displayResults.scss */ 241);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(/*! ./../../~/style-loader/addStyles.js */ 213)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js!./displayResults.scss", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js!./displayResults.scss");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 241 */
+/*!********************************************************************!*\
+  !*** ./~/css-loader!./~/sass-loader!./app/css/displayResults.scss ***!
+  \********************************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(/*! ./../../~/css-loader/lib/css-base.js */ 212)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, "", ""]);
+	
+	// exports
+
+
+/***/ },
+/* 242 */
+/*!******************************************!*\
+  !*** ./~/edmonds-blossom/app/blossom.js ***!
+  \******************************************/
+/***/ function(module, exports) {
+
+	/*Converted to JS from Python by Matt Krick. Original: http://jorisvr.nl/maximummatching.html*/
+	
+	module.exports = function (edges, maxCardinality) {
+	  if (edges.length === 0) {
+	    return edges;
+	  }
+	  var edmonds = new Edmonds(edges, maxCardinality);
+	  return edmonds.maxWeightMatching();
+	
+	};
+	
+	var Edmonds = function (edges, maxCardinality) {
+	  this.edges = edges;
+	  this.maxCardinality = maxCardinality;
+	  this.nEdge = edges.length;
+	  this.init();
+	};
+	
+	Edmonds.prototype.maxWeightMatching = function () {
+	  for (var t = 0; t < this.nVertex; t++) {
+	    //console.log('DEBUG: STAGE ' + t);
+	    this.label = filledArray(2 * this.nVertex, 0);
+	    this.bestEdge = filledArray(2 * this.nVertex, -1);
+	    this.blossomBestEdges = initArrArr(2 * this.nVertex);
+	    this.allowEdge = filledArray(this.nEdge, false);
+	    this.queue = [];
+	    for (var v = 0; v < this.nVertex; v++) {
+	      if (this.mate[v] === -1 && this.label[this.inBlossom[v]] === 0) {
+	        this.assignLabel(v, 1, -1);
+	      }
+	    }
+	    var augmented = false;
+	    while (true) {
+	      //console.log('DEBUG: SUBSTAGE');
+	      while (this.queue.length > 0 && !augmented) {
+	        v = this.queue.pop();
+	        //console.log('DEBUG: POP ', 'v=' + v);
+	        //console.assert(this.label[this.inBlossom[v]] == 1);
+	        for (var ii = 0; ii < this.neighbend[v].length; ii++) {
+	          var p = this.neighbend[v][ii];
+	          var k = ~~(p / 2);
+	          var w = this.endpoint[p];
+	          if (this.inBlossom[v] === this.inBlossom[w]) continue;
+	          if (!this.allowEdge[k]) {
+	            var kSlack = this.slack(k);
+	            if (kSlack <= 0) {
+	              this.allowEdge[k] = true;
+	            }
+	          }
+	          if (this.allowEdge[k]) {
+	            if (this.label[this.inBlossom[w]] === 0) {
+	              this.assignLabel(w, 2, p ^ 1);
+	            } else if (this.label[this.inBlossom[w]] === 1) {
+	              var base = this.scanBlossom(v, w);
+	              if (base >= 0) {
+	                this.addBlossom(base, k);
+	              } else {
+	                this.augmentMatching(k);
+	                augmented = true;
+	                break;
+	              }
+	            } else if (this.label[w] === 0) {
+	              //console.assert(this.label[this.inBlossom[w]] === 2);
+	              this.label[w] = 2;
+	              this.labelEnd[w] = p ^ 1;
+	            }
+	          } else if (this.label[this.inBlossom[w]] === 1) {
+	            var b = this.inBlossom[v];
+	            if (this.bestEdge[b] === -1 || kSlack < this.slack(this.bestEdge[b])) {
+	              this.bestEdge[b] = k;
+	            }
+	          } else if (this.label[w] === 0) {
+	            if (this.bestEdge[w] === -1 || kSlack < this.slack(this.bestEdge[w])) {
+	              this.bestEdge[w] = k;
+	            }
+	          }
+	        }
+	      }
+	      if (augmented) break;
+	      var deltaType = -1;
+	      var delta = [];
+	      var deltaEdge = [];
+	      var deltaBlossom = [];
+	      if (!this.maxCardinality) {
+	        deltaType = 1;
+	        delta = getMin(this.dualVar, 0, this.nVertex - 1);
+	      }
+	      for (v = 0; v < this.nVertex; v++) {
+	        if (this.label[this.inBlossom[v]] === 0 && this.bestEdge[v] !== -1) {
+	          var d = this.slack(this.bestEdge[v]);
+	          if (deltaType === -1 || d < delta) {
+	            delta = d;
+	            deltaType = 2;
+	            deltaEdge = this.bestEdge[v];
+	          }
+	        }
+	      }
+	      for (b = 0; b < 2 * this.nVertex; b++) {
+	        if (this.blossomParent[b] === -1 && this.label[b] === 1 && this.bestEdge[b] !== -1) {
+	          kSlack = this.slack(this.bestEdge[b]);
+	          ////console.assert((kSlack % 2) == 0);
+	          d = kSlack / 2;
+	          if (deltaType === -1 || d < delta) {
+	            delta = d;
+	            deltaType = 3;
+	            deltaEdge = this.bestEdge[b];
+	          }
+	        }
+	      }
+	      for (b = this.nVertex; b < this.nVertex * 2; b++) {
+	        if (this.blossomBase[b] >= 0 && this.blossomParent[b] === -1 && this.label[b] === 2 && (deltaType === -1 || this.dualVar[b] < delta)) {
+	          delta = this.dualVar[b];
+	          deltaType = 4;
+	          deltaBlossom = b;
+	        }
+	      }
+	      if (deltaType === -1) {
+	        //console.assert(this.maxCardinality);
+	        deltaType = 1;
+	        delta = Math.max(0, getMin(this.dualVar, 0, this.nVertex - 1));
+	      }
+	      for (v = 0; v < this.nVertex; v++) {
+	        var curLabel = this.label[this.inBlossom[v]];
+	        if (curLabel === 1) {
+	          this.dualVar[v] -= delta;
+	        } else if (curLabel === 2) {
+	          this.dualVar[v] += delta;
+	        }
+	      }
+	      for (b = this.nVertex; b < this.nVertex * 2; b++) {
+	        if (this.blossomBase[b] >= 0 && this.blossomParent[b] === -1) {
+	          if (this.label[b] === 1) {
+	            this.dualVar[b] += delta;
+	          } else if (this.label[b] === 2) {
+	            this.dualVar[b] -= delta;
+	          }
+	        }
+	      }
+	      //console.log('DEBUG: deltaType', deltaType, ' delta: ', delta);
+	      if (deltaType === 1) {
+	        break;
+	      } else if (deltaType === 2) {
+	        this.allowEdge[deltaEdge] = true;
+	        var i = this.edges[deltaEdge][0];
+	        var j = this.edges[deltaEdge][1];
+	        var wt = this.edges[deltaEdge][2];
+	        if (this.label[this.inBlossom[i]] === 0) {
+	          i = i ^ j;
+	          j = j ^ i;
+	          i = i ^ j;
+	        }
+	        //console.assert(this.label[this.inBlossom[i]] == 1);
+	        this.queue.push(i);
+	      } else if (deltaType === 3) {
+	        this.allowEdge[deltaEdge] = true;
+	        i = this.edges[deltaEdge][0];
+	        j = this.edges[deltaEdge][1];
+	        wt = this.edges[deltaEdge][2];
+	        //console.assert(this.label[this.inBlossom[i]] == 1);
+	        this.queue.push(i);
+	      } else if (deltaType === 4) {
+	        this.expandBlossom(deltaBlossom, false);
+	      }
+	    }
+	    if (!augmented) break;
+	    for (b = this.nVertex; b < this.nVertex * 2; b++) {
+	      if (this.blossomParent[b] === -1 && this.blossomBase[b] >= 0 && this.label[b] === 1 && this.dualVar[b] === 0) {
+	        this.expandBlossom(b, true);
+	      }
+	    }
+	  }
+	  for (v = 0; v < this.nVertex; v++) {
+	    if (this.mate[v] >= 0) {
+	      this.mate[v] = this.endpoint[this.mate[v]];
+	    }
+	  }
+	  for (v = 0; v < this.nVertex; v++) {
+	    //console.assert(this.mate[v] == -1 || this.mate[this.mate[v]] == v);
+	  }
+	  return this.mate;
+	};
+	
+	Edmonds.prototype.slack = function (k) {
+	  var i = this.edges[k][0];
+	  var j = this.edges[k][1];
+	  var wt = this.edges[k][2];
+	  return this.dualVar[i] + this.dualVar[j] - 2 * wt;
+	};
+	
+	Edmonds.prototype.blossomLeaves = function (b) {
+	  if (b < this.nVertex) {
+	    return [b];
+	  }
+	  var leaves = [];
+	  var childList = this.blossomChilds[b];
+	  for (var t = 0; t < childList.length; t++) {
+	    if (childList[t] <= this.nVertex) {
+	      leaves.push(childList[t]);
+	    } else {
+	      var leafList = this.blossomLeaves(childList[t]);
+	      for (var v = 0; v < leafList.length; v++) {
+	        leaves.push(leafList[v]);
+	      }
+	    }
+	  }
+	  return leaves;
+	};
+	
+	Edmonds.prototype.assignLabel = function (w, t, p) {
+	  //console.log('DEBUG: assignLabel(' + w + ',' + t + ',' + p + '}');
+	  var b = this.inBlossom[w];
+	  //console.assert(this.label[w] === 0 && this.label[b] === 0);
+	  this.label[w] = this.label[b] = t;
+	  this.labelEnd[w] = this.labelEnd[b] = p;
+	  this.bestEdge[w] = this.bestEdge[b] = -1;
+	  if (t === 1) {
+	    this.queue.push.apply(this.queue, this.blossomLeaves(b));
+	    //console.log('DEBUG: PUSH ' + this.blossomLeaves(b).toString());
+	  } else if (t === 2) {
+	    var base = this.blossomBase[b];
+	    //console.assert(this.mate[base] >= 0);
+	    this.assignLabel(this.endpoint[this.mate[base]], 1, this.mate[base] ^ 1);
+	  }
+	};
+	
+	Edmonds.prototype.scanBlossom = function (v, w) {
+	  //console.log('DEBUG: scanBlossom(' + v + ',' + w + ')');
+	  var path = [];
+	  var base = -1;
+	  while (v !== -1 || w !== -1) {
+	    var b = this.inBlossom[v];
+	    if ((this.label[b] & 4)) {
+	      base = this.blossomBase[b];
+	      break;
+	    }
+	    //console.assert(this.label[b] === 1);
+	    path.push(b);
+	    this.label[b] = 5;
+	    //console.assert(this.labelEnd[b] === this.mate[this.blossomBase[b]]);
+	    if (this.labelEnd[b] === -1) {
+	      v = -1;
+	    } else {
+	      v = this.endpoint[this.labelEnd[b]];
+	      b = this.inBlossom[v];
+	      //console.assert(this.label[b] === 2);
+	      //console.assert(this.labelEnd[b] >= 0);
+	      v = this.endpoint[this.labelEnd[b]];
+	    }
+	    if (w !== -1) {
+	      v = v ^ w;
+	      w = w ^ v;
+	      v = v ^ w;
+	    }
+	  }
+	  for (var ii = 0; ii < path.length; ii++) {
+	    b = path[ii];
+	    this.label[b] = 1;
+	  }
+	  return base;
+	};
+	
+	Edmonds.prototype.addBlossom = function (base, k) {
+	  var v = this.edges[k][0];
+	  var w = this.edges[k][1];
+	  var wt = this.edges[k][2];
+	  var bb = this.inBlossom[base];
+	  var bv = this.inBlossom[v];
+	  var bw = this.inBlossom[w];
+	  b = this.unusedBlossoms.pop();
+	  //console.log('DEBUG: addBlossom(' + base + ',' + k + ')' + ' (v=' + v + ' w=' + w + ')' + ' -> ' + b);
+	  this.blossomBase[b] = base;
+	  this.blossomParent[b] = -1;
+	  this.blossomParent[bb] = b;
+	  path = this.blossomChilds[b] = [];
+	  var endPs = this.blossomEndPs[b] = [];
+	  while (bv !== bb) {
+	    this.blossomParent[bv] = b;
+	    path.push(bv);
+	    endPs.push(this.labelEnd[bv]);
+	    //console.assert(this.label[bv] === 2 || (this.label[bv] === 1 && this.labelEnd[bv] === this.mate[this.blossomBase[bv]]));
+	    //console.assert(this.labelEnd[bv] >= 0);
+	    v = this.endpoint[this.labelEnd[bv]];
+	    bv = this.inBlossom[v];
+	  }
+	  path.push(bb);
+	  path.reverse();
+	  endPs.reverse();
+	  endPs.push((2 * k));
+	  while (bw !== bb) {
+	    this.blossomParent[bw] = b;
+	    path.push(bw);
+	    endPs.push(this.labelEnd[bw] ^ 1);
+	    //console.assert(this.label[bw] === 2 || (this.label[bw] === 1 && this.labelEnd[bw] === this.mate[this.blossomBase[bw]]));
+	    //console.assert(this.labelEnd[bw] >= 0);
+	    w = this.endpoint[this.labelEnd[bw]];
+	    bw = this.inBlossom[w];
+	  }
+	  //console.assert(this.label[bb] === 1);
+	  this.label[b] = 1;
+	  this.labelEnd[b] = this.labelEnd[bb];
+	  this.dualVar[b] = 0;
+	  var leaves = this.blossomLeaves(b);
+	  for (var ii = 0; ii < leaves.length; ii++) {
+	    v = leaves[ii];
+	    if (this.label[this.inBlossom[v]] === 2) {
+	      this.queue.push(v);
+	    }
+	    this.inBlossom[v] = b;
+	  }
+	  var bestEdgeTo = filledArray(2 * this.nVertex, -1);
+	  for (ii = 0; ii < path.length; ii++) {
+	    bv = path[ii];
+	    if (this.blossomBestEdges[bv].length === 0) {
+	      var nbLists = [];
+	      leaves = this.blossomLeaves(bv);
+	      for (var x = 0; x < leaves.length; x++) {
+	        v = leaves[x];
+	        nbLists[x] = [];
+	        for (var y = 0; y < this.neighbend[v].length; y++) {
+	          var p = this.neighbend[v][y];
+	          nbLists[x].push(~~(p / 2));
+	        }
+	      }
+	    } else {
+	      nbLists = [this.blossomBestEdges[bv]];
+	    }
+	    //console.log('DEBUG: nbLists ' + nbLists.toString());
+	    for (x = 0; x < nbLists.length; x++) {
+	      var nbList = nbLists[x];
+	      for (y = 0; y < nbList.length; y++) {
+	        k = nbList[y];
+	        var i = this.edges[k][0];
+	        var j = this.edges[k][1];
+	        wt = this.edges[k][2];
+	        if (this.inBlossom[j] === b) {
+	          i = i ^ j;
+	          j = j ^ i;
+	          i = i ^ j;
+	        }
+	        var bj = this.inBlossom[j];
+	        if (bj !== b && this.label[bj] === 1 && (bestEdgeTo[bj] === -1 || this.slack(k) < this.slack(bestEdgeTo[bj]))) {
+	          bestEdgeTo[bj] = k;
+	        }
+	      }
+	    }
+	    this.blossomBestEdges[bv] = [];
+	    this.bestEdge[bv] = -1;
+	  }
+	  var be = [];
+	  for (ii = 0; ii < bestEdgeTo.length; ii++) {
+	    k = bestEdgeTo[ii];
+	    if (k !== -1) {
+	      be.push(k);
+	    }
+	  }
+	  this.blossomBestEdges[b] = be;
+	  //console.log('DEBUG: blossomBestEdges[' + b + ']= ' + this.blossomBestEdges[b].toString());
+	  this.bestEdge[b] = -1;
+	  for (ii = 0; ii < this.blossomBestEdges[b].length; ii++) {
+	    k = this.blossomBestEdges[b][ii];
+	    if (this.bestEdge[b] === -1 || this.slack(k) < this.slack(this.bestEdge[b])) {
+	      this.bestEdge[b] = k;
+	    }
+	  }
+	  //console.log('DEBUG: blossomChilds[' + b + ']= ' + this.blossomChilds[b].toString());
+	};
+	
+	Edmonds.prototype.expandBlossom = function (b, endStage) {
+	  //console.log('DEBUG: expandBlossom(' + b + ',' + endStage + ') ' + this.blossomChilds[b].toString());
+	  for (var ii = 0; ii < this.blossomChilds[b].length; ii++) {
+	    var s = this.blossomChilds[b][ii];
+	    this.blossomParent[s] = -1;
+	    if (s < this.nVertex) {
+	      this.inBlossom[s] = s;
+	    } else if (endStage && this.dualVar[s] === 0) {
+	      this.expandBlossom(s, endStage);
+	    } else {
+	      var leaves = this.blossomLeaves(s);
+	      for (var jj = 0; jj < leaves.length; jj++) {
+	        v = leaves[jj];
+	        this.inBlossom[v] = s;
+	      }
+	    }
+	  }
+	  if (!endStage && this.label[b] === 2) {
+	    //console.assert(this.labelEnd[b] >= 0);
+	    var entryChild = this.inBlossom[this.endpoint[this.labelEnd[b] ^ 1]];
+	    var j = this.blossomChilds[b].indexOf(entryChild);
+	    if ((j & 1)) {
+	      j -= this.blossomChilds[b].length;
+	      var jStep = 1;
+	      var endpTrick = 0;
+	    } else {
+	      jStep = -1;
+	      endpTrick = 1;
+	    }
+	    var p = this.labelEnd[b];
+	    while (j !== 0) {
+	      this.label[this.endpoint[p ^ 1]] = 0;
+	      this.label[this.endpoint[pIndex(this.blossomEndPs[b], j - endpTrick) ^ endpTrick ^ 1]] = 0;
+	      this.assignLabel(this.endpoint[p ^ 1], 2, p);
+	      this.allowEdge[~~(pIndex(this.blossomEndPs[b], j - endpTrick) / 2)] = true;
+	      j += jStep;
+	      p = pIndex(this.blossomEndPs[b], j - endpTrick) ^ endpTrick;
+	      this.allowEdge[~~(p / 2)] = true;
+	      j += jStep;
+	    }
+	    var bv = pIndex(this.blossomChilds[b], j);
+	    this.label[this.endpoint[p ^ 1]] = this.label[bv] = 2;
+	
+	    this.labelEnd[this.endpoint[p ^ 1]] = this.labelEnd[bv] = p;
+	    this.bestEdge[bv] = -1;
+	    j += jStep;
+	    while (pIndex(this.blossomChilds[b], j) !== entryChild) {
+	      bv = pIndex(this.blossomChilds[b], j);
+	      if (this.label[bv] === 1) {
+	        j += jStep;
+	        continue;
+	      }
+	      leaves = this.blossomLeaves(bv);
+	      for (ii = 0; ii < leaves.length; ii++) {
+	        v = leaves[ii];
+	        if (this.label[v] !== 0) break;
+	      }
+	      if (this.label[v] !== 0) {
+	        //console.assert(this.label[v] === 2);
+	        //console.assert(this.inBlossom[v] === bv);
+	        this.label[v] = 0;
+	        this.label[this.endpoint[this.mate[this.blossomBase[bv]]]] = 0;
+	        this.assignLabel(v, 2, this.labelEnd[v]);
+	      }
+	      j += jStep;
+	    }
+	  }
+	  this.label[b] = this.labelEnd[b] = -1;
+	  this.blossomEndPs[b] = this.blossomChilds[b] = [];
+	  this.blossomBase[b] = -1;
+	  this.blossomBestEdges[b] = [];
+	  this.bestEdge[b] = -1;
+	  this.unusedBlossoms.push(b);
+	};
+	
+	Edmonds.prototype.augmentBlossom = function (b, v) {
+	  //console.log('DEBUG: augmentBlossom(' + b + ',' + v + ')');
+	  var i, j;
+	  var t = v;
+	  while (this.blossomParent[t] !== b) {
+	    t = this.blossomParent[t];
+	  }
+	  if (t > this.nVertex) {
+	    this.augmentBlossom(t, v);
+	  }
+	  i = j = this.blossomChilds[b].indexOf(t);
+	  if ((i & 1)) {
+	    j -= this.blossomChilds[b].length;
+	    var jStep = 1;
+	    var endpTrick = 0;
+	  } else {
+	    jStep = -1;
+	    endpTrick = 1;
+	  }
+	  while (j !== 0) {
+	    j += jStep;
+	    t = pIndex(this.blossomChilds[b], j);
+	    var p = pIndex(this.blossomEndPs[b], j - endpTrick) ^ endpTrick;
+	    if (t >= this.nVertex) {
+	      this.augmentBlossom(t, this.endpoint[p]);
+	    }
+	    j += jStep;
+	    t = pIndex(this.blossomChilds[b], j);
+	    if (t >= this.nVertex) {
+	      this.augmentBlossom(t, this.endpoint[p ^ 1]);
+	    }
+	    this.mate[this.endpoint[p]] = p ^ 1;
+	    this.mate[this.endpoint[p ^ 1]] = p;
+	  }
+	  //console.log('DEBUG: PAIR ' + this.endpoint[p] + ' ' + this.endpoint[p^1] + '(k=' + ~~(p/2) + ')');
+	  this.blossomChilds[b] = this.blossomChilds[b].slice(i).concat(this.blossomChilds[b].slice(0, i));
+	  this.blossomEndPs[b] = this.blossomEndPs[b].slice(i).concat(this.blossomEndPs[b].slice(0, i));
+	  this.blossomBase[b] = this.blossomBase[this.blossomChilds[b][0]];
+	  //console.assert(this.blossomBase[b] === v);
+	};
+	
+	Edmonds.prototype.augmentMatching = function (k) {
+	  var v = this.edges[k][0];
+	  var w = this.edges[k][1];
+	  //console.log('DEBUG: augmentMatching(' + k + ')' + ' (v=' + v + ' ' + 'w=' + w);
+	  //console.log('DEBUG: PAIR ' + v + ' ' + w + '(k=' + k + ')');
+	  for (var ii = 0; ii < 2; ii++) {
+	    if (ii === 0) {
+	      var s = v;
+	      var p = 2 * k + 1;
+	    } else {
+	      s = w;
+	      p = 2 * k;
+	    }
+	    while (true) {
+	      var bs = this.inBlossom[s];
+	      //console.assert(this.label[bs] === 1);
+	      //console.assert(this.labelEnd[bs] === this.mate[this.blossomBase[bs]]);
+	      if (bs >= this.nVertex) {
+	        this.augmentBlossom(bs, s);
+	      }
+	      this.mate[s] = p;
+	      if (this.labelEnd[bs] === -1) break;
+	      var t = this.endpoint[this.labelEnd[bs]];
+	      var bt = this.inBlossom[t];
+	      //console.assert(this.label[bt] === 2);
+	      //console.assert(this.labelEnd[bt] >= 0);
+	      s = this.endpoint[this.labelEnd[bt]];
+	      var j = this.endpoint[this.labelEnd[bt] ^ 1];
+	      //console.assert(this.blossomBase[bt] === t);
+	      if (bt >= this.nVertex) {
+	        this.augmentBlossom(bt, j);
+	      }
+	      this.mate[j] = this.labelEnd[bt];
+	      p = this.labelEnd[bt] ^ 1;
+	      //console.log('DEBUG: PAIR ' + s + ' ' + t + '(k=' + ~~(p/2) + ')');
+	
+	
+	    }
+	  }
+	};
+	
+	
+	//INIT STUFF//
+	Edmonds.prototype.init = function () {
+	  this.nVertexInit();
+	  this.maxWeightInit();
+	  this.endpointInit();
+	  this.neighbendInit();
+	  this.mate = filledArray(this.nVertex, -1);
+	  this.label = filledArray(2 * this.nVertex, 0); //remove?
+	  this.labelEnd = filledArray(2 * this.nVertex, -1);
+	  this.inBlossomInit();
+	  this.blossomParent = filledArray(2 * this.nVertex, -1);
+	  this.blossomChilds = initArrArr(2 * this.nVertex);
+	  this.blossomBaseInit();
+	  this.blossomEndPs = initArrArr(2 * this.nVertex);
+	  this.bestEdge = filledArray(2 * this.nVertex, -1); //remove?
+	  this.blossomBestEdges = initArrArr(2 * this.nVertex); //remove?
+	  this.unusedBlossomsInit();
+	  this.dualVarInit();
+	  this.allowEdge = filledArray(this.nEdge, false); //remove?
+	  this.queue = []; //remove?
+	};
+	Edmonds.prototype.blossomBaseInit = function () {
+	  var base = [];
+	  for (var i = 0; i < this.nVertex; i++) {
+	    base[i] = i;
+	  }
+	  var negs = filledArray(this.nVertex, -1);
+	  this.blossomBase = base.concat(negs);
+	};
+	Edmonds.prototype.dualVarInit = function () {
+	  var mw = filledArray(this.nVertex, this.maxWeight);
+	  var zeros = filledArray(this.nVertex, 0);
+	  this.dualVar = mw.concat(zeros);
+	};
+	Edmonds.prototype.unusedBlossomsInit = function () {
+	  var i, unusedBlossoms = [];
+	  for (i = this.nVertex; i < 2 * this.nVertex; i++) {
+	    unusedBlossoms.push(i);
+	  }
+	  this.unusedBlossoms = unusedBlossoms;
+	};
+	Edmonds.prototype.inBlossomInit = function () {
+	  var i, inBlossom = [];
+	  for (i = 0; i < this.nVertex; i++) {
+	    inBlossom[i] = i;
+	  }
+	  this.inBlossom = inBlossom;
+	};
+	Edmonds.prototype.neighbendInit = function () {
+	  var k, i, j;
+	  var neighbend = initArrArr(this.nVertex);
+	  for (k = 0; k < this.nEdge; k++) {
+	    i = this.edges[k][0];
+	    j = this.edges[k][1];
+	    neighbend[i].push(2 * k + 1);
+	    neighbend[j].push(2 * k);
+	  }
+	  this.neighbend = neighbend;
+	};
+	Edmonds.prototype.endpointInit = function () {
+	  var p;
+	  var endpoint = [];
+	  for (p = 0; p < 2 * this.nEdge; p++) {
+	    endpoint[p] = this.edges[~~(p / 2)][p % 2];
+	  }
+	  this.endpoint = endpoint;
+	};
+	Edmonds.prototype.nVertexInit = function () {
+	  var nVertex = 0;
+	  for (var k = 0; k < this.nEdge; k++) {
+	    var i = this.edges[k][0];
+	    var j = this.edges[k][1];
+	    if (i >= nVertex) nVertex = i + 1;
+	    if (j >= nVertex) nVertex = j + 1;
+	  }
+	  this.nVertex = nVertex;
+	};
+	Edmonds.prototype.maxWeightInit = function () {
+	  var maxWeight = 0;
+	  for (var k = 0; k < this.nEdge; k++) {
+	    var weight = this.edges[k][2];
+	    if (weight > maxWeight) {
+	      maxWeight = weight;
+	    }
+	  }
+	  this.maxWeight = maxWeight;
+	};
+	
+	//HELPERS//
+	function filledArray(len, fill) {
+	  var i, newArray = [];
+	  for (i = 0; i < len; i++) {
+	    newArray[i] = fill;
+	  }
+	  return newArray;
+	}
+	
+	function initArrArr(len) {
+	  var arr = [];
+	  for (var i = 0; i < len; i++) {
+	    arr[i] = [];
+	  }
+	  return arr;
+	}
+	
+	function getMin(arr, start, end) {
+	  var min = Infinity;
+	  for (var i = start; i <= end; i++) {
+	    if (arr[i] < min) {
+	      min = arr[i];
+	    }
+	  }
+	  return min;
+	}
+	
+	function pIndex(arr, idx) {
+	  //if idx is negative, go from the back
+	  return idx < 0 ? arr[arr.length + idx] : arr[idx];
+	}
+
+
+/***/ },
+/* 243 */
+/*!********************************!*\
+  !*** ./reducers/highlights.js ***!
+  \********************************/
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var highlights = function highlights() {
+	  var state = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
+	  var action = arguments[1];
+	
+	  switch (action.type) {
+	    case 'SET_RESULT':
+	      var cells = [];
+	      action.result.forEach(function (pair) {
+	        cells.push(pair[0].key + ":" + pair[1].key);
+	        cells.push(pair[1].key + ":" + pair[0].key);
+	      });
+	      return cells;
+	    default:
+	      return state;
+	  }
+	};
+	
+	exports.default = highlights;
 
 /***/ }
 /******/ ]);
