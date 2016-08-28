@@ -4,6 +4,7 @@ import BlossomManager from './blossomManager';
 import AddNode from './addNode';
 import InputGrid from './inputGrid';
 import CalculateMatching from './calculateMatching';
+import DisplayResults from './displayResults';
 
 require("./css/app.scss");
 
@@ -18,6 +19,7 @@ class App extends React.Component {
         <AddNode />
         <InputGrid />
         <CalculateMatching />
+        <DisplayResults />
       </div>
     )
   }
