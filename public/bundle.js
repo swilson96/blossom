@@ -24009,9 +24009,9 @@
 	
 	var _nodeActions = __webpack_require__(/*! ../actions/nodeActions */ 207);
 	
-	var _edgeActions = __webpack_require__(/*! ../actions/edgeActions */ 208);
+	var _edgeActions = __webpack_require__(/*! ../actions/edgeActions */ 213);
 	
-	var _blossomStore = __webpack_require__(/*! ./blossomStore */ 209);
+	var _blossomStore = __webpack_require__(/*! ./blossomStore */ 208);
 	
 	var _blossomStore2 = _interopRequireDefault(_blossomStore);
 	
@@ -24234,7 +24234,7 @@
 	});
 	exports.renameNode = exports.deleteNode = exports.addNodeFromStore = exports.addNode = undefined;
 	
-	var _blossomStore = __webpack_require__(/*! ../app/blossomStore */ 209);
+	var _blossomStore = __webpack_require__(/*! ../app/blossomStore */ 208);
 	
 	var _blossomStore2 = _interopRequireDefault(_blossomStore);
 	
@@ -24250,8 +24250,13 @@
 	  return node;
 	};
 	
+	var nextId = 0;
+	
 	var addNode = exports.addNode = function addNode(name) {
 	  var node = createNode(undefined, name);
+	  if (!blossomStore.isConnected()) {
+	    return addNodeFromStore(nextId++, node);
+	  }
 	  blossomStore.addNode(node);
 	  return {
 	    type: 'NO_ACTION',
@@ -24274,15 +24279,14 @@
 	var deleteNode = exports.deleteNode = function deleteNode(key, fromStore) {
 	  var type = 'ADD_NODE';
 	
-	  if (!fromStore) {
+	  if (!fromStore && blossomStore.isConnected()) {
 	    blossomStore.removeNode(key);
 	    type = 'NO_ACTION'; // The store listeners will fire another action.
 	  }
 	
 	  return {
 	    type: 'DELETE_NODE',
-	    key: key,
-	    fromStore: fromStore
+	    key: key
 	  };
 	};
 	
@@ -24290,7 +24294,7 @@
 	  var node = createNode(key, name);
 	  var type = 'RENAME_NODE';
 	
-	  if (!fromStore) {
+	  if (!fromStore && blossomStore.isConnected()) {
 	    blossomStore.renameNode(key, node);
 	    type = 'NO_ACTION'; // The store listeners will fire another action.
 	  }
@@ -24298,55 +24302,12 @@
 	  return {
 	    type: type,
 	    key: key,
-	    node: node,
-	    fromStore: fromStore
+	    node: node
 	  };
 	};
 
 /***/ },
 /* 208 */
-/*!********************************!*\
-  !*** ./actions/edgeActions.js ***!
-  \********************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.setEdge = undefined;
-	
-	var _blossomStore = __webpack_require__(/*! ../app/blossomStore */ 209);
-	
-	var _blossomStore2 = _interopRequireDefault(_blossomStore);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var blossomStore = new _blossomStore2.default();
-	
-	var createEdge = function createEdge(weight) {
-	  return { weight: weight };
-	};
-	
-	var setEdge = exports.setEdge = function setEdge(key, weight, fromStore) {
-	  var newEdge = createEdge(weight);
-	  var type = 'SET_EDGE';
-	
-	  if (!fromStore) {
-	    blossomStore.setEdge(key, newEdge);
-	    type = 'NO_ACTION'; // The store listeners will fire another action.
-	  }
-	
-	  return {
-	    type: type,
-	    key: key,
-	    edge: newEdge
-	  };
-	};
-
-/***/ },
-/* 209 */
 /*!*****************************!*\
   !*** ./app/blossomStore.js ***!
   \*****************************/
@@ -24364,8 +24325,8 @@
 	
 	var lastKeyLoaded;
 	
-	var firebase = __webpack_require__(/*! firebase/app */ 210);
-	__webpack_require__(/*! firebase/database */ 212);
+	var firebase = __webpack_require__(/*! firebase/app */ 209);
+	__webpack_require__(/*! firebase/database */ 211);
 	
 	var config = {
 	  apiKey: "AIzaSyC1RZbfWfMyKPFrJX-LAPwCiu00EF-86FU",
@@ -24442,6 +24403,11 @@
 	    value: function setEdge(key, edge) {
 	      firebase.database().ref('/blossoms/' + lastKeyLoaded + "/edges/" + key).set(edge);
 	    }
+	  }, {
+	    key: "isConnected",
+	    value: function isConnected() {
+	      return lastKeyLoaded;
+	    }
 	  }]);
 	
 	  return BlossomStore;
@@ -24450,7 +24416,7 @@
 	exports.default = BlossomStore;
 
 /***/ },
-/* 210 */
+/* 209 */
 /*!***************************!*\
   !*** ./~/firebase/app.js ***!
   \***************************/
@@ -24463,12 +24429,12 @@
 	 *
 	 *   firebase = require('firebase/app');
 	 */
-	__webpack_require__(/*! ./firebase-app */ 211);
+	__webpack_require__(/*! ./firebase-app */ 210);
 	module.exports = firebase;
 
 
 /***/ },
-/* 211 */
+/* 210 */
 /*!************************************!*\
   !*** ./~/firebase/firebase-app.js ***!
   \************************************/
@@ -24506,7 +24472,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 212 */
+/* 211 */
 /*!********************************!*\
   !*** ./~/firebase/database.js ***!
   \********************************/
@@ -24519,13 +24485,13 @@
 	 *
 	 *   database = require('firebase/database');
 	 */
-	__webpack_require__(/*! ./firebase-app */ 211);
-	__webpack_require__(/*! ./firebase-database */ 213);
+	__webpack_require__(/*! ./firebase-app */ 210);
+	__webpack_require__(/*! ./firebase-database */ 212);
 	module.exports = firebase.database;
 
 
 /***/ },
-/* 213 */
+/* 212 */
 /*!*****************************************!*\
   !*** ./~/firebase/firebase-database.js ***!
   \*****************************************/
@@ -24775,6 +24741,50 @@
 	d;return d.$a},{Reference:U,Query:X,Database:rf,enableLogging:bd,INTERNAL:Y,TEST_ACCESS:Z,ServerValue:uf})}catch(mi){ed("Failed to register the Firebase Database Service ("+mi+")")};})();
 	
 
+
+/***/ },
+/* 213 */
+/*!********************************!*\
+  !*** ./actions/edgeActions.js ***!
+  \********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.setEdge = undefined;
+	
+	var _blossomStore = __webpack_require__(/*! ../app/blossomStore */ 208);
+	
+	var _blossomStore2 = _interopRequireDefault(_blossomStore);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var blossomStore = new _blossomStore2.default();
+	
+	var createEdge = function createEdge(weight) {
+	  return { weight: weight };
+	};
+	
+	var setEdge = exports.setEdge = function setEdge(key, weight, fromStore) {
+	  var newEdge = createEdge(weight);
+	  var type = 'SET_EDGE';
+	
+	  if (!fromStore && blossomStore.isConnected()) {
+	    blossomStore.setEdge(key, newEdge, function (k, e) {
+	      return setEdge(k, weight, true);
+	    });
+	    type = 'NO_ACTION'; // The store listeners will fire another action.
+	  }
+	
+	  return {
+	    type: type,
+	    key: key,
+	    edge: newEdge
+	  };
+	};
 
 /***/ },
 /* 214 */
@@ -25601,7 +25611,7 @@
 	
 	var _reactRedux = __webpack_require__(/*! react-redux */ 175);
 	
-	var _edgeActions = __webpack_require__(/*! ../actions/edgeActions */ 208);
+	var _edgeActions = __webpack_require__(/*! ../actions/edgeActions */ 213);
 	
 	var _riek = __webpack_require__(/*! riek */ 225);
 	
