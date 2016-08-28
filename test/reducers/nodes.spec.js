@@ -5,32 +5,33 @@ describe('Nodes reducer', () => {
 
     it('should add first node to empty state', () => {
       var state = [];
-      var action = { type: 'ADD_NODE', name: 'test_node'};
+      var action = { type: 'ADD_NODE', node: {name: 'test_node'}};
 
       var returnedState = nodes(state, action);
 
       expect(returnedState.length).toEqual(1);
-      expect(returnedState[0].name).toEqual(action.name);
+      expect(returnedState[0].name).toEqual(action.node.name);
     });
 
     it('should add first node to undefined state', () => {
       var state = undefined;
-      var action = { type: 'ADD_NODE', name: 'test_node'};
+      var action = { type: 'ADD_NODE', node: {name: 'test_node'}};
 
       var returnedState = nodes(state, action);
 
       expect(returnedState.length).toEqual(1);
-      expect(returnedState[0].name).toEqual(action.name);
+      expect(returnedState[0].name).toEqual(action.node.name);
     });
 
-    it('should generate a key', () => {
+    it('should respect key if set', () => {
       var state = [];
-      var action = { type: 'ADD_NODE', name: 'test_node'};
+      var action = { type: 'ADD_NODE', node: {name: 'test_node', key: 123456}};
 
       var returnedState = nodes(state, action);
 
       expect(returnedState.length).toEqual(1);
       expect(returnedState[0].key).toExist();
+      expect(returnedState[0].key).toEqual(123456);
     });
 
     it('should ignore set edge', () => {
@@ -44,7 +45,7 @@ describe('Nodes reducer', () => {
 
     it('should append node to existing list', () => {
       var state = [ {name:'node1', key:1}, {name:'node2', key:2} ];
-      var action = { type: 'ADD_NODE', name: 'third_node'};
+      var action = { type: 'ADD_NODE', node: {name: 'third_node'}};
 
       var returnedState = nodes(state, action);
 
@@ -73,11 +74,11 @@ describe('Nodes reducer', () => {
 
     it('should remove a node', () => {
       var state = [ {name:'node1', key:1}, {name:'node2', key:2} ];
-      var action = { type: 'DELETE_NODE', key: 1};
+      var action = { type: 'DELETE_NODE', index: 1 };
 
       var returnedState = nodes(state, action);
 
       expect(returnedState.length).toEqual(1);
-      expect(returnedState[0].name).toEqual('node2');
+      expect(returnedState[0].name).toEqual('node1');
     });
 });

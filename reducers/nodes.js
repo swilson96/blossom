@@ -11,7 +11,8 @@ const addNode = (state, action) => {
 };
 
 const removeNode = (state, action) => {
-  return state.splice(action.index, 1);
+  state.splice(action.index, 1);
+  return state;
 };
 
 const renameNode = (state, action) => {

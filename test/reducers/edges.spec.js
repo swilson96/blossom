@@ -5,20 +5,20 @@ describe('Edges reducer', () => {
 
     it('should add first edge to empty state', () => {
       var state = {};
-      var action = { type: 'SET_EDGE', key: "1:2", weight: 5};
+      var action = { type: 'SET_EDGE', key: "1:2", edge: {weight: 5}};
 
       var returnedState = edges(state, action);
 
-      expect(returnedState["1:2"].weight).toEqual(action.weight);
+      expect(returnedState["1:2"].weight).toEqual(action.edge.weight);
     });
 
     it('should add first edge to undefined state', () => {
       var state = undefined;
-      var action = { type: 'SET_EDGE', key: "1:2", weight: 5};
+      var action = { type: 'SET_EDGE', key: "1:2", edge: {weight: 5}};
 
       var returnedState = edges(state, action);
 
-      expect(returnedState["1:2"].weight).toEqual(action.weight);
+      expect(returnedState["1:2"].weight).toEqual(action.edge.weight);
     });
 
     it('should append first edge to existing state', () => {
@@ -26,11 +26,11 @@ describe('Edges reducer', () => {
       state["2:1"] = { weight:7 };
       state["1:3"] = { weight:0 };
 
-      var action = { type: 'SET_EDGE', key: "1:2", weight: 5};
+      var action = { type: 'SET_EDGE', key: "1:2", edge: {weight: 5}};
 
       var returnedState = edges(state, action);
 
-      expect(returnedState["1:2"].weight).toEqual(action.weight);
+      expect(returnedState["1:2"].weight).toEqual(action.edge.weight);
       expect(returnedState["2:1"].weight).toEqual(7);
       expect(returnedState["1:3"].weight).toEqual(0);
     });
