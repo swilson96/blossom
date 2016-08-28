@@ -76,7 +76,7 @@ const mapStateToProps = (state) => {
       edges: state.edges
     },
     keyValue: state.key
-  }
+  };
 }
 
 const mapDispatchToProps = (dispatch) => {
@@ -87,7 +87,7 @@ const mapDispatchToProps = (dispatch) => {
     setBlossom: (blossom) => {
       dispatch(setBlossom(blossom));
     }
-  }
+  };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(BlossomManager);

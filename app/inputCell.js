@@ -25,8 +25,8 @@ class InputCell extends React.Component {
     if (this.props.x.key == this.props.y.key) {
       className += " diagonal";
     } else {
-      var matches = this.props.edges.filter(e => e.key == this.getKey());
-      var value = matches.length > 0 ? matches[0].weight : 0;
+      var match = this.props.edges[this.getKey()];
+      var value = match ? match.weight : 0;
 
       inner = (
         <RIENumber
@@ -50,7 +50,7 @@ class InputCell extends React.Component {
 const mapStateToProps = (state) => {
   return {
     edges: state.edges
-  }
+  };
 }
 
 const mapDispatchToProps = (dispatch) => {
@@ -58,7 +58,7 @@ const mapDispatchToProps = (dispatch) => {
     setEdge: (key, weight) => {
       dispatch(setEdge(key, weight))
     }
-  }
+  };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(InputCell)
+export default connect(mapStateToProps, mapDispatchToProps)(InputCell);

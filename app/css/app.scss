@@ -1,3 +1,4 @@
+
 body {
   padding: 10px;
   background-color: #66CCFF;
@@ -37,4 +38,8 @@ nav {
 h1 {
   margin: 5px;
   float: left;
+}
+
+.invalid {
+  outline-color: red;
 }

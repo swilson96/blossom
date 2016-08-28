@@ -12,6 +12,14 @@ export const deleteNode = (key) => {
   };
 };
 
+export const renameNode = (key, name) => {
+   return {
+     type: 'RENAME_NODE',
+     key: key,
+     name: name
+   }
+};
+
 export const setKey = (key) => {
   return {
     type: 'SET_KEY',

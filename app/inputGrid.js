@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { TableHeader, InputGridRow } from './inputGridComponents';
+import InputGridHeader from './inputGridHeader';
+import InputGridRow from './inputGridRow';
 
 require("./css/inputGrid.scss");
 
@@ -18,7 +19,7 @@ class InputGrid extends React.Component {
 
     return (
       <table id="inputGrid" className="inputGrid">
-        <TableHeader nodes={nodes} />
+        <InputGridHeader nodes={nodes} />
         <tbody>
           {rows}
         </tbody>
@@ -30,7 +31,7 @@ class InputGrid extends React.Component {
 const mapStateToProps = (state) => {
   return {
     nodes: state.nodes
-  }
+  };
 }
 
 export default connect(mapStateToProps)(InputGrid);

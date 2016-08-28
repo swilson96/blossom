@@ -1,5 +1,4 @@
 import React from 'react';
-import InputCell from './inputCell'
 
 class NodeHeader extends React.Component {
   render() {
@@ -13,7 +12,7 @@ class NodeHeader extends React.Component {
   }
 }
 
-class TableHeader extends React.Component {
+class InputGridHeader extends React.Component {
   createNameCell(item) {
     return <NodeHeader key={item.key} node={item} />
   }
@@ -32,20 +31,4 @@ class TableHeader extends React.Component {
   }
 }
 
-class InputGridRow extends React.Component {
-  createInputCell(x, y) {
-    return <InputCell key={x.key} x={x} y={y} />
-  }
-
-  render() {
-    var inputCells = this.props.nodes.map(n => this.createInputCell(n, this.props.currentNode));
-    return (
-      <tr key={this.props.currentNode.key}>
-        <td className="nameCell" id={this.props.currentNode.key + "_row"}>{this.props.currentNode.name}</td>
-        {inputCells}
-      </tr>
-    )
-  }
-}
-
-export { TableHeader, InputGridRow }
+export default InputGridHeader;

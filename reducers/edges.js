@@ -1,18 +1,24 @@
 const setEdge = (state, action) => {
-  var matches = state.filter(e => e.key == action.key);
-  if (matches.length > 0) {
-    matches[0].weight = action.weight;
-    return state;
+  var found = false;
+  var newEdges = {};
+  for (var k in state) {
+    if (!state.hasOwnProperty(k)) {
+      return;
+    }
+    var edgeToSet = state[k];
+    if (k == action.key) {
+      edgeToSet.weight = action.weight;
+      found = true;
+    }
+    newEdges[k] = edgeToSet;
   }
-
-  // No match, so add the edge
-  return [
-    ...state,
-    { key: action.key, weight: action.weight }
-  ];
+  if (!found) {
+    newEdges[action.key] = {weight: action.weight};
+  }
+  return newEdges;
 };
 
-const edges = (state = [], action) => {
+const edges = (state = {}, action) => {
   switch (action.type) {
     case 'SET_EDGE':
       return setEdge(state, action);
