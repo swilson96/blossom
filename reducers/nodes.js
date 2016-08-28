@@ -6,7 +6,7 @@ const node = (state, action) => {
         name: action.name
       };
     default:
-      return state;
+      return undefined;
   }
 };
 

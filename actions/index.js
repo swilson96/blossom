@@ -41,3 +41,10 @@ export const setEdge = (key, weight) => {
     weight: weight
   }
 }
+
+export const setResult = (result) => {
+  return {
+    type: 'SET_RESULT',
+    result: result
+  }
+}

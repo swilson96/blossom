@@ -51,4 +51,16 @@ describe('Edges reducer', () => {
       expect(returnedState["2:3"].weight).toEqual(9);
       expect(returnedState["1:3"]).toNotExist();
     });
+
+    it('should ignore add node action', () => {
+      var state = {};
+      state["1:2"] = { weight:7 };
+      state["1:3"] = { weight:0 };
+
+      var action = { type: 'ADD_NODE' };
+
+      var returnedState = edges(state, action);
+
+      expect(returnedState).toEqual(state);
+    });
 });
