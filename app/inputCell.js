@@ -11,8 +11,8 @@ class InputCell extends React.Component {
     return this.props.x.key + ":" + this.props.y.key;
   }
 
-  onChange(value) {
-    this.props.setEdge(this.getKey(), value.number);
+  onChange(valueObject) {
+    this.props.setEdge(this.getKey(), valueObject.number);
   }
 
   isValidWeight(value) {
@@ -31,7 +31,7 @@ class InputCell extends React.Component {
       inner = (
         <RIENumber
           value={value}
-          change={v => this.onChange(v)}
+          change={vo => this.onChange(vo)}
           propName="number"
           validate={v => this.isValidWeight(v)}
           className="cellInput"

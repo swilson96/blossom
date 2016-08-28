@@ -12,8 +12,8 @@ class InputGridRow extends React.Component {
     return <InputCell key={x.key} x={x} y={y} />
   }
 
-  onChange(value) {
-    this.props.renameNode(this.props.currentNode.key, value.text);
+  onChange(valueObject) {
+    this.props.renameNode(this.props.currentNode.key, valueObject.text);
   }
 
   isValid(value) {
@@ -27,7 +27,7 @@ class InputGridRow extends React.Component {
         <td className="nameCell" id={this.props.currentNode.key + "_row"}>
           <RIEInput
             value={this.props.currentNode.name}
-            change={v => this.onChange(v)}
+            change={vo => this.onChange(vo)}
             propName="text"
             className="editable"
             validate={v => this.isValid(v)}
