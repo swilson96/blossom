@@ -12,7 +12,7 @@ class InputCell extends React.Component {
   }
 
   onChange(valueObject) {
-    this.props.setEdge(this.getKey(), valueObject.number);
+    this.props.setEdge(this.getKey(), +valueObject.number);
   }
 
   isValidWeight(value) {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { firstMatching } from '../algorithm';
+import { blossomMatching } from '../algorithm';
 import { setResult } from '../actions';
 
 require("./css/calculateMatching.scss");
@@ -10,7 +10,7 @@ class CalculateMatching extends React.Component {
   calculate(e) {
     e.preventDefault();
 
-    var result = firstMatching(this.props.nodes, this.props.edges);
+    var result = blossomMatching(this.props.nodes, this.props.edges);
 
     this.props.dispatch(setResult(result));
   }
