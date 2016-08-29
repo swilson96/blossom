@@ -1,4 +1,4 @@
-import BlossomStore from '../app/blossomStore';
+import BlossomStore from '../storage/blossomStore';
 
 const blossomStore = new BlossomStore();
 

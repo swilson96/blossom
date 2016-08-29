@@ -4,7 +4,7 @@ import { setKey } from '../actions';
 import { addNodeFromStore, renameNode, deleteNode } from '../actions/nodeActions';
 import { setEdge } from '../actions/edgeActions';
 import { setTitle } from '../actions/titleActions';
-import BlossomStore from './blossomStore';
+import BlossomStore from '../storage/blossomStore';
 
 import { browserHistory } from 'react-router';
 
