@@ -28,7 +28,12 @@ class BlossomManager extends React.Component {
     this.clearMessage();
 
     // And now listen for changes
-    this.connectToStore(key, s => {});
+    this.connectToStore(key, success => {
+      if (success) {
+        // Rewrite the URL if and when connected
+        browserHistory.push(`/blossom/?key=${key}`);
+      }
+    });
   }
 
   loadBlossomClick(e) {
