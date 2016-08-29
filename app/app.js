@@ -15,7 +15,7 @@ class App extends React.Component {
       <div>
         <nav>
           <EditableTitle />
-          <BlossomManager />
+          <BlossomManager keyFromUrl={this.props.location.query.key}/>
         </nav>
         <AddNode />
         <InputGrid />

@@ -1,11 +1,11 @@
 .blossomManager {
   float: right;
 
-  .currentBlossom, .blossomAction {
+  .currentBlossom, .blossomAction, .loading {
     display: inline-block;
   }
 
-  .currentBlossom {
+  .currentBlossom, .loading {
     margin: 5px;
   }
 

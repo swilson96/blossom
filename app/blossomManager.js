@@ -6,6 +6,8 @@ import { setEdge } from '../actions/edgeActions';
 import { setTitle } from '../actions/titleActions';
 import BlossomStore from './blossomStore';
 
+import { browserHistory } from 'react-router';
+
 require("./css/blossomManager.scss");
 
 class BlossomManager extends React.Component {
@@ -35,6 +37,9 @@ class BlossomManager extends React.Component {
         if (success) {
           this.clearMessage();
           this.props.setKey(this._blossomInput.value);
+
+          browserHistory.push(`/blossom/?key=${this._blossomInput.value}`);
+
           this._blossomInput.value = "";
         } else {
           this.setState({message:"Not a valid blossom key"});
@@ -54,8 +59,23 @@ class BlossomManager extends React.Component {
   }
 
   render() {
+    var loading = false;
+    if (this.props.keyFromUrl && this.props.keyFromUrl != this.props.keyValue) {
+      console.log("Connecting to key " + this.props.keyFromUrl + " from URL");
+      loading = true;
+      this.connectToStore(this.props.keyFromUrl, success => {
+        if (success) {
+          this.props.setKey(this.props.keyFromUrl);
+        } else {
+          browserHistory.push('/blossom/');
+        }
+      });
+    }
+
     var action = "";
-    if (!this.props.keyValue) {
+    if (loading) {
+      action = <div className="loading">Loading...</div>
+    } else if (!this.props.keyValue) {
       action = (
         <form onSubmit={(e) => this.saveNewBlossom(e)}>
           <button type="submit">Save as new blossom</button>
