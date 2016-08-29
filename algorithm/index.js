@@ -31,8 +31,8 @@ export const convertForAlgorithm = (nodes, edges) => {
     var j = 0;
     for (var k2 in nodes) {
       if (i < j) {
-        var e1 = edges[k1 + ':' + k2];
-        var e2 = edges[k2 + ':' + k1];
+        var e1 = edges[`${k1}:${k2}`];
+        var e2 = edges[`${k2}:${k1}`];
 
         if (e1) {
           var weight = e1.weight;

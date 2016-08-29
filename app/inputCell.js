@@ -8,7 +8,7 @@ require("./css/inputCell.scss");
 
 class InputCell extends React.Component {
   getKey() {
-    return this.props.x.key + ":" + this.props.y.key;
+    return `${this.props.x.key}:${this.props.y.key}`;
   }
 
   onChange(valueObject) {
