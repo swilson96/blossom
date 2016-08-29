@@ -23883,7 +23883,7 @@
   \********************************/
 /***/ function(module, exports) {
 
-	"use strict";
+	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
@@ -23896,8 +23896,8 @@
 	    case 'SET_RESULT':
 	      var cells = [];
 	      action.result.forEach(function (pair) {
-	        cells.push(pair[0].key + ":" + pair[1].key);
-	        cells.push(pair[1].key + ":" + pair[0].key);
+	        cells.push(pair[0].key + ':' + pair[1].key);
+	        cells.push(pair[1].key + ':' + pair[0].key);
 	      });
 	      return cells;
 	    default:
@@ -24066,7 +24066,12 @@
 	      this.clearMessage();
 	
 	      // And now listen for changes
-	      this.connectToStore(key, function (s) {});
+	      this.connectToStore(key, function (success) {
+	        if (success) {
+	          // Rewrite the URL if and when connected
+	          _reactRouter.browserHistory.push('/blossom/?key=' + key);
+	        }
+	      });
 	    }
 	  }, {
 	    key: 'loadBlossomClick',
@@ -25569,7 +25574,7 @@
 	  _createClass(InputCell, [{
 	    key: 'getKey',
 	    value: function getKey() {
-	      return this.props.x.key + ":" + this.props.y.key;
+	      return this.props.x.key + ':' + this.props.y.key;
 	    }
 	  }, {
 	    key: 'onChange',
