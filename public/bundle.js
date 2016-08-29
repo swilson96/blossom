@@ -24023,7 +24023,7 @@
 	
 	var _titleActions = __webpack_require__(/*! ../actions/titleActions */ 248);
 	
-	var _blossomStore = __webpack_require__(/*! ./blossomStore */ 208);
+	var _blossomStore = __webpack_require__(/*! ../storage/blossomStore */ 320);
 	
 	var _blossomStore2 = _interopRequireDefault(_blossomStore);
 	
@@ -24276,7 +24276,7 @@
 	});
 	exports.renameNode = exports.deleteNode = exports.addNodeFromStore = exports.addNode = undefined;
 	
-	var _blossomStore = __webpack_require__(/*! ../app/blossomStore */ 208);
+	var _blossomStore = __webpack_require__(/*! ../storage/blossomStore */ 320);
 	
 	var _blossomStore2 = _interopRequireDefault(_blossomStore);
 	
@@ -24349,123 +24349,7 @@
 	};
 
 /***/ },
-/* 208 */
-/*!*****************************!*\
-  !*** ./app/blossomStore.js ***!
-  \*****************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var lastKeyLoaded;
-	
-	var firebase = __webpack_require__(/*! firebase/app */ 209);
-	__webpack_require__(/*! firebase/database */ 211);
-	
-	var config = {
-	  apiKey: "AIzaSyC1RZbfWfMyKPFrJX-LAPwCiu00EF-86FU",
-	  authDomain: "blossom-c67b4.firebaseapp.com",
-	  databaseURL: "https://blossom-c67b4.firebaseio.com",
-	  storageBucket: "blossom-c67b4.appspot.com"
-	};
-	
-	firebase.initializeApp(config);
-	
-	var BlossomStore = function () {
-	  function BlossomStore() {
-	    _classCallCheck(this, BlossomStore);
-	
-	    this.database = firebase.database();
-	  }
-	
-	  _createClass(BlossomStore, [{
-	    key: "saveNewBlossom",
-	    value: function saveNewBlossom(blossom) {
-	      var key = this.database.ref("blossoms").push().key;
-	      this.database.ref('/blossoms/' + key).set(blossom);
-	      lastKeyLoaded = key;
-	      return key;
-	    }
-	  }, {
-	    key: "loadBlossom",
-	    value: function loadBlossom(key, callback, onNewNode, onChangedNode, onRemoveNode, onNewEdge, onChangedEdge, onChangedTitle) {
-	      try {
-	        firebase.database().ref('/blossoms/' + key).once('value', function (snapshot) {
-	          if (snapshot.exists()) {
-	            firebase.database().ref('/blossoms/' + key + "/nodes").on("child_added", function (n) {
-	              return onNewNode(n.key, n.val());
-	            });
-	            firebase.database().ref('/blossoms/' + key + "/nodes").on("child_changed", function (n) {
-	              return onChangedNode(n.key, n.val());
-	            });
-	            firebase.database().ref('/blossoms/' + key + "/nodes").on("child_removed", function (n) {
-	              return onRemoveNode(n.key);
-	            });
-	            firebase.database().ref('/blossoms/' + key + "/edges").on("child_added", function (e) {
-	              return onNewEdge(e.key, e.val());
-	            });
-	            firebase.database().ref('/blossoms/' + key + "/edges").on("child_changed", function (e) {
-	              return onChangedEdge(e.key, e.val());
-	            });
-	            firebase.database().ref('/blossoms/' + key + "/title").on("value", function (t) {
-	              return onChangedTitle(t.val());
-	            });
-	          }
-	
-	          lastKeyLoaded = key;
-	          callback(snapshot.exists());
-	        });
-	      } catch (err) {
-	        console.log(err);
-	        callback(null);
-	      }
-	    }
-	  }, {
-	    key: "addNode",
-	    value: function addNode(node) {
-	      firebase.database().ref('/blossoms/' + lastKeyLoaded + "/nodes").push(node);
-	    }
-	  }, {
-	    key: "renameNode",
-	    value: function renameNode(key, node) {
-	      firebase.database().ref('/blossoms/' + lastKeyLoaded + "/nodes/" + key).set(node);
-	    }
-	  }, {
-	    key: "removeNode",
-	    value: function removeNode(key) {
-	      firebase.database().ref('/blossoms/' + lastKeyLoaded + "/nodes/" + key).remove();
-	    }
-	  }, {
-	    key: "setEdge",
-	    value: function setEdge(key, edge) {
-	      firebase.database().ref('/blossoms/' + lastKeyLoaded + "/edges/" + key).set(edge);
-	    }
-	  }, {
-	    key: "setTitle",
-	    value: function setTitle(title) {
-	      firebase.database().ref('/blossoms/' + lastKeyLoaded + "/title").set(title);
-	    }
-	  }, {
-	    key: "isConnected",
-	    value: function isConnected() {
-	      return lastKeyLoaded;
-	    }
-	  }]);
-	
-	  return BlossomStore;
-	}();
-	
-	exports.default = BlossomStore;
-
-/***/ },
+/* 208 */,
 /* 209 */
 /*!***************************!*\
   !*** ./~/firebase/app.js ***!
@@ -24806,7 +24690,7 @@
 	});
 	exports.setEdge = undefined;
 	
-	var _blossomStore = __webpack_require__(/*! ../app/blossomStore */ 208);
+	var _blossomStore = __webpack_require__(/*! ../storage/blossomStore */ 320);
 	
 	var _blossomStore2 = _interopRequireDefault(_blossomStore);
 	
@@ -27774,7 +27658,7 @@
 	});
 	exports.setTitle = undefined;
 	
-	var _blossomStore = __webpack_require__(/*! ../app/blossomStore */ 208);
+	var _blossomStore = __webpack_require__(/*! ../storage/blossomStore */ 320);
 	
 	var _blossomStore2 = _interopRequireDefault(_blossomStore);
 	
@@ -33525,6 +33409,123 @@
 	
 	exports.default = (0, _createRouterHistory2.default)(_createHashHistory2.default);
 	module.exports = exports['default'];
+
+/***/ },
+/* 320 */
+/*!*********************************!*\
+  !*** ./storage/blossomStore.js ***!
+  \*********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var lastKeyLoaded;
+	
+	var firebase = __webpack_require__(/*! firebase/app */ 209);
+	__webpack_require__(/*! firebase/database */ 211);
+	
+	var config = {
+	  apiKey: "AIzaSyC1RZbfWfMyKPFrJX-LAPwCiu00EF-86FU",
+	  authDomain: "blossom-c67b4.firebaseapp.com",
+	  databaseURL: "https://blossom-c67b4.firebaseio.com",
+	  storageBucket: "blossom-c67b4.appspot.com"
+	};
+	
+	firebase.initializeApp(config);
+	
+	var BlossomStore = function () {
+	  function BlossomStore() {
+	    _classCallCheck(this, BlossomStore);
+	
+	    this.database = firebase.database();
+	  }
+	
+	  _createClass(BlossomStore, [{
+	    key: "saveNewBlossom",
+	    value: function saveNewBlossom(blossom) {
+	      var key = this.database.ref("blossoms").push().key;
+	      this.database.ref('/blossoms/' + key).set(blossom);
+	      lastKeyLoaded = key;
+	      return key;
+	    }
+	  }, {
+	    key: "loadBlossom",
+	    value: function loadBlossom(key, callback, onNewNode, onChangedNode, onRemoveNode, onNewEdge, onChangedEdge, onChangedTitle) {
+	      try {
+	        firebase.database().ref('/blossoms/' + key).once('value', function (snapshot) {
+	          if (snapshot.exists()) {
+	            firebase.database().ref('/blossoms/' + key + "/nodes").on("child_added", function (n) {
+	              return onNewNode(n.key, n.val());
+	            });
+	            firebase.database().ref('/blossoms/' + key + "/nodes").on("child_changed", function (n) {
+	              return onChangedNode(n.key, n.val());
+	            });
+	            firebase.database().ref('/blossoms/' + key + "/nodes").on("child_removed", function (n) {
+	              return onRemoveNode(n.key);
+	            });
+	            firebase.database().ref('/blossoms/' + key + "/edges").on("child_added", function (e) {
+	              return onNewEdge(e.key, e.val());
+	            });
+	            firebase.database().ref('/blossoms/' + key + "/edges").on("child_changed", function (e) {
+	              return onChangedEdge(e.key, e.val());
+	            });
+	            firebase.database().ref('/blossoms/' + key + "/title").on("value", function (t) {
+	              return onChangedTitle(t.val());
+	            });
+	          }
+	
+	          lastKeyLoaded = key;
+	          callback(snapshot.exists());
+	        });
+	      } catch (err) {
+	        console.log(err);
+	        callback(null);
+	      }
+	    }
+	  }, {
+	    key: "addNode",
+	    value: function addNode(node) {
+	      firebase.database().ref('/blossoms/' + lastKeyLoaded + "/nodes").push(node);
+	    }
+	  }, {
+	    key: "renameNode",
+	    value: function renameNode(key, node) {
+	      firebase.database().ref('/blossoms/' + lastKeyLoaded + "/nodes/" + key).set(node);
+	    }
+	  }, {
+	    key: "removeNode",
+	    value: function removeNode(key) {
+	      firebase.database().ref('/blossoms/' + lastKeyLoaded + "/nodes/" + key).remove();
+	    }
+	  }, {
+	    key: "setEdge",
+	    value: function setEdge(key, edge) {
+	      firebase.database().ref('/blossoms/' + lastKeyLoaded + "/edges/" + key).set(edge);
+	    }
+	  }, {
+	    key: "setTitle",
+	    value: function setTitle(title) {
+	      firebase.database().ref('/blossoms/' + lastKeyLoaded + "/title").set(title);
+	    }
+	  }, {
+	    key: "isConnected",
+	    value: function isConnected() {
+	      return lastKeyLoaded;
+	    }
+	  }]);
+	
+	  return BlossomStore;
+	}();
+	
+	exports.default = BlossomStore;
 
 /***/ }
 /******/ ]);
