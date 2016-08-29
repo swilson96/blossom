@@ -27,39 +27,42 @@ export const firstMatching = (nodes, edges) => {
 export const convertForAlgorithm = (nodes, edges) => {
   var ret = [];
   var i = 0;
-  nodes.forEach(n1 => {
+  for (var k1 in nodes) {
     var j = 0;
-    nodes.forEach(n2 => {
-      if (i >= j) {
-        j += 1;
-        return;
-      };
+    for (var k2 in nodes) {
+      if (i < j) {
+        var e1 = edges[k1 + ':' + k2];
+        var e2 = edges[k2 + ':' + k1];
 
-      var e1 = edges[n1.key + ':' + n2.key];
-      var e2 = edges[n2.key + ':' + n1.key];
-
-      if (e1) {
-        var weight = e1.weight;
-        if (e2) {
-          weight += e2.weight;
+        if (e1) {
+          var weight = e1.weight;
+          if (e2) {
+            weight += e2.weight;
+          }
+          ret.push([i, j, weight]);
+        } else if (e2) {
+          ret.push([i, j, e2.weight]);
         }
-        ret.push([i, j, weight]);
-      } else if (e2) {
-        ret.push([i, j, e2.weight]);
       }
       j += 1;
-    });
+    }
     i += 1;
-  })
+  }
   return ret;
 }
 
 export const convertForDisplay = (result, nodes) => {
   var ret = [];
+
+  var nodesArray = []
+  for (var k in nodes) {
+    nodesArray.push(nodes[k]);
+  }
+
   var i = 0;
   result.forEach(j => {
     if (j > i) {
-      ret.push([nodes[i], nodes[j]]);
+      ret.push([nodesArray[i], nodesArray[j]]);
     }
     i += 1;
   });

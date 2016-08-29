@@ -3,12 +3,12 @@ import { convertForDisplay } from '../../algorithm';
 
 describe('Converting our state to algorithm input', () => {
 
-    var nodes = [
-      {name:"node1"},
-      {name:"node2"},
-      {name:"node3"},
-      {name:"node4"}
-    ];
+    var nodes = {
+      'a': {name:"node1", key:'a'},
+      'b': {name:"node2", key:'b'},
+      'c': {name:"node3", key:'c'},
+      'd': {name:"node4", key:'d'}
+    };
 
     it('should return the right pairs', () => {
       var matching = [3,2,1,0];
