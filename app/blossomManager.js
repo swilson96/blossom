@@ -2,7 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { setKey } from '../actions';
 import { addNodeFromStore, renameNode, deleteNode } from '../actions/nodeActions';
-import { setEdge } from '../actions/edgeActions'
+import { setEdge } from '../actions/edgeActions';
+import { setTitle } from '../actions/titleActions';
 import BlossomStore from './blossomStore';
 
 require("./css/blossomManager.scss");
@@ -48,7 +49,8 @@ class BlossomManager extends React.Component {
       (i, n) => this.props.renameNodeFromStore(i, n),
       i => this.props.removeNodeFromStore(i),
       (k, e) => this.props.setEdgeFromStore(k, e),
-      (k, e) => this.props.setEdgeFromStore(k, e));
+      (k, e) => this.props.setEdgeFromStore(k, e),
+      t => this.props.setTitleFromStore(t));
   }
 
   render() {
@@ -86,7 +88,8 @@ const mapStateToProps = (state) => {
   return {
     blossom: {
       nodes: state.nodes,
-      edges: state.edges
+      edges: state.edges,
+      title: state.title
     },
     keyValue: state.key
   };
@@ -108,6 +111,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     setEdgeFromStore: (key, edge) => {
       dispatch(setEdge(key, edge.weight, true));
+    },
+    setTitleFromStore: (title) => {
+      dispatch(setTitle(title, true));
     }
   };
 }

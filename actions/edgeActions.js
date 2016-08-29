@@ -11,7 +11,7 @@ export const setEdge = (key, weight, fromStore) => {
   var type = 'SET_EDGE';
 
   if (!fromStore && blossomStore.isConnected()) {
-    blossomStore.setEdge(key, newEdge, (k, e) => setEdge(k, weight, true));
+    blossomStore.setEdge(key, newEdge);
     type = 'NO_ACTION'; // The store listeners will fire another action.
   }
 

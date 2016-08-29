@@ -24,7 +24,7 @@ class BlossomStore {
     return key;
   }
 
-  loadBlossom(key, callback, onNewNode, onChangedNode, onRemoveNode, onNewEdge, onChangedEdge) {
+  loadBlossom(key, callback, onNewNode, onChangedNode, onRemoveNode, onNewEdge, onChangedEdge, onChangedTitle) {
     try {
       firebase.database().ref('/blossoms/' + key).once('value', (snapshot) => {
         if (snapshot.exists()) {
@@ -33,6 +33,7 @@ class BlossomStore {
           firebase.database().ref('/blossoms/' + key + "/nodes").on("child_removed", n => onRemoveNode(n.key));
           firebase.database().ref('/blossoms/' + key + "/edges").on("child_added", e => onNewEdge(e.key, e.val()));
           firebase.database().ref('/blossoms/' + key + "/edges").on("child_changed", e => onChangedEdge(e.key, e.val()));
+          firebase.database().ref('/blossoms/' + key + "/title").on("value", t => onChangedTitle(t.val()));
         }
 
         lastKeyLoaded = key;
@@ -58,6 +59,10 @@ class BlossomStore {
 
   setEdge(key, edge) {
     firebase.database().ref('/blossoms/' + lastKeyLoaded + "/edges/" + key).set(edge);
+  }
+
+  setTitle(title) {
+    firebase.database().ref('/blossoms/' + lastKeyLoaded + "/title").set(title);
   }
 
   isConnected() {

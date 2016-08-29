@@ -1,5 +1,6 @@
 import React from 'react';
 
+import EditableTitle from './editableTitle';
 import BlossomManager from './blossomManager';
 import AddNode from './addNode';
 import InputGrid from './inputGrid';
@@ -13,7 +14,7 @@ class App extends React.Component {
     return (
       <div>
         <nav>
-          <h1>I AM BLOSSOM</h1>
+          <EditableTitle />
           <BlossomManager />
         </nav>
         <AddNode />
