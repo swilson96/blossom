@@ -3,7 +3,7 @@ import { convertForAlgorithm } from '../../algorithm';
 
 describe('Converting our state to algorithm input', () => {
 
-    it('should add the right edges and weights', () => {
+    it('should use the right edges and weights', () => {
       var nodes = { 'a':{name:'a node', key:'a'}, 'b':{name:'b node', key:'b'} };
       var edges = {"a:b":{weight:2}};
 
@@ -14,7 +14,7 @@ describe('Converting our state to algorithm input', () => {
       expect(result[0][2]).toEqual(2);
     });
 
-    it('should add the edge values correctly', () => {
+    it('should add the two edge values correctly', () => {
       var nodes = { 'a':{name:'a node', key:'a'}, 'b':{name:'b node', key:'b'} };
       var edges = {
         'a:b':{weight:2},
@@ -73,5 +73,29 @@ describe('Converting our state to algorithm input', () => {
       //expect(result[3]).toInclude([1, 2, 5]);
       //expect(result[4]).toInclude([1, 3, 16]);
       //expect(result[5]).toInclude([2, 3, 16]);
+    });
+
+    it('should treat two missing edges as zero', () => {
+      var nodes = { 'a':{name:'a node', key:'a'}, 'b':{name:'b node', key:'b'} };
+      var edges = {};
+
+      var result = convertForAlgorithm(nodes, edges);
+
+      expect(result.length).toEqual(1);
+      expect(result[0][0]).toEqual(0);
+      expect(result[0][1]).toEqual(1);
+      expect(result[0][2]).toEqual(0);
+    });
+
+    it('should handle first edge missing', () => {
+      var nodes = { 'a':{name:'a node', key:'a'}, 'b':{name:'b node', key:'b'} };
+      var edges = {'b:a':{weight:9}};
+
+      var result = convertForAlgorithm(nodes, edges);
+
+      expect(result.length).toEqual(1);
+      expect(result[0][0]).toEqual(0);
+      expect(result[0][1]).toEqual(1);
+      expect(result[0][2]).toEqual(9);
     });
 })

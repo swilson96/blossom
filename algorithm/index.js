@@ -33,16 +33,11 @@ export const convertForAlgorithm = (nodes, edges) => {
       if (i < j) {
         var e1 = edges[`${k1}:${k2}`];
         var e2 = edges[`${k2}:${k1}`];
+        var weight = 0;
+        weight += e1 ? e1.weight : 0;
+        weight += e2 ? e2.weight : 0;
 
-        if (e1) {
-          var weight = e1.weight;
-          if (e2) {
-            weight += e2.weight;
-          }
-          ret.push([i, j, weight]);
-        } else if (e2) {
-          ret.push([i, j, e2.weight]);
-        }
+        ret.push([i, j, weight]);
       }
       j += 1;
     }
