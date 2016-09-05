@@ -1,18 +1,32 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { RIENumber } from 'riek';
 import { setEdge } from '../actions/edgeActions';
 
-import { RIENumber } from 'riek';
+import BlossomStore from '../storage/blossomStore'
 
 require("./css/inputCell.scss");
 
 class InputCell extends React.Component {
+  constructor() {
+    super();
+    this.state = {};
+    this.blossomStore = new BlossomStore();
+    this.connected = false;
+  }
+
   getKey() {
     return `${this.props.x.key}:${this.props.y.key}`;
   }
 
   onChange(valueObject) {
-    this.props.setEdge(this.getKey(), +valueObject.number);
+    if (!this.blossomStore.isConnected()) {
+      this.props.setEdge(this.getKey(), +valueObject.number);
+    } else {
+      this.setState({
+        edge: { key: this.getKey(), weight: +valueObject.number }
+      });
+    }
   }
 
   isValidWeight(value) {
@@ -33,11 +47,22 @@ class InputCell extends React.Component {
     return classname;
   }
 
+  getEdgeWeight() {
+    var edge = this.blossomStore.isConnected() ? this.state.edge : this.props.edge;
+    return edge ? (edge.weight ? edge.weight : 0) : 0;
+  }
+
   render() {
+
+    if (!this.connected && this.blossomStore.isConnected()) {
+      this.blossomStore.syncEdge(this.getKey(), this);
+      this.connected = true;
+    }
+
     var inner = "";
     if (this.props.x.key != this.props.y.key) {
-      var match = this.props.edges[this.getKey()];
-      var value = match ? match.weight : 0;
+
+      var value = this.getEdgeWeight();
 
       inner = (
         <RIENumber
@@ -58,10 +83,11 @@ class InputCell extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state, ownProps) => {
   return {
-    edges: state.edges,
-    highlights: state.highlights
+    edge: state.edges[ownProps.x.key + ':' + ownProps.y.key],
+    highlights: state.highlights,
+    firebaseKey: state.key
   };
 }
 

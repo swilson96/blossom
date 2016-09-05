@@ -58,8 +58,8 @@ class BlossomManager extends React.Component {
       (i, n) => this.props.addNodeFromStore(i, n),
       (i, n) => this.props.renameNodeFromStore(i, n),
       i => this.props.removeNodeFromStore(i),
-      (k, e) => this.props.setEdgeFromStore(k, e),
-      (k, e) => this.props.setEdgeFromStore(k, e),
+      (k, e) => {},//this.props.setEdgeFromStore(k, e),
+      (k, e) => {},//this.props.setEdgeFromStore(k, e),
       t => this.props.setTitleFromStore(t));
   }
 
