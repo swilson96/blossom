@@ -2,7 +2,7 @@ const createEdge = weight => {
   return {weight: weight};
 };
 
-export const setEdge = (key, weight, fromStore) => {
+export const setEdge = (key, weight) => {
   var newEdge = createEdge(weight);
   var type = 'SET_EDGE';
 
