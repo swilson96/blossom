@@ -37,9 +37,10 @@ class BlossomStore {
           firebase.database().ref('/blossoms/' + key + '/edges').on('child_added', e => onNewEdge(e.key, e.val()));
           firebase.database().ref('/blossoms/' + key + '/edges').on('child_changed', e => onChangedEdge(e.key, e.val()));
           firebase.database().ref('/blossoms/' + key + '/title').on('value', t => onChangedTitle(t.val()));
+
+          lastKeyLoaded = key;
         }
 
-        lastKeyLoaded = key;
         callback(snapshot.exists());
       });
     } catch(err) {
