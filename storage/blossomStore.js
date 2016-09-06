@@ -79,6 +79,10 @@ class BlossomStore {
       asArray: false
     });
   }
+
+  getEdges(callback) {
+    firebase.database().ref('/blossoms/' + lastKeyLoaded + '/edges').once('value', (snapshot) => callback(snapshot.val()));
+  }
 }
 
 export default BlossomStore;

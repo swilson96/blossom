@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { RIENumber } from 'riek';
 import { setEdge } from '../actions/edgeActions';
 
-import BlossomStore from '../storage/blossomStore'
+import BlossomStore from '../storage/blossomStore';
 
 require("./css/inputCell.scss");
 

@@ -3,16 +3,29 @@ import { connect } from 'react-redux';
 import { blossomMatching } from '../algorithm';
 import { setResult } from '../actions';
 
+import BlossomStore from '../storage/blossomStore';
+
 require("./css/calculateMatching.scss");
 
 class CalculateMatching extends React.Component {
+  constructor() {
+    super();
+    this.blossomStore = new BlossomStore();
+  }
 
   calculate(e) {
     e.preventDefault();
 
-    var result = blossomMatching(this.props.nodes, this.props.edges);
+    if (this.blossomStore.isConnected()) {
+      this.blossomStore.getEdges(val => this.publishResultFromEdges(val))
+    } else {
+      this.publishResultFromEdges(this.props.edges)
+    }
+  }
 
-    this.props.dispatch(setResult(result));
+  publishResultFromEdges(edges) {
+      var result = blossomMatching(this.props.nodes, edges);
+      this.props.dispatch(setResult(result));
   }
 
   render() {
