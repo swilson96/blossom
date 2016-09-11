@@ -41,9 +41,9 @@ class InputGridRow extends React.Component {
 
   iconClass() {
     if (this.isSelected()) {
-      return 'fa fa-collapse';
+      return 'fa fa-expand';
     }
-    return 'fa fa-expand';
+    return 'fa fa-compress';
   }
 
   render() {
