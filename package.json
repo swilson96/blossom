@@ -2,6 +2,7 @@
   "name": "blossom",
   "version": "1.0.0",
   "description": "Finds your maximal graph",
+  "license": "MIT",
   "scripts": {
     "dev": "webpack -d",
     "watch": "webpack -d --watch",
