@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { renameNode } from '../actions/nodeActions';
-import { selectNode } from '../actions';
+import { selectNode } from '../actions/selectNodeActions';
 
 import InputCell from './inputCell'
 

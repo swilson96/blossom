@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { deselectNode } from '../actions';
+import { deselectNode } from '../actions/selectNodeActions';
 import InputGridHeader from './inputGridHeader';
 import InputGridRow from './inputGridRow';
 
