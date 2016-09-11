@@ -52,6 +52,13 @@ class InputCell extends React.Component {
     return edge ? (edge.weight ? edge.weight : 0) : 0;
   }
 
+  componentWillUnmount() {
+    console.log('will unmount cell ' + this.getKey());
+    if (this.connected && this.blossomStore.isConnected()) {
+      this.blossomStore.removeEdgeBinding(this.getKey());
+    }
+  }
+
   render() {
 
     if (!this.connected && this.blossomStore.isConnected()) {

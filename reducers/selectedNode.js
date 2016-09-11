@@ -3,6 +3,7 @@ const selectedNode = (state = null, action) => {
     case 'SELECT_NODE':
       return action.node;
     case 'SET_BLOSSOM':
+    case 'SET_KEY':
     case 'DESELECT_NODE':
       return null;
     default:

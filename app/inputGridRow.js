@@ -1,11 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { renameNode } from '../actions/nodeActions';
-import { selectNode } from '../actions/selectNodeActions';
-
+import { selectNode, deselectNode } from '../actions/selectNodeActions';
 import InputCell from './inputCell';
-
 import { RIEInput } from 'riek';
+
+require("./css/inputGridRow.scss");
 
 class InputGridRow extends React.Component {
   createInputCell(x, y) {
@@ -20,8 +20,30 @@ class InputGridRow extends React.Component {
     return value && value != '';
   }
 
-  expandNode() {
-    this.props.selectNode(this.props.currentNode);
+  isSelected() {
+    return this.props.selectedNode && this.props.selectedNode.key == this.props.currentNode.key
+  }
+
+  rowClass() {
+    if (this.props.selectedNode && this.props.selectedNode.key != this.props.currentNode.key) {
+      return 'hidden';
+    }
+    return '';
+  }
+
+  iconClick() {
+    if (this.isSelected()) {
+      this.props.deselectNode();
+    } else {
+      this.props.selectNode(this.props.currentNode);
+    }
+  }
+
+  iconClass() {
+    if (this.isSelected()) {
+      return 'fa fa-collapse';
+    }
+    return 'fa fa-expand';
   }
 
   render() {
@@ -30,7 +52,7 @@ class InputGridRow extends React.Component {
       inputCells.push(this.createInputCell(this.props.nodes[k], this.props.currentNode));
     }
     return (
-      <tr key={this.props.currentNode.key}>
+      <tr key={this.props.currentNode.key} className={this.rowClass()}>
         <td className="nameCell" id={this.props.currentNode.key + "_row"}>
           <RIEInput
             value={this.props.currentNode.name}
@@ -40,7 +62,7 @@ class InputGridRow extends React.Component {
             validate={v => this.isValid(v)}
             classLoading="loading"
             classInvalid="invalid"/>
-          { this.props.isExpanded ? '' : <span onClick={e => this.expandNode(e)}><i className="fa fa-expand"></i></span> }
+          <span onClick={e => this.iconClick(e)}><i className={this.iconClass()}></i></span>
         </td>
         {inputCells}
       </tr>
@@ -50,7 +72,9 @@ class InputGridRow extends React.Component {
 
 
 const mapStateToProps = (state) => {
-  return { };
+  return {
+    selectedNode: state.selectedNode
+  };
 }
 
 const mapDispatchToProps = (dispatch) => {
@@ -60,6 +84,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     selectNode: (node) => {
       dispatch(selectNode(node))
+    },
+    deselectNode: () => {
+      dispatch(deselectNode())
     }
   };
 }

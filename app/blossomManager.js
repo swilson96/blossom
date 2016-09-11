@@ -1,12 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { browserHistory } from 'react-router';
 import { setKey } from '../actions';
 import { addNodeFromStore, renameNode, deleteNode } from '../actions/nodeActions';
 import { setEdge } from '../actions/edgeActions';
 import { setTitle } from '../actions/titleActions';
 import BlossomStore from '../storage/blossomStore';
-
-import { browserHistory } from 'react-router';
 
 require("./css/blossomManager.scss");
 

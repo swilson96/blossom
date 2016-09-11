@@ -1,0 +1,10 @@
+.hidden {
+  display: none;
+}
+
+i {
+  padding-left: 8px;
+  &:hover {
+    cursor: pointer;
+  }
+}

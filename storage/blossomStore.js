@@ -1,5 +1,7 @@
 var lastKeyLoaded;
 
+var edgeRefs = {};
+
 var firebase = require('firebase/app');
 require('firebase/database');
 
@@ -74,11 +76,17 @@ class BlossomStore {
   }
 
   syncEdge(key, context) {
-    base.syncState('/blossoms/' + lastKeyLoaded + '/edges/' + key, {
+    edgeRefs[key] = base.syncState('/blossoms/' + lastKeyLoaded + '/edges/' + key, {
       context: context,
       state: 'edge',
       asArray: false
     });
+  }
+
+  removeEdgeBinding(key) {
+    if (edgeRefs[key]) {
+      base.removeBinding(edgeRefs[key])
+    }
   }
 
   getEdges(callback) {
