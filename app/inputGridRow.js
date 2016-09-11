@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { renameNode } from '../actions/nodeActions';
+import { selectNode } from '../actions';
 
 import InputCell from './inputCell'
 
@@ -20,6 +21,10 @@ class InputGridRow extends React.Component {
     return value && value != '';
   }
 
+  expandNode() {
+    this.props.selectNode(this.props.currentNode);
+  }
+
   render() {
     var inputCells = [];
     for (var k in this.props.nodes) {
@@ -36,6 +41,7 @@ class InputGridRow extends React.Component {
             validate={v => this.isValid(v)}
             classLoading="loading"
             classInvalid="invalid"/>
+          { this.props.isExpanded ? '' : <span onClick={e => this.expandNode(e)}>[EXPAND]</span> }
         </td>
         {inputCells}
       </tr>
@@ -52,6 +58,9 @@ const mapDispatchToProps = (dispatch) => {
   return {
     renameNode: (key, name) => {
       dispatch(renameNode(key, name))
+    },
+    selectNode: (node) => {
+      dispatch(selectNode(node))
     }
   };
 }

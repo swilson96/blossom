@@ -6,6 +6,7 @@ import AddNode from './addNode';
 import InputGrid from './inputGrid';
 import CalculateMatching from './calculateMatching';
 import DisplayResults from './displayResults';
+import SelectedNode from './selectedNode';
 
 require("./css/app.scss");
 
@@ -21,6 +22,7 @@ class App extends React.Component {
         <InputGrid />
         <CalculateMatching />
         <DisplayResults />
+        <SelectedNode />
       </div>
     )
   }

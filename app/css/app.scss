@@ -1,7 +1,10 @@
+$background-blue: #66CCFF;
+$medium-blue: #0066FF;
+$dark-blue: #003399;
 
 body {
   padding: 10px;
-  background-color: #66CCFF;
+  background-color: $background-blue;
   font-family: sans-serif;
 }
 
@@ -20,14 +23,14 @@ button {
   padding: 10px;
   font-size: 16px;
   margin: 5px;
-  background-color: #0066FF;
+  background-color: $medium-blue;
   color: #FFF;
-  border: 2px solid #0066FF;
+  border: 2px solid $medium-blue;
 }
 
 button:hover {
-  background-color: #003399;
-  border: 2px solid #003399;
+  background-color: $dark-blue;
+  border: 2px solid $dark-blue;
   cursor: pointer;
 }
 
