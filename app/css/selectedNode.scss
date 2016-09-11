@@ -9,11 +9,14 @@ $medium-blue: #0066FF;
   left: 0;
   background-color: rgba(100, 100, 100, 0.8);
 }
-.popup {
 
+.popup {
   background-color: $background-blue;
   border: solid 1px $medium-blue;
-  height: auto;
-  width: auto;
-  margin: auto;
+  width: 90%;
+  margin: 40px auto;
+}
+
+.close {
+  float: right;
 }

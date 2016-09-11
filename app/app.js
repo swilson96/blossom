@@ -8,6 +8,7 @@ import CalculateMatching from './calculateMatching';
 import DisplayResults from './displayResults';
 import SelectedNode from './selectedNode';
 
+require("font-awesome-sass-loader");
 require("./css/app.scss");
 
 class App extends React.Component {

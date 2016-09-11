@@ -15,7 +15,7 @@ class SelectedNode extends React.Component {
     let nodes = this.props.nodes;
 
     if (!this.props.selectedNode) {
-      return <div />
+      return <div></div>
     }
 
     return (

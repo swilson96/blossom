@@ -3,10 +3,9 @@ import { connect } from 'react-redux';
 import { renameNode } from '../actions/nodeActions';
 import { selectNode } from '../actions/selectNodeActions';
 
-import InputCell from './inputCell'
+import InputCell from './inputCell';
 
 import { RIEInput } from 'riek';
-
 
 class InputGridRow extends React.Component {
   createInputCell(x, y) {
@@ -41,7 +40,7 @@ class InputGridRow extends React.Component {
             validate={v => this.isValid(v)}
             classLoading="loading"
             classInvalid="invalid"/>
-          { this.props.isExpanded ? '' : <span onClick={e => this.expandNode(e)}>[EXPAND]</span> }
+          { this.props.isExpanded ? '' : <span onClick={e => this.expandNode(e)}><i className="fa fa-expand"></i></span> }
         </td>
         {inputCells}
       </tr>
